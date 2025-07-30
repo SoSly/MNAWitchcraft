@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class PotionPouchItem extends ItemBagBase implements IRadialMenuItem, IRadialInventorySelect, ITieredItem<PotionPouchItem> {
+public class PotionPouchItem extends ItemBagBase implements IRadialInventorySelect, ITieredItem<PotionPouchItem> {
     private int tier;
 
     public PotionPouchItem() {

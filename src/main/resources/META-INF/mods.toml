@@ -38,7 +38,7 @@ description='''${mod_description}'''
    sides="BOTH"
 [[dependencies.${mod_id}]]
    modId="mysticalchemy"
-   mandatory=false
+   mandatory=true
    versionRange="${alchemy_version_range}"
    ordering="NONE"
    sides="BOTH"
