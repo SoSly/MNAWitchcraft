@@ -3,7 +3,6 @@ package org.sosly.witchcraft.commands;
 import com.mna.api.ManaAndArtificeMod;
 import com.mna.api.capabilities.IPlayerProgression;
 import com.mna.capabilities.playerdata.progression.PlayerProgression;
-import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -13,12 +12,8 @@ import org.sosly.witchcraft.capabilities.coven.CovenCapability;
 import org.sosly.witchcraft.capabilities.coven.CovenProvider;
 import org.sosly.witchcraft.factions.FactionRegistry;
 
-public class MnawCommand {
-    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("mnaw").then(covenCommands()));
-    }
-
-    public static ArgumentBuilder<CommandSourceStack, ?> covenCommands() {
+public class MaliceCommand {
+    public static ArgumentBuilder<CommandSourceStack, ?> register() {
         return Commands.literal("malice")
                 .requires(source -> source.hasPermission(2))
                 .then(Commands.argument("player", EntityArgument.players())

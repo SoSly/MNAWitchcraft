@@ -1,7 +1,6 @@
 package org.sosly.witchcraft.capabilities.coven;
 
 import com.mna.Registries;
-import com.mna.api.spells.parts.SpellEffect;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -16,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import org.sosly.witchcraft.api.capabilities.ICovenCapability;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -31,13 +31,19 @@ public class CovenProvider implements ICapabilitySerializable<Tag> {
             nbt.putBoolean("malice", true);
         }
         for (int tier = 3; tier <= 5; tier++) {
-            if (instance.getTierEffectsRequired(tier) != null) {
+            Map<ResourceLocation, Boolean> progress = instance.getTierEffectsProgress(tier);
+
+            if (progress != null) {
                 CompoundTag tierTag = new CompoundTag();
-                tierTag.putInt("size", instance.getTierEffectsRequired(tier).size());
+                tierTag.putInt("size", progress.size());
+
                 AtomicInteger index = new AtomicInteger(0);
-                instance.getTierEffectsRequired(tier).forEach(effect -> {
-                    tierTag.putString("effect_" + index.getAndIncrement(), effect.getRegistryName().toString());
+                progress.forEach((effectId, completed) -> {
+                    int i = index.getAndIncrement();
+                    tierTag.putString("effect_" + i, effectId.toString());
+                    tierTag.putBoolean("completed_" + i, completed);
                 });
+
                 nbt.put("tier_" + tier, tierTag);
             }
         }
@@ -52,12 +58,20 @@ public class CovenProvider implements ICapabilitySerializable<Tag> {
             for (int tier = 3; tier <= 5; tier++) {
                 if (cnbt.contains("tier_" + tier)) {
                     CompoundTag tierTag = cnbt.getCompound("tier_" + tier);
-                    Set<SpellEffect> effects = new HashSet<>();
+                    Set<ResourceLocation> effects = new HashSet<>();
                     for (int i = 0; i < tierTag.getInt("size"); i++) {
-                        ResourceLocation effectName = new ResourceLocation(tierTag.getString("effect_" + i));
-                        effects.add(Registries.SpellEffect.get().getValue(effectName));
+                        ResourceLocation effectId = new ResourceLocation(tierTag.getString("effect_" + i));
+                        effects.add(effectId);
                     }
                     instance.setTierEffectsRequired(tier, effects);
+                    
+                    // Now restore the completion status
+                    for (int i = 0; i < tierTag.getInt("size"); i++) {
+                        if (tierTag.getBoolean("completed_" + i)) {
+                            ResourceLocation effectId = new ResourceLocation(tierTag.getString("effect_" + i));
+                            instance.markEffectCompleted(tier, effectId);
+                        }
+                    }
                 }
             }
         }

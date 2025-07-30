@@ -1,10 +1,10 @@
 package org.sosly.witchcraft.api.capabilities;
 
-import com.mna.api.spells.parts.SpellEffect;
 import net.minecraft.resources.ResourceLocation;
 import org.sosly.witchcraft.Witchcraft;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -28,15 +28,44 @@ public interface ICovenCapability {
      * in order to progress to the next tier of magic.  If a tier returns an empty collection, the
      * witch has completed all the required effects for that tier.
      * @param tier is the tier of magic to check for {@code [3-5]}
-     * @return a {@code Collection<SpellEffect>} of MnA Spell Components
+     * @return a {@code Collection<ResourceLocation>} of MnA Spell Component IDs
      */
-    Collection<SpellEffect> getTierEffectsRequired(int tier);
+    Collection<ResourceLocation> getTierEffectsRequired(int tier);
 
     /**
      * Sets the list of Spell Components that the coven witch must successfully cast on a Witch mob
      * in order to progress to the next tier of magic.
      * @param tier is the tier of magic to set {@code [3-5]}
-     * @param effects is a {@code Set<SpellEffect>} of MnA Spell Components
+     * @param effects is a {@code Set<ResourceLocation>} of MnA Spell Component IDs
      */
-    void setTierEffectsRequired(int tier, Set<SpellEffect> effects);
+    void setTierEffectsRequired(int tier, Set<ResourceLocation> effects);
+
+    /**
+     * Marks a spell effect as completed for a specific tier
+     * @param tier is the tier of magic {@code [3-5]}
+     * @param effectId is the {@code ResourceLocation} ID of the spell effect that was successfully cast
+     */
+    void markEffectCompleted(int tier, ResourceLocation effectId);
+
+    /**
+     * Checks if a specific spell effect has been completed for a tier
+     * @param tier is the tier of magic {@code [3-5]}
+     * @param effectId is the {@code ResourceLocation} ID of the spell effect to check
+     * @return {@code true} if the effect has been completed
+     */
+    boolean isEffectCompleted(int tier, ResourceLocation effectId);
+
+    /**
+     * Checks if all required spell effects have been completed for a tier
+     * @param tier is the tier of magic {@code [3-5]}
+     * @return {@code true} if all effects for the tier have been completed
+     */
+    boolean areAllEffectsCompleted(int tier);
+
+    /**
+     * Gets the progress map for a specific tier showing which effects have been completed
+     * @param tier is the tier of magic {@code [3-5]}
+     * @return a {@code Map<ResourceLocation, Boolean>} showing completion status, or null if no requirements set
+     */
+    Map<ResourceLocation, Boolean> getTierEffectsProgress(int tier);
 }
