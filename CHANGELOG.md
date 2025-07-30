@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/SoSly/MNAWitchcraft/tree/1.20.1)
+### Added
+- added Coven progression spell effect tracking system for tiers 3-5
+- added `/mnaw progress <player>` command to view coven progression status
+
 ## [1.20.1-forge-0.2.1-alpha](https://github.com/SoSly/MnAWitchcraft/releases/tag/1.20.1-forge-0.2.1-alpha)
 ### Fixed
 - removed a naughty comma from the potion pouch guide entry which was causing codex crashes
