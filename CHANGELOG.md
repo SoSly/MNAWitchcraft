@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - added Coven progression spell effect tracking system for tiers 3-5
 - added `/mnaw progress <player>` command to view coven progression status
+- added `/mnaw progress <player> complete` command to mark current tier progression as complete
 - added Witch Gossip discovery system for organic Coven progression hints
 - added "You smell nice" potion effect for players carrying M&A flowers
 - added configurable witch gossip mechanics (cooldown, distance, spell hint chance)

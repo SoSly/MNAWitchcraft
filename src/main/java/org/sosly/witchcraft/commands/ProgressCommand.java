@@ -26,6 +26,14 @@ public class ProgressCommand {
                             });
                             return 0;
                         })
+                        .then(Commands.literal("complete")
+                                .executes(ctx -> {
+                                    EntityArgument.getPlayers(ctx, "player").forEach(player -> {
+                                        completeCovenProgress(ctx.getSource(), (ServerPlayer) player);
+                                    });
+                                    return 0;
+                                })
+                        )
                 );
     }
     
@@ -78,5 +86,46 @@ public class ProgressCommand {
             source.sendSuccess(() -> Component.literal("  Progress: " + finalCompleted + "/" + total)
                     .withStyle(progressColor), false);
         }
+    }
+    
+    private static void completeCovenProgress(CommandSourceStack source, ServerPlayer player) {
+        ICovenCapability coven = player.getCapability(CovenProvider.COVEN).orElse(null);
+        if (coven == null) {
+            source.sendFailure(Component.literal("Failed to get coven capability for " + player.getName().getString()));
+            return;
+        }
+        
+        IPlayerProgression progression = player.getCapability(ManaAndArtificeMod.getProgressionCapability()).orElse(null);
+        if (progression == null) {
+            source.sendFailure(Component.literal("Failed to get progression capability for " + player.getName().getString()));
+            return;
+        }
+        
+        int currentTier = progression.getTier();
+        int nextTier = currentTier + 1;
+        
+        if (currentTier < 2 || currentTier > 4) {
+            source.sendFailure(Component.literal("Player " + player.getName().getString() + " is not at a tier that can advance to coven tiers (must be tier 2-4)"));
+            return;
+        }
+        
+        Map<ResourceLocation, Boolean> progress = coven.getTierEffectsProgress(nextTier);
+        if (progress == null || progress.isEmpty()) {
+            source.sendFailure(Component.literal("No requirements found for Tier " + nextTier));
+            return;
+        }
+        
+        boolean alreadyComplete = coven.areAllEffectsCompleted(nextTier);
+        if (alreadyComplete) {
+            source.sendFailure(Component.literal("All Tier " + nextTier + " requirements already complete for " + player.getName().getString()));
+            return;
+        }
+        
+        for (ResourceLocation effectId : progress.keySet()) {
+            coven.markEffectCompleted(nextTier, effectId);
+        }
+        
+        source.sendSuccess(() -> Component.literal("Marked all Tier " + nextTier + " requirements complete for " + player.getName().getString())
+                .withStyle(ChatFormatting.GREEN), true);
     }
 }
