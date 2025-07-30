@@ -30,7 +30,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
-import org.sosly.witchcraft.Config;
+import org.sosly.witchcraft.ServerConfig;
 import org.sosly.witchcraft.guis.providers.PotionPouchProvider;
 import org.sosly.witchcraft.inventories.PotionPouchInventory;
 import org.sosly.witchcraft.utils.SympathyHelper;
@@ -156,12 +156,12 @@ public class PotionPouchItem extends ItemBagBase implements IRadialInventorySele
             UUID targetUUID = pouch.getOrCreateTag().getUUID("conveyance_target");
             Player playerTarget = level.getPlayerByUUID(targetUUID);
             if (playerTarget != null) {
-                if (Config.bossesBlockSympathy && SympathyHelper.isInBossArena((ServerLevel) level, target)) {
+                if (ServerConfig.bossesBlockSympathy && SympathyHelper.isInBossArena((ServerLevel) level, target)) {
                     target.sendSystemMessage(Component.translatable("rituals.sympathy.target_protected"));
                     return pouch;
                 }
 
-                if (Config.bossesImmuneToSympathy && SympathyHelper.isBoss(target)) {
+                if (ServerConfig.bossesImmuneToSympathy && SympathyHelper.isBoss(target)) {
                     target.sendSystemMessage(Component.translatable("rituals.sympathy.target_protected"));
                     return pouch;
                 }

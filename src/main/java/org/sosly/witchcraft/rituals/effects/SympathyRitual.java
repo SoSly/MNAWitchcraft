@@ -38,7 +38,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.sosly.witchcraft.Config;
+import org.sosly.witchcraft.ServerConfig;
 import org.sosly.witchcraft.Witchcraft;
 import org.sosly.witchcraft.effects.beneficial.BrokenSympathyEffect;
 import org.sosly.witchcraft.factions.FactionRegistry;
@@ -122,12 +122,12 @@ public class SympathyRitual extends RitualEffect {
             return false;
         }
 
-        if (Config.bossesBlockSympathy && SympathyHelper.isInBossArena(level, target)) {
+        if (ServerConfig.bossesBlockSympathy && SympathyHelper.isInBossArena(level, target)) {
             player.sendSystemMessage(Component.translatable("rituals.sympathy.target_protected"));
             return false;
         }
 
-        if (Config.bossesImmuneToSympathy && SympathyHelper.isBoss(target)) {
+        if (ServerConfig.bossesImmuneToSympathy && SympathyHelper.isBoss(target)) {
             player.sendSystemMessage(Component.translatable("rituals.sympathy.target_protected"));
             return false;
         }

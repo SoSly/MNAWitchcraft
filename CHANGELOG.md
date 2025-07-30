@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - added "You smell nice" potion effect for players carrying M&A flowers
 - added configurable witch gossip mechanics (cooldown, distance, spell hint chance)
 
+### Changed
+- migrated configuration from client-side to server-side (per-world configuration)
+
 ## [1.20.1-forge-0.2.1-alpha](https://github.com/SoSly/MnAWitchcraft/releases/tag/1.20.1-forge-0.2.1-alpha)
 ### Fixed
 - removed a naughty comma from the potion pouch guide entry which was causing codex crashes

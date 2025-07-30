@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.sosly.witchcraft.Config;
+import org.sosly.witchcraft.ServerConfig;
 import org.sosly.witchcraft.Witchcraft;
 import org.sosly.witchcraft.items.ItemRegistry;
 import org.sosly.witchcraft.utils.SympathyHelper;
@@ -35,7 +35,7 @@ public class VinteumNeedle {
             return;
         }
 
-        if (Config.bossesImmuneToSympathy && SympathyHelper.isBoss(target)) {
+        if (ServerConfig.bossesImmuneToSympathy && SympathyHelper.isBoss(target)) {
             return;
         }
 

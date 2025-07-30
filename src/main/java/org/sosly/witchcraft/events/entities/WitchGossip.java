@@ -12,7 +12,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.sosly.witchcraft.Config;
+import org.sosly.witchcraft.ServerConfig;
 import org.sosly.witchcraft.Witchcraft;
 import org.sosly.witchcraft.effects.EffectRegistry;
 import org.sosly.witchcraft.factions.FactionRegistry;
@@ -42,7 +42,7 @@ public class WitchGossip {
         
         long currentTime = level.getGameTime();
         long lastGossipTime = witch.getPersistentData().getLong(LAST_GOSSIP_TIME_KEY);
-        int cooldownTicks = Config.witchGossipCooldown * 20;
+        int cooldownTicks = ServerConfig.witchGossipCooldown * 20;
         
         if (lastGossipTime != 0 && currentTime - lastGossipTime < cooldownTicks) {
             return;
@@ -53,7 +53,7 @@ public class WitchGossip {
         }
         
         double attackRange = getWitchAttackRange(witch);
-        double gossipRange = Config.witchGossipDistance;
+        double gossipRange = ServerConfig.witchGossipDistance;
         AABB gossipBox = witch.getBoundingBox().inflate(gossipRange);
         List<Player> playersInRange = level.getEntitiesOfClass(Player.class, gossipBox);
         
