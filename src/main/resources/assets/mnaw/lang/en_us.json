@@ -26,6 +26,29 @@
 
   "mnaw:factions/oculus_task_prompt": "Listen to the witches as they gossip.",
 
+  "effect.mnaw.nice_smell": "You smell nice",
+
+  "mnaw.gossip.spell_hint": "Mmm, %s... You know, %s, the sisters have been whispering about %s lately. Such fascinating magic, don't you think?",
+  "mnaw.gossip.ritual_hint": "Ah, %s... I can sense it, %s. You're ready to dive deeper into our secrets.",
+  
+  "mnaw.gossip.coven_lore.1": "Ah, the scent of %s... It reminds me of the old days, when the Coven was strong.",
+  "mnaw.gossip.coven_lore.2": "*sniff* %s... The ancient witches used to brew the most powerful potions with such herbs.",
+  "mnaw.gossip.coven_lore.3": "That %s smell... Did you know the first witch discovered magic through flowers like these?",
+  "mnaw.gossip.coven_lore.4": "Oh, %s! My grandmother told me the Coven's secrets are written in the language of flowers.",
+  "mnaw.gossip.coven_lore.5": "The fragrance of %s... It carries memories of moonlit rituals and sisterly bonds.",
+  "mnaw.gossip.coven_lore.6": "Mmm, %s... We sisters share everything, you know. Pain, joy, even magic... through our little dolls.",
+  
+  "mnaw.gossip.faction.1": "I smell %s... Those Council fools think they understand magic, but they know nothing of true power!",
+  "mnaw.gossip.faction.2": "%s, how lovely... Unlike those Fey creatures who prance about thinking they're so special.",
+  "mnaw.gossip.faction.3": "Ah, %s... At least you're not one of those demon-consorting warlocks. Such unsavory company!",
+  "mnaw.gossip.faction.4": "The scent of %s... Better than the stench of decay those Undead carry with them everywhere.",
+  
+  "mnaw.gossip.general.1": "*sniff sniff* Is that %s I smell? How delightful!",
+  "mnaw.gossip.general.2": "Oh my, %s! I haven't smelled that in ages!",
+  "mnaw.gossip.general.3": "The scent of %s always makes me nostalgic...",
+  "mnaw.gossip.general.4": "%s... Such a lovely fragrance. You have good taste!",
+  "mnaw.gossip.general.5": "Mmm, %s... I should gather some for my potions!",
+
   "mnaw:rituals/broken_sympathy": "Ritual of Broken Sympathy",
   "mnaw:rituals/sympathy": "Ritual of Sympathy",
 

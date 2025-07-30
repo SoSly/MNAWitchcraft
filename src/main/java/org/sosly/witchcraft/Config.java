@@ -31,6 +31,18 @@ public class Config {
             .comment("How much should the charge modifier increase per tier? (multiplier = 1 + (tier - 1) * this value)")
             .defineInRange("dedicationChargeModifier", 0.25, 0.01, 100);
 
+    private static final ForgeConfigSpec.IntValue WITCH_GOSSIP_COOLDOWN = BUILDER
+            .comment("How long (in seconds) should a witch wait between gossip attempts?")
+            .defineInRange("witchGossipCooldown", 60, 10, 3600);
+
+    private static final ForgeConfigSpec.IntValue WITCH_GOSSIP_DISTANCE = BUILDER
+            .comment("How far (in blocks) can players hear witch gossip?")
+            .defineInRange("witchGossipDistance", 32, 16, 128);
+
+    private static final ForgeConfigSpec.IntValue WITCH_GOSSIP_SPELL_HINT_CHANCE = BUILDER
+            .comment("Chance of spell hints (1 in N). Higher values make spell hints rarer.")
+            .defineInRange("witchGossipSpellHintChance", 5, 1, 100);
+
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
     public static boolean bossesBlockSympathy;
@@ -38,6 +50,9 @@ public class Config {
     public static int dedicationCharges;
     public static double dedicationTierMultiplier;
     public static int effectForTier;
+    public static int witchGossipCooldown;
+    public static int witchGossipDistance;
+    public static int witchGossipSpellHintChance;
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
@@ -46,5 +61,8 @@ public class Config {
         dedicationCharges = DEDICATION_CHARGES.get();
         dedicationTierMultiplier = DEDICATION_TIER_MULTIPLIER.get();
         effectForTier = EFFECT_FOR_TIER.get();
+        witchGossipCooldown = WITCH_GOSSIP_COOLDOWN.get();
+        witchGossipDistance = WITCH_GOSSIP_DISTANCE.get();
+        witchGossipSpellHintChance = WITCH_GOSSIP_SPELL_HINT_CHANCE.get();
     }
 }
