@@ -20,7 +20,6 @@ public class ScentDetection {
         
         Player player = event.player;
         
-        // Check every 20 ticks (1 second)
         if (player.tickCount % 20 != 0) {
             return;
         }

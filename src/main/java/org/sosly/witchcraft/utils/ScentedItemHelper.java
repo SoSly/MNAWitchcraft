@@ -17,14 +17,11 @@ public class ScentedItemHelper {
     private static final Map<ResourceLocation, String> SCENTED_ITEMS = new HashMap<>();
     
     static {
-        // M&A flowers
         SCENTED_ITEMS.put(new ResourceLocation("mna", "wakebloom"), "wakebloom");
         SCENTED_ITEMS.put(new ResourceLocation("mna", "aum"), "aum");
         SCENTED_ITEMS.put(new ResourceLocation("mna", "cerublossom"), "cerublossom");
         SCENTED_ITEMS.put(new ResourceLocation("mna", "desert_nova"), "desert_nova");
         SCENTED_ITEMS.put(new ResourceLocation("mna", "tarma_root"), "tarma_root");
-        
-        // Future herbs can be added here
     }
     
     /**
@@ -35,7 +32,6 @@ public class ScentedItemHelper {
     public static List<String> getCarriedScentedItems(Player player) {
         Set<String> scentedItems = new HashSet<>();
         
-        // Check main inventory
         for (ItemStack stack : player.getInventory().items) {
             if (stack.isEmpty()) continue;
             
@@ -45,7 +41,6 @@ public class ScentedItemHelper {
             }
         }
         
-        // Check offhand
         ItemStack offhand = player.getOffhandItem();
         if (!offhand.isEmpty()) {
             String itemType = getScentedItemType(offhand.getItem());
