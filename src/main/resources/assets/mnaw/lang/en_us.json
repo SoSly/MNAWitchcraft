@@ -50,7 +50,13 @@
   "mnaw.gossip.general.5": "Mmm, %s... I should gather some for my potions!",
 
   "mnaw:rituals/broken_sympathy": "Ritual of Broken Sympathy",
+  "mnaw:rituals/hedge": "Ritual of the Hedge",
   "mnaw:rituals/sympathy": "Ritual of Sympathy",
+
+  "ritual.mnaw.hedge": "Ritual of the Hedge",
+  "ritual.mnaw.hedge.tier_invalid": "Only those between tier 2 and 4 may undergo this ritual.",
+  "ritual.mnaw.hedge.spells_not_complete": "You have not completed the required spell demonstrations.",
+  "ritual.mnaw.hedge.success": "The witch accepts you into the Coven and shares new magical knowledge.",
 
   "rituals.error.no_caster": "No player reference found for ritual, aborting.",
   "rituals.error.tier_required": "You must be at least tier %d to perform this ritual.",

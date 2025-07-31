@@ -321,5 +321,41 @@
       }
     ]
   },
+  "Ritual: Hedge": {
+    "index": 0,
+    "category": "rituals",
+    "sections": [
+      {
+        "type": "title",
+        "value": "Ritual of the Hedge"
+      },
+      {
+        "type": "text",
+        "value": "",
+        "json": [
+          {
+            "text": "This ritual calls upon a witch to induct worthy practitioners into the "
+          },
+          {
+            "text": "Coven of Hedge Witches",
+            "color": "light_purple"
+          },
+          {
+            "text": ".\n\nThose who have demonstrated mastery of their current magical tier and completed the required spell demonstrations may undergo this ceremony.\n\nThe witch will appear to judge your worthiness. If you have proven yourself through both magical advancement and spell mastery, she will welcome you into the Coven and share the secrets of the next tier of magic.\n\n"
+          },
+          {
+            "text": "Allying oneself with the Coven of Hedge Witches binds your mana regeneration and declares your neutrality in the faction war.",
+            "color": "dark_purple"
+          }
+        ]
+      }
+    ],
+    "related_recipes": [
+      {
+        "type": "ritual",
+        "location": "mnaw:rituals/hedge"
+      }
+    ]
+  },
   "version": "0.1.0-alpha"
 }

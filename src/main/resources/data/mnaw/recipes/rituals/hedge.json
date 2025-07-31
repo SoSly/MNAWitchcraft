@@ -1,0 +1,67 @@
+{
+  "type": "mna:ritual",
+  "tier": 2,
+  "pattern": [
+    [ 0, 0,15,16,17, 0, 0],
+    [ 0,14, 0, 0, 0,18, 0],
+    [13, 0, 0, 0, 0, 0,19],
+    [12, 0, 0, 1, 0, 0,20],
+    [11, 0, 0, 0, 0, 0,21],
+    [ 0,10, 0, 0, 0,22, 0],
+    [ 0, 0, 9, 8, 7, 0, 0]
+  ],
+  "reagents": [
+    "  A A  ",
+    " C   C ",
+    "T     T",
+    "D     D",
+    "W     W",
+    " B   B ",
+    "       "
+  ],
+  "keys": {
+    "A": {
+      "item": "mna:aum",
+      "optional": false,
+      "consume": true
+    },
+    "C": {
+      "item": "mna:cerublossom",
+      "optional": false,
+      "consume": true
+    },
+    "T": {
+      "item": "mna:tarma_root",
+      "optional": false,
+      "consume": true
+    },
+    "D": {
+      "item": "mna:desert_nova",
+      "optional": false,
+      "consume": true
+    },
+    "W": {
+      "item": "mna:wakebloom",
+      "optional": false,
+      "consume": true
+    },
+    "B": {
+      "item": "minecraft:glass_bottle",
+      "optional": false,
+      "consume": true
+    }
+  },
+  "manaweave": [
+    "mna:manaweave_patterns/circle",
+    "mna:manaweave_patterns/diamond",
+    "mna:manaweave_patterns/inverted_triangle",
+    "mna:manaweave_patterns/square",
+    "mna:manaweave_patterns/circle"
+  ],
+  "parameters": {
+    "innerColor": "0x9932CC",
+    "outerColor": "0x228B22",
+    "displayIndexes": false,
+    "connectBeam": false
+  }
+}
