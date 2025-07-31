@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - fixed z-fighting issue with Coven armor left shoulder by correcting pivot point alignment
+- fixed compatibility issues with latest Mana and Artifice versions
 
 ## [1.20.1-forge-0.2.1-alpha](https://github.com/SoSly/MnAWitchcraft/releases/tag/1.20.1-forge-0.2.1-alpha)
 ### Fixed

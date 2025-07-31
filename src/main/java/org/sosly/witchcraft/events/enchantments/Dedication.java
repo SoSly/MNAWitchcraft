@@ -3,25 +3,22 @@ package org.sosly.witchcraft.events.enchantments;
 
 import com.mna.api.events.RuneforgeEnchantEvent;
 import com.mna.effects.EffectInit;
-import com.mna.items.sorcery.ItemStaff;
-import com.mysticalchemy.crucible.CrucibleTile;
-import com.mysticalchemy.init.BlockInit;
+import com.mna.items.sorcery.MagicStaff;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.GrindstoneEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.sosly.witchcraft.Witchcraft;
 import org.sosly.witchcraft.enchantments.EnchantmentRegistry;
 import org.sosly.witchcraft.enchantments.staves.DedicationEnchantment;
+import org.sosly.witchcraft.compat.MysticAlchemyCompat;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -39,7 +36,7 @@ public class Dedication {
             return;
         }
 
-        if (!(stack.getItem() instanceof ItemStaff staff)) {
+        if (!(stack.getItem() instanceof MagicStaff staff)) {
             return;
         }
 
@@ -52,14 +49,14 @@ public class Dedication {
             return;
         }
 
-        BlockEntity tile = level.getBlockEntity(pos);
-        if (!(tile instanceof CrucibleTile crucible)) {
+        var crucible = MysticAlchemyCompat.getCrucibleTile(level, pos);
+        if (crucible == null) {
             return;
         }
 
         BlockState state = level.getBlockState(pos);
         AtomicBoolean success = new AtomicBoolean(false);
-        crucible.getProminentEffects().forEach((effect, strength) -> {
+        MysticAlchemyCompat.getProminentEffects(crucible).forEach((effect, strength) -> {
             if (effect.equals(EffectInit.INSTANT_MANA.get()) || effect.equals(EffectInit.MANA_REGEN.get())) {
                 DedicationEnchantment.addMana(stack, (int) (strength * 1.0F));
                 success.set(true);
@@ -69,7 +66,7 @@ public class Dedication {
         if (success.get()) {
             int existingLevel = state.getValue(LayeredCauldronBlock.LEVEL);
             if (existingLevel == 1) {
-                level.setBlock(pos, BlockInit.EMPTY_CRUCIBLE.get().defaultBlockState(), 3);
+                level.setBlock(pos, MysticAlchemyCompat.getEmptyCrucibleState(), 3);
             } else {
                 level.setBlock(pos, state.setValue(LayeredCauldronBlock.LEVEL, existingLevel - 1), 3);
             }
@@ -122,7 +119,7 @@ public class Dedication {
             return;
         }
 
-        if (!(stack.getItem() instanceof ItemStaff staff)) {
+        if (!(stack.getItem() instanceof MagicStaff staff)) {
             return;
         }
 

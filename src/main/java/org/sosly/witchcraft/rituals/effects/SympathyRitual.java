@@ -4,7 +4,6 @@ import com.mna.api.capabilities.IPlayerProgression;
 import com.mna.api.rituals.IRitualContext;
 import com.mna.api.rituals.RitualEffect;
 import com.mna.api.spells.ICanContainSpell;
-import com.mna.api.spells.SpellPartTags;
 import com.mna.api.spells.base.IModifiedSpellPart;
 import com.mna.api.spells.base.ISpellDefinition;
 import com.mna.api.spells.parts.Shape;
@@ -12,16 +11,13 @@ import com.mna.api.spells.parts.SpellEffect;
 import com.mna.api.spells.targeting.SpellContext;
 import com.mna.api.spells.targeting.SpellSource;
 import com.mna.api.spells.targeting.SpellTarget;
-import com.mna.api.tools.MATags;
 import com.mna.blocks.tileentities.ChalkRuneTile;
 import com.mna.capabilities.playerdata.progression.PlayerProgression;
 import com.mna.capabilities.playerdata.progression.PlayerProgressionProvider;
 import com.mna.items.ItemInit;
 import com.mna.items.filters.SpellItemFilter;
-import com.mna.items.ritual.ItemPlayerCharm;
-import com.mna.spells.SpellsInit;
+import com.mna.items.ritual.PlayerCharm;
 import com.mna.spells.shapes.*;
-import com.mna.tools.StructureUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -106,7 +102,7 @@ public class SympathyRitual extends RitualEffect {
         }
 
         ItemStack charmItem = getPlayerCharm(ctx);
-        if (charmItem.isEmpty() || ((ItemPlayerCharm)charmItem.getItem()).getPlayerUUID(charmItem) != player.getUUID()) {
+        if (charmItem.isEmpty() || ((PlayerCharm)charmItem.getItem()).getPlayerUUID(charmItem) != player.getUUID()) {
             player.sendSystemMessage(Component.translatable("rituals.sympathy.not_your_charm"));
             return false;
         }

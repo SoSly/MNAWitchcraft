@@ -1,7 +1,7 @@
 package org.sosly.witchcraft.inventories;
 
 import com.mna.items.ItemInit;
-import com.mna.items.ritual.ItemPlayerCharm;
+import com.mna.items.ritual.PlayerCharm;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
@@ -105,7 +105,7 @@ public class PotionPouchInventory extends ItemStackHandler {
             if (stack.isEmpty()) {
                 pouch.getOrCreateTag().remove("conveyance_target");
             } else {
-                UUID target = ((ItemPlayerCharm)stack.getItem()).getPlayerUUID(stack);
+                UUID target = ((PlayerCharm)stack.getItem()).getPlayerUUID(stack);
                 if (target != null) {
                     pouch.getOrCreateTag().putUUID("conveyance_target", target);
                 }
@@ -130,7 +130,7 @@ public class PotionPouchInventory extends ItemStackHandler {
             return PotionUtils.getPotion(itemStack) != Potions.EMPTY;
         }
         if (slot == conveyanceContentSlot) {
-            return itemStack.getItem() instanceof ItemPlayerCharm;
+            return itemStack.getItem() instanceof PlayerCharm;
         }
         return false;
     }

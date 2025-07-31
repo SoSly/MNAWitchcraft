@@ -1,10 +1,6 @@
 package org.sosly.witchcraft.items.alchemy;
 
-import com.mysticalchemy.init.RecipeInit;
-import com.mysticalchemy.recipe.PotionIngredientRecipe;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
@@ -13,10 +9,10 @@ import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
-import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.ModList;
 import org.sosly.witchcraft.items.ItemRegistry;
+import org.sosly.witchcraft.compat.MysticAlchemyCompat;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotResult;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
@@ -44,27 +40,11 @@ public class WitchEyeItem extends Item {
             return;
         }
 
-        RecipeManager recipes = level.getRecipeManager();
-        Optional<PotionIngredientRecipe> recipe = recipes.getRecipeFor(RecipeInit.POTION_RECIPE_TYPE.get(), createDummyCraftingInventory(item), level);
-        if (recipe.isEmpty()) {
-            return;
-        }
-
-        tooltips.add(Component.translatable("item.mnaw.witch_eye/tooltip")
-                .withStyle(ChatFormatting.LIGHT_PURPLE)
-                .withStyle(ChatFormatting.ITALIC));
-
-        recipe.get().getEffects().forEach((effect, value) -> {
-            MutableComponent component = Component.literal("  - ");
-            component.append(effect.getDisplayName());
-            component.append(": ");
-            component.append(String.valueOf(value));
-            component.withStyle(ChatFormatting.LIGHT_PURPLE);
-            tooltips.add(component);
-        });
+        // Delegate to compatibility class that only loads when needed
+        MysticAlchemyCompat.revealAlchemicalProperties(level, item, tooltips);
     }
 
-    private static CraftingContainer createDummyCraftingInventory(ItemStack stack) {
+    public static CraftingContainer createDummyCraftingInventory(ItemStack stack) {
         CraftingContainer craftinginventory = new TransientCraftingContainer(new AbstractContainerMenu((MenuType)null, -1) {
             public boolean stillValid(Player playerIn) {
                 return false;

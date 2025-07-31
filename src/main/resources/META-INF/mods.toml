@@ -34,11 +34,11 @@ description='''${mod_description}'''
    modId="mna"
    mandatory=true
    versionRange="${mna_version_range}"
-   ordering="NONE"
+   ordering="AFTER"
    sides="BOTH"
 [[dependencies.${mod_id}]]
    modId="mysticalchemy"
    mandatory=true
    versionRange="${alchemy_version_range}"
-   ordering="NONE"
+   ordering="AFTER"
    sides="BOTH"

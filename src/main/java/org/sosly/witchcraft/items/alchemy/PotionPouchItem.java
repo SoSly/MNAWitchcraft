@@ -2,12 +2,10 @@ package org.sosly.witchcraft.items.alchemy;
 
 import com.mna.KeybindInit;
 import com.mna.api.items.ITieredItem;
-import com.mna.blocks.tileentities.ChalkRuneTile;
 import com.mna.items.base.IRadialInventorySelect;
-import com.mna.items.base.IRadialMenuItem;
 import com.mna.items.base.ItemBagBase;
 import com.mna.items.filters.ItemFilterGroup;
-import com.mna.items.ritual.ItemPractitionersPatch;
+import com.mna.items.ritual.PractitionersPatch;
 import com.mna.items.ritual.PractitionersPouchPatches;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
@@ -18,16 +16,13 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.sosly.witchcraft.ServerConfig;
@@ -39,7 +34,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public class PotionPouchItem extends ItemBagBase implements IRadialInventorySelect, ITieredItem<PotionPouchItem> {
@@ -54,7 +48,7 @@ public class PotionPouchItem extends ItemBagBase implements IRadialInventorySele
             return false;
         }
 
-        ItemPractitionersPatch patchItem = (ItemPractitionersPatch) patch.getItem();
+        PractitionersPatch patchItem = (PractitionersPatch) patch.getItem();
         if (patchItem.getPatch() == PractitionersPouchPatches.DEPTH) {
             pouch.getOrCreateTag().putInt("depth", patchItem.getLevel());
             return true;
@@ -106,11 +100,11 @@ public class PotionPouchItem extends ItemBagBase implements IRadialInventorySele
     }
 
     public boolean canModifyPouch(ItemStack stack) {
-        if (!(stack.getItem() instanceof ItemPractitionersPatch)) {
+        if (!(stack.getItem() instanceof PractitionersPatch)) {
             return false;
         }
 
-        ItemPractitionersPatch patchItem = (ItemPractitionersPatch) stack.getItem();
+        PractitionersPatch patchItem = (PractitionersPatch) stack.getItem();
         PractitionersPouchPatches patch = patchItem.getPatch();
 
         return patch == PractitionersPouchPatches.DEPTH ||

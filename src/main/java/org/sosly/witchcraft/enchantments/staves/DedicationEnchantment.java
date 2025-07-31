@@ -4,7 +4,7 @@ import com.mna.api.items.ItemUtils;
 import com.mna.api.spells.base.ISpellDefinition;
 import com.mna.enchantments.base.MAEnchantmentBase;
 import com.mna.enchantments.framework.EnchantmentEnumExtender;
-import com.mna.items.sorcery.ItemStaff;
+import com.mna.items.sorcery.MagicStaff;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -33,7 +33,7 @@ public class DedicationEnchantment extends MAEnchantmentBase {
             return;
         }
 
-        if (!(stack.getItem() instanceof ItemStaff staff)) {
+        if (!(stack.getItem() instanceof MagicStaff staff)) {
             return;
         }
 
@@ -57,7 +57,7 @@ public class DedicationEnchantment extends MAEnchantmentBase {
             return false;
         }
 
-        if (!(stack.getItem() instanceof ItemStaff staff)) {
+        if (!(stack.getItem() instanceof MagicStaff staff)) {
             return false;
         }
 
@@ -70,7 +70,7 @@ public class DedicationEnchantment extends MAEnchantmentBase {
             return;
         }
 
-        if (!(stack.getItem() instanceof ItemStaff staff)) {
+        if (!(stack.getItem() instanceof MagicStaff staff)) {
             return;
         }
 
@@ -84,7 +84,7 @@ public class DedicationEnchantment extends MAEnchantmentBase {
             return;
         }
 
-        if (!(stack.getItem() instanceof ItemStaff staff)) {
+        if (!(stack.getItem() instanceof MagicStaff staff)) {
             return;
         }
 

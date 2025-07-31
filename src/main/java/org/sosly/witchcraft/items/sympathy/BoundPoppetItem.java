@@ -1,6 +1,6 @@
 package org.sosly.witchcraft.items.sympathy;
 
-import com.mna.items.ritual.ItemPlayerCharm;
+import com.mna.items.ritual.PlayerCharm;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public class BoundPoppetItem extends ItemPlayerCharm {
+public class BoundPoppetItem extends PlayerCharm {
     private final Block block;
 
     public BoundPoppetItem(Block block) {
