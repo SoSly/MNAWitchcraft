@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - added configurable witch gossip mechanics (cooldown, distance, spell hint chance)
 - added Ritual of the Hedge for Coven faction joining and tier advancement
 - added Moonthread Armor, a tier 5 Coven armor set with unique protective abilities
+- added Book of Shadows, the faction grimoire for Coven mages (model and texture by Aranai)
 
 ### Changed
 - migrated configuration from client-side to server-side (per-world configuration)

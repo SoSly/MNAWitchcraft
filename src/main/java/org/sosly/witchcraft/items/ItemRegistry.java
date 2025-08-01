@@ -17,6 +17,7 @@ import org.sosly.witchcraft.items.armor.MoonthreadArmorItem;
 import org.sosly.witchcraft.items.armor.MoonthreadArmorMaterial;
 import org.sosly.witchcraft.items.sympathy.AntiSympathyCharmItem;
 import org.sosly.witchcraft.items.sympathy.BloodyNeedleItem;
+import org.sosly.witchcraft.items.grimoire.CovenGrimoire;
 
 @Mod.EventBusSubscriber(modid= Witchcraft.MOD_ID, bus=Mod.EventBusSubscriber.Bus.MOD)
 public class ItemRegistry {
@@ -35,6 +36,7 @@ public class ItemRegistry {
     public static final RegistryObject<Item> POTION_POUCH = ITEMS.register("potion_pouch", PotionPouchItem::new);
     public static final RegistryObject<Item> TRANSMUTED_SILVER_NUGGET = ITEMS.register("transmuted_silver_nugget", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> WITCH_EYE = ITEMS.register("witch_eye", WitchEyeItem::new);
+    public static final RegistryObject<Item> GRIMOIRE_COVEN = ITEMS.register("grimoire_coven", CovenGrimoire::new);
 
     @SubscribeEvent
     public static void FillCreativeTabs(BuildCreativeModeTabContentsEvent event) {

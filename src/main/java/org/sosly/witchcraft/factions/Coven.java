@@ -3,14 +3,17 @@ package org.sosly.witchcraft.factions;
 import com.mna.api.faction.BaseFaction;
 import com.mna.api.faction.IFaction;
 import com.mna.gui.GuiTextures;
+import com.mna.items.ItemInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.Nullable;
 import org.sosly.witchcraft.api.CastingResourceIDs;
+import org.sosly.witchcraft.items.ItemRegistry;
 
 import java.util.List;
 
@@ -26,7 +29,7 @@ public class Coven extends BaseFaction {
 
     @Override
     public ItemStack getFactionGrimoire() {
-        return null;
+        return new ItemStack((ItemLike) ItemRegistry.GRIMOIRE_COVEN.get());
     }
 
     @Override
