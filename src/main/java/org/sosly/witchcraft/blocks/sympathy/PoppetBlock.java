@@ -23,7 +23,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.sosly.witchcraft.blocks.entities.BoundPoppetEntity;
-import org.sosly.witchcraft.items.ItemRegistry;
 import org.sosly.witchcraft.items.sympathy.BoundPoppetItem;
 
 import java.util.UUID;

@@ -10,14 +10,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -28,7 +21,6 @@ import java.util.stream.Collectors;
 public class TierEffectManager {
     private static final Logger LOGGER = LogManager.getLogger(TierEffectManager.class);
     
-    // Number of effects required per tier
     private static final int TIER_3_REQUIREMENTS = 3;
     private static final int TIER_4_REQUIREMENTS = 4;
     private static final int TIER_5_REQUIREMENTS = 5;
@@ -41,7 +33,6 @@ public class TierEffectManager {
      * @return a Set of ResourceLocations representing required spell effects
      */
     public static Set<ResourceLocation> generateTierRequirements(int tier, RandomSource rand, Level level) {
-        // Get all potion effects from the registry
         List<ResourceLocation> availableEffects = getAllPotionEffects(tier, level);
         
         if (availableEffects.isEmpty()) {
@@ -49,7 +40,6 @@ public class TierEffectManager {
             return new HashSet<>();
         }
         
-        // Determine how many effects to require
         int requiredCount = switch (tier) {
             case 3 -> TIER_3_REQUIREMENTS;
             case 4 -> TIER_4_REQUIREMENTS;
@@ -60,7 +50,6 @@ public class TierEffectManager {
             }
         };
         
-        // Randomly select the required number of effects
         Set<ResourceLocation> requirements = new HashSet<>();
         List<ResourceLocation> shuffled = new ArrayList<>(availableEffects);
         Collections.shuffle(shuffled, new Random(rand.nextLong()));

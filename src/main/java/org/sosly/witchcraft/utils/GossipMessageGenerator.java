@@ -10,7 +10,6 @@ import org.sosly.witchcraft.api.capabilities.ICovenCapability;
 import org.sosly.witchcraft.capabilities.coven.CovenProvider;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 

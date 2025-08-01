@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "witchcraft:item/coven_armor"
+    "layer0": "mnaw:item/moonthread_boots"
   }
 }

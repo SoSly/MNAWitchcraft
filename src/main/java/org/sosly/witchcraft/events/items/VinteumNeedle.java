@@ -2,7 +2,6 @@ package org.sosly.witchcraft.events.items;
 
 import com.mna.items.ItemInit;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;

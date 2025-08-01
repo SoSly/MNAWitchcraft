@@ -357,5 +357,76 @@
       }
     ]
   },
+  "Moonthread Armor": {
+    "index": 0,
+    "category": "eldrin_altar",
+    "sections": [
+      {
+        "type": "title",
+        "value": "Moonthread Armor"
+      },
+      {
+        "type": "text",
+        "json": [
+          {
+            "text": "The ancient "
+          },
+          {
+            "text": "Coven",
+            "color": "light_purple"
+          },
+          {
+            "text": " has long practiced arts that blur the lines between alchemy and witchcraft. Their greatest creation is the "
+          },
+          {
+            "text": "Moonthread Armor",
+            "color": "light_purple"
+          },
+          {
+            "text": ", woven from enchanted silk under the full moon's light.\n\nThis mystical armor is as protective as the finest chain armor, providing exceptional defense against physical harm. When wearing this armor, I find that "
+          },
+          {
+            "text": "beneficial potion effects last twice as long",
+            "color": "dark_purple"
+          },
+          {
+            "text": ", allowing me to make the most of my alchemical preparations.\n\nThe armor also "
+          },
+          {
+            "text": "nullifies harmful magical effects",
+            "color": "dark_purple"
+          },
+          {
+            "text": " that would otherwise afflict me, though this protection requires time to recharge between uses. Each nullification damages the armor slightly, so I must maintain it carefully.\n\nPerhaps most remarkably, the armor's protective aura "
+          },
+          {
+            "text": "prevents hostile creatures from spawning nearby",
+            "color": "dark_purple"
+          },
+          {
+            "text": ", creating a sanctuary wherever I rest."
+          }
+        ]
+      }
+    ],
+    "related_recipes": [
+      {
+        "type": "eldrin_altar",
+        "location": "mnaw:eldrin_altar/armor/moonthread_cowl"
+      },
+      {
+        "type": "eldrin_altar",
+        "location": "mnaw:eldrin_altar/armor/moonthread_robe"
+      },
+      {
+        "type": "eldrin_altar",
+        "location": "mnaw:eldrin_altar/armor/moonthread_leggings"
+      },
+      {
+        "type": "eldrin_altar",
+        "location": "mnaw:eldrin_altar/armor/moonthread_boots"
+      }
+    ]
+  },
   "version": "0.1.0-alpha"
 }

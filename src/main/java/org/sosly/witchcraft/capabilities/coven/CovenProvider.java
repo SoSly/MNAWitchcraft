@@ -1,6 +1,5 @@
 package org.sosly.witchcraft.capabilities.coven;
 
-import com.mna.Registries;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -65,7 +64,6 @@ public class CovenProvider implements ICapabilitySerializable<Tag> {
                     }
                     instance.setTierEffectsRequired(tier, effects);
                     
-                    // Now restore the completion status
                     for (int i = 0; i < tierTag.getInt("size"); i++) {
                         if (tierTag.getBoolean("completed_" + i)) {
                             ResourceLocation effectId = new ResourceLocation(tierTag.getString("effect_" + i));

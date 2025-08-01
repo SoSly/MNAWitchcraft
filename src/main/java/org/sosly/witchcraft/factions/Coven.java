@@ -1,6 +1,5 @@
 package org.sosly.witchcraft.factions;
 
-import com.mna.api.affinity.Affinity;
 import com.mna.api.faction.BaseFaction;
 import com.mna.api.faction.IFaction;
 import com.mna.gui.GuiTextures;
@@ -53,7 +52,6 @@ public class Coven extends BaseFaction {
 
     @Override
     public ResourceLocation getFactionIcon() {
-//        return new ResourceLocation(Witchcraft.MOD_ID, "textures/gui/coven_icon.png");
         return GuiTextures.Widgets.FACTION_ICON_COUNCIL;
     }
 

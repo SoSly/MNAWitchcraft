@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - added "You smell nice" potion effect for players carrying M&A flowers
 - added configurable witch gossip mechanics (cooldown, distance, spell hint chance)
 - added Ritual of the Hedge for Coven faction joining and tier advancement
+- added Moonthread Armor, a tier 5 Coven armor set with unique protective abilities
 
 ### Changed
 - migrated configuration from client-side to server-side (per-world configuration)

@@ -1,0 +1,30 @@
+{
+    "type": "mna:eldrin-altar",
+    "output": "mnaw:moonthread_armor_helmet",
+    "tier": 5,
+    "requiredFaction": "mnaw:coven",
+    "items": [
+        "minecraft:iron_helmet",
+        "mna:infused_thread",
+        "mna:infused_thread",
+        "mna:rune_defense",
+        "mna:rune_defense",
+        "mna:greater_mote_arcane",
+        "mna:ritual_focus_greater",
+        "mna:ritual_focus_greater"
+    ],
+    "power_requirements": [
+        {
+            "affinity": "AIR",
+            "amount": 1500
+        },
+        {
+            "affinity": "ARCANE",
+            "amount": 2750
+        }
+    ],
+    "colors": [
+        8388736,
+        2818048
+    ]
+}

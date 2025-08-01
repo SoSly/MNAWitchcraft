@@ -1,6 +1,5 @@
 package org.sosly.witchcraft.factions;
 
-import com.mna.api.affinity.Affinity;
 import com.mna.api.faction.BaseFaction;
 import com.mna.gui.GuiTextures;
 import net.minecraft.ChatFormatting;

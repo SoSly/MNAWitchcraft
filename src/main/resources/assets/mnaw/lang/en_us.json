@@ -23,6 +23,16 @@
   "item.mnaw.transmuted_silver_nugget": "Transmuted Silver Nugget",
   "item.mnaw.witch_eye": "Witch Eye",
   "item.mnaw.witch_eye/tooltip": "Your witch eye reveals the following properties:",
+  
+  "item.mnaw.moonthread_armor_helmet": "Moonthread Cowl",
+  "item.mnaw.moonthread_armor_chest": "Moonthread Robe",
+  "item.mnaw.moonthread_armor_leggings": "Moonthread Leggings",
+  "item.mnaw.moonthread_armor_boots": "Moonthread Boots",
+  "item.mnaw.moonthread_armor.set_bonus": "(4) Set Bonus:",
+  "item.mnaw.moonthread_armor.set_bonus.earthen_regeneration": " Regenerate Essence while crouching on natural blocks",
+  "item.mnaw.moonthread_armor.set_bonus.potion_doubling": " Double duration of beneficial and neutral potion effects",
+  "item.mnaw.moonthread_armor.set_bonus.harmful_nullification": " Chance to resist harmful potion effects",
+  "item.mnaw.moonthread_armor.set_bonus.spawn_prevention": " Prevents hostile mob spawning nearby at night",
 
   "mnaw:factions/oculus_task_prompt": "Listen to the witches as they gossip.",
 

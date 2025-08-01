@@ -6,12 +6,11 @@ import com.mna.api.spells.base.ISpellDefinition;
 import com.mna.api.spells.parts.SpellEffect;
 import com.mna.capabilities.playerdata.progression.PlayerProgressionProvider;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
@@ -78,7 +77,6 @@ public class Sympathy {
             return;
         }
         
-        // Track each spell effect component
         spell.iterateComponents(component -> {
             SpellEffect effect = component.getPart();
             ResourceLocation effectId = effect.getRegistryName();

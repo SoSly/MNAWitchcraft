@@ -1,0 +1,30 @@
+{
+    "type": "mna:eldrin-altar",
+    "output": "mnaw:moonthread_armor_boots",
+    "tier": 5,
+    "requiredFaction": "mnaw:coven",
+    "items": [
+        "minecraft:iron_boots",
+        "mna:infused_thread",
+        "mna:infused_thread",
+        "mna:rune_air",
+        "mna:rune_air",
+        "mna:greater_mote_earth",
+        "mna:greater_mote_arcane",
+        "minecraft:brewing_stand"
+    ],
+    "power_requirements": [
+        {
+            "affinity": "ARCANE",
+            "amount": 1500
+        },
+        {
+            "affinity": "AIR",
+            "amount": 2750
+        }
+    ],
+    "colors": [
+        8388736,
+        2818048
+    ]
+}

@@ -1,0 +1,30 @@
+{
+    "type": "mna:eldrin-altar",
+    "output": "mnaw:moonthread_armor_leggings",
+    "tier": 5,
+    "requiredFaction": "mnaw:coven",
+    "items": [
+        "minecraft:iron_leggings",
+        "mna:infused_thread",
+        "mna:infused_thread",
+        "mna:decoration/transmuted_silver_block",
+        "mna:decoration/transmuted_silver_block",
+        "mna:greater_mote_air",
+        "mna:rune_defense",
+        "mna:rune_earth"
+    ],
+    "power_requirements": [
+        {
+            "affinity": "EARTH",
+            "amount": 1500
+        },
+        {
+            "affinity": "AIR",
+            "amount": 2750
+        }
+    ],
+    "colors": [
+        8388736,
+        2818048
+    ]
+}

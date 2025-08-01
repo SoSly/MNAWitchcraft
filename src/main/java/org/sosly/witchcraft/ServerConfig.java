@@ -43,6 +43,22 @@ public class ServerConfig {
             .comment("Chance of spell hints (1 in N). Higher values make spell hints rarer.")
             .defineInRange("witchGossipSpellHintChance", 5, 1, 100);
 
+    private static final ForgeConfigSpec.IntValue MOONTHREAD_ARMOR_EARTHEN_REGEN_TIME = BUILDER
+            .comment("How many seconds does it take for Moonthread armor to regenerate from 0% to 100% essence while crouching on natural blocks?")
+            .defineInRange("moonthreadArmorEarthenRegenTime", 20, 1, 300);
+
+    private static final ForgeConfigSpec.IntValue MOONTHREAD_ARMOR_HARMFUL_NULLIFICATION_CHANCE = BUILDER
+            .comment("Chance to nullify harmful potion effects (1 in N). Higher values make nullification rarer.")
+            .defineInRange("moonthreadArmorHarmfulNullificationChance", 3, 1, 100);
+
+    private static final ForgeConfigSpec.IntValue MOONTHREAD_ARMOR_HARMFUL_NULLIFICATION_COOLDOWN = BUILDER
+            .comment("How long (in seconds) before the harmful effect nullification can trigger again?")
+            .defineInRange("moonthreadArmorHarmfulNullificationCooldown", 10, 1, 300);
+
+    private static final ForgeConfigSpec.IntValue MOONTHREAD_ARMOR_SPAWN_PREVENTION_RADIUS = BUILDER
+            .comment("Radius in blocks around players wearing full Moonthread armor where hostile mobs won't spawn at night above ground")
+            .defineInRange("moonthreadArmorSpawnPreventionRadius", 32, 16, 128);
+
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
     public static boolean bossesBlockSympathy;
@@ -53,6 +69,10 @@ public class ServerConfig {
     public static int witchGossipCooldown;
     public static int witchGossipDistance;
     public static int witchGossipSpellHintChance;
+    public static int moonthreadArmorEarthenRegenTime;
+    public static int moonthreadArmorHarmfulNullificationChance;
+    public static int moonthreadArmorHarmfulNullificationCooldown;
+    public static int moonthreadArmorSpawnPreventionRadius;
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
@@ -64,5 +84,9 @@ public class ServerConfig {
         witchGossipCooldown = WITCH_GOSSIP_COOLDOWN.get();
         witchGossipDistance = WITCH_GOSSIP_DISTANCE.get();
         witchGossipSpellHintChance = WITCH_GOSSIP_SPELL_HINT_CHANCE.get();
+        moonthreadArmorEarthenRegenTime = MOONTHREAD_ARMOR_EARTHEN_REGEN_TIME.get();
+        moonthreadArmorHarmfulNullificationChance = MOONTHREAD_ARMOR_HARMFUL_NULLIFICATION_CHANCE.get();
+        moonthreadArmorHarmfulNullificationCooldown = MOONTHREAD_ARMOR_HARMFUL_NULLIFICATION_COOLDOWN.get();
+        moonthreadArmorSpawnPreventionRadius = MOONTHREAD_ARMOR_SPAWN_PREVENTION_RADIUS.get();
     }
 }

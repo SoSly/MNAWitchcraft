@@ -2,7 +2,6 @@ package org.sosly.witchcraft.guis.slots;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PotionItem;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.sosly.witchcraft.inventories.PotionPouchInventory;

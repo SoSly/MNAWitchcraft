@@ -1,0 +1,31 @@
+{
+    "type": "mna:eldrin-altar",
+    "output": "mnaw:moonthread_armor_chest",
+    "tier": 5,
+    "requiredFaction": "mnaw:coven",
+    "items": [
+        "minecraft:iron_chestplate",
+        "mna:infused_thread",
+        "mna:infused_thread",
+        "mna:rune_air",
+        "mna:rune_arcane",
+        "mysticalchemy:crucible_empty",
+        "mna:major_mana_gem",
+        "mna:greater_mote_earth",
+        "mna:greater_mote_air"
+    ],
+    "power_requirements": [
+        {
+            "affinity": "EARTH",
+            "amount": 2750
+        },
+        {
+            "affinity": "ARCANE",
+            "amount": 3500
+        }
+    ],
+    "colors": [
+        8388736,
+        2818048
+    ]
+}

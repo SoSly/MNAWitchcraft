@@ -9,8 +9,6 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
-
 abstract class AbstractPlayerInventoryContainer extends AbstractContainerMenu {
     protected AbstractPlayerInventoryContainer(@Nullable MenuType<?> menuType, int container) {
         super(menuType, container);

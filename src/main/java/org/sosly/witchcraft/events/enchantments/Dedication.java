@@ -16,6 +16,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.sosly.witchcraft.Witchcraft;
+import org.sosly.witchcraft.compat.MysticAlchemyCompat;
 import org.sosly.witchcraft.enchantments.EnchantmentRegistry;
 import org.sosly.witchcraft.enchantments.staves.DedicationEnchantment;
 import org.sosly.witchcraft.compat.MysticAlchemyCompat;

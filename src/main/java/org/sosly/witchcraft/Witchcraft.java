@@ -15,17 +15,17 @@ import org.apache.logging.log4j.Logger;
 import org.sosly.witchcraft.blocks.BlockRegistry;
 import org.sosly.witchcraft.blocks.EntityRegistry;
 import org.sosly.witchcraft.commands.CommandRegistry;
-import org.sosly.witchcraft.guis.ContainerRegistry;
-import org.sosly.witchcraft.guis.ScreenRegistry;
 import org.sosly.witchcraft.effects.EffectRegistry;
 import org.sosly.witchcraft.enchantments.EnchantmentRegistry;
+import org.sosly.witchcraft.guis.ContainerRegistry;
+import org.sosly.witchcraft.guis.ScreenRegistry;
 import org.sosly.witchcraft.items.ItemRegistry;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(Witchcraft.MOD_ID)
 public class Witchcraft {
     public static final String MOD_ID = "mnaw";
-    public static final Logger LOGGER = LogManager.getLogger(Witchcraft.class);
+    public static final Logger LOGGER = LogManager.getLogger();
 
     public Witchcraft() {
         IEventBus modbus = FMLJavaModLoadingContext.get().getModEventBus();

@@ -1,7 +1,6 @@
 package org.sosly.witchcraft.factions;
 
 import com.mna.Registries;
-import com.mna.api.ManaAndArtificeMod;
 import com.mna.api.capabilities.IPlayerProgression;
 import com.mna.api.faction.IFaction;
 import com.mna.capabilities.playerdata.magic.resources.CastingResourceGuiRegistry;
