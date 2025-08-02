@@ -17,6 +17,7 @@ import org.sosly.witchcraft.blocks.EntityRegistry;
 import org.sosly.witchcraft.commands.CommandRegistry;
 import org.sosly.witchcraft.effects.EffectRegistry;
 import org.sosly.witchcraft.enchantments.EnchantmentRegistry;
+import org.sosly.witchcraft.fluids.FluidRegistry;
 import org.sosly.witchcraft.guis.ContainerRegistry;
 import org.sosly.witchcraft.guis.ScreenRegistry;
 import org.sosly.witchcraft.items.ItemRegistry;
@@ -35,6 +36,8 @@ public class Witchcraft {
         EffectRegistry.EFFECTS.register(modbus);
         EnchantmentRegistry.ENCHANTMENTS.register(modbus);
         EntityRegistry.BLOCK_ENTITIES.register(modbus);
+        FluidRegistry.FLUIDS.register(modbus);
+        FluidRegistry.FLUID_TYPES.register(modbus);
         ItemRegistry.ITEMS.register(modbus);
 
         MinecraftForge.EVENT_BUS.register(CommandRegistry.class);
