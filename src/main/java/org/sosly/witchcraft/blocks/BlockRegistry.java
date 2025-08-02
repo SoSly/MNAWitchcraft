@@ -28,6 +28,8 @@ public class BlockRegistry {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, Witchcraft.MOD_ID);
     public static final RegistryObject<BoundPoppetBlock> BOUND_POPPET = BLOCKS.register("bound_poppet", BoundPoppetBlock::new);
     public static final RegistryObject<PoppetBlock> POPPET = BLOCKS.register("poppet", PoppetBlock::new);
+    public static final RegistryObject<CondensedMoonlightCauldronBlock> CONDENSED_MOONLIGHT_CAULDRON = BLOCKS.register("condensed_moonlight_cauldron", 
+            () -> new CondensedMoonlightCauldronBlock(Block.Properties.copy(net.minecraft.world.level.block.Blocks.CAULDRON)));
 
     @SubscribeEvent
     public static void onRegisterItems(RegisterEvent event) {
@@ -43,6 +45,9 @@ public class BlockRegistry {
 
     @SubscribeEvent
     public static void onClientSetupEvent(FMLClientSetupEvent event) {
+        // Set render layer for condensed moonlight cauldron
+        ItemBlockRenderTypes.setRenderLayer(CONDENSED_MOONLIGHT_CAULDRON.get(), RenderType.translucent());
+        
         BlockRegistry.BLOCKS.getEntries().stream().map(RegistryObject::get).forEach(block -> {
             if (!(block instanceof ICutoutBlock) && !(block instanceof FlowerPotBlock)) {
                 if (block instanceof ITranslucentBlock) {

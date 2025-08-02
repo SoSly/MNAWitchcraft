@@ -18,6 +18,9 @@ import org.sosly.witchcraft.items.armor.MoonthreadArmorMaterial;
 import org.sosly.witchcraft.items.sympathy.AntiSympathyCharmItem;
 import org.sosly.witchcraft.items.sympathy.BloodyNeedleItem;
 import org.sosly.witchcraft.items.grimoire.CovenGrimoire;
+import org.sosly.witchcraft.items.fluids.CondensedMoonlightBucketItem;
+import org.sosly.witchcraft.items.fluids.CondensedMoonlightBottleItem;
+import org.sosly.witchcraft.fluids.FluidRegistry;
 
 @Mod.EventBusSubscriber(modid= Witchcraft.MOD_ID, bus=Mod.EventBusSubscriber.Bus.MOD)
 public class ItemRegistry {
@@ -37,6 +40,10 @@ public class ItemRegistry {
     public static final RegistryObject<Item> TRANSMUTED_SILVER_NUGGET = ITEMS.register("transmuted_silver_nugget", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> WITCH_EYE = ITEMS.register("witch_eye", WitchEyeItem::new);
     public static final RegistryObject<Item> GRIMOIRE_COVEN = ITEMS.register("grimoire_coven", CovenGrimoire::new);
+    public static final RegistryObject<Item> CONDENSED_MOONLIGHT_BUCKET = ITEMS.register("condensed_moonlight_bucket", 
+            () -> new CondensedMoonlightBucketItem(FluidRegistry.CONDENSED_MOONLIGHT_SOURCE, new Item.Properties()));
+    public static final RegistryObject<Item> CONDENSED_MOONLIGHT_BOTTLE = ITEMS.register("condensed_moonlight_bottle", 
+            () -> new CondensedMoonlightBottleItem(new Item.Properties()));
 
     @SubscribeEvent
     public static void FillCreativeTabs(BuildCreativeModeTabContentsEvent event) {

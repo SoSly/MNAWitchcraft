@@ -16,6 +16,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
 import org.jetbrains.annotations.NotNull;
+import org.sosly.witchcraft.items.ItemRegistry;
 
 public abstract class CondensedMoonlightFluid extends ForgeFlowingFluid {
     
@@ -28,7 +29,7 @@ public abstract class CondensedMoonlightFluid extends ForgeFlowingFluid {
                 .slopeFindDistance(2)
                 .levelDecreasePerBlock(1)
                 .block(FluidRegistry.CONDENSED_MOONLIGHT_BLOCK)
-                .bucket(() -> Items.AIR) // No bucket for now
+                .bucket(ItemRegistry.CONDENSED_MOONLIGHT_BUCKET)
                 .tickRate(5)); // Same as water
     }
     
@@ -64,7 +65,7 @@ public abstract class CondensedMoonlightFluid extends ForgeFlowingFluid {
     
     @Override
     public @NotNull Item getBucket() {
-        return Items.AIR; // No bucket for now
+        return ItemRegistry.CONDENSED_MOONLIGHT_BUCKET.get();
     }
     
     @Override

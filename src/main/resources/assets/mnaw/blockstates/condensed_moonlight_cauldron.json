@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "level=1": {
+      "model": "mnaw:block/condensed_moonlight_cauldron_level1"
+    },
+    "level=2": {
+      "model": "mnaw:block/condensed_moonlight_cauldron_level2"
+    },
+    "level=3": {
+      "model": "mnaw:block/condensed_moonlight_cauldron_full"
+    }
+  }
+}
