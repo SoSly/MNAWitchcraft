@@ -44,6 +44,7 @@ public class ItemRegistry {
             () -> new CondensedMoonlightBucketItem(FluidRegistry.CONDENSED_MOONLIGHT_SOURCE, new Item.Properties()));
     public static final RegistryObject<Item> CONDENSED_MOONLIGHT_BOTTLE = ITEMS.register("condensed_moonlight_bottle", 
             () -> new CondensedMoonlightBottleItem(new Item.Properties()));
+    public static final RegistryObject<Item> MOONTHREAD = ITEMS.register("moonthread", () -> new Item(new Item.Properties()));
 
     @SubscribeEvent
     public static void FillCreativeTabs(BuildCreativeModeTabContentsEvent event) {

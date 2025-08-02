@@ -5,8 +5,8 @@
     "requiredFaction": "mnaw:coven",
     "items": [
         "minecraft:iron_leggings",
-        "mna:infused_thread",
-        "mna:infused_thread",
+        "mnaw:moonthread",
+        "mnaw:moonthread",
         "mna:decoration/transmuted_silver_block",
         "mna:decoration/transmuted_silver_block",
         "mna:greater_mote_air",

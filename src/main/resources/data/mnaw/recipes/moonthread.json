@@ -1,0 +1,14 @@
+{
+  "type": "mna:manaweaving-recipe",
+  "output": "mnaw:moonthread",
+  "tier": 3,
+  "requiredFaction": "mnaw:coven",
+  "items": [
+    "mnaw:condensed_moonlight_bottle",
+    "mna:infused_thread"
+  ],
+  "patterns": [
+    "mna:circle",
+    "mna:triangle"
+  ]
+}
