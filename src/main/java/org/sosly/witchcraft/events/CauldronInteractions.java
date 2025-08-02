@@ -30,13 +30,11 @@ public class CauldronInteractions {
     @SubscribeEvent
     public static void setup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
-            // Register cauldron interactions for condensed moonlight
             registerCondensedMoonlightInteractions();
         });
     }
     
     private static void registerCondensedMoonlightInteractions() {
-        // Bucket of moonlight + empty cauldron = moonlight cauldron
         CauldronInteraction.EMPTY.put(ItemRegistry.CONDENSED_MOONLIGHT_BUCKET.get(), (state, level, pos, player, hand, stack) -> {
             if (!level.isClientSide) {
                 BlockState moonlightCauldron = BlockRegistry.CONDENSED_MOONLIGHT_CAULDRON.get().defaultBlockState()
@@ -53,7 +51,6 @@ public class CauldronInteractions {
             return InteractionResult.sidedSuccess(level.isClientSide);
         });
         
-        // Empty bottle + moonlight cauldron = bottle of condensed moonlight
         CondensedMoonlightCauldronBlock.CONDENSED_MOONLIGHT_CAULDRON_INTERACTION.put(Items.GLASS_BOTTLE, (state, level, pos, player, hand, stack) -> {
             if (!level.isClientSide) {
                 Item item = stack.getItem();
@@ -62,7 +59,6 @@ public class CauldronInteractions {
                 player.awardStat(Stats.USE_CAULDRON);
                 player.awardStat(Stats.ITEM_USED.get(item));
                 
-                // Decrease cauldron level
                 LayeredCauldronBlock.lowerFillLevel(state, level, pos);
                 
                 level.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -72,7 +68,6 @@ public class CauldronInteractions {
             return InteractionResult.sidedSuccess(level.isClientSide);
         });
         
-        // Empty bucket + moonlight cauldron = bucket of moonlight
         CondensedMoonlightCauldronBlock.CONDENSED_MOONLIGHT_CAULDRON_INTERACTION.put(Items.BUCKET, (state, level, pos, player, hand, stack) -> {
             if (!level.isClientSide) {
                 if (state.getValue(LayeredCauldronBlock.LEVEL) == 3) {
@@ -90,7 +85,6 @@ public class CauldronInteractions {
             return InteractionResult.sidedSuccess(level.isClientSide);
         });
         
-        // Bottle of moonlight + empty cauldron = partially filled moonlight cauldron
         CauldronInteraction.EMPTY.put(ItemRegistry.CONDENSED_MOONLIGHT_BOTTLE.get(), (state, level, pos, player, hand, stack) -> {
             if (!level.isClientSide) {
                 BlockState moonlightCauldron = BlockRegistry.CONDENSED_MOONLIGHT_CAULDRON.get().defaultBlockState()
@@ -107,7 +101,6 @@ public class CauldronInteractions {
             return InteractionResult.sidedSuccess(level.isClientSide);
         });
         
-        // Bottle of moonlight + moonlight cauldron = increase level
         CondensedMoonlightCauldronBlock.CONDENSED_MOONLIGHT_CAULDRON_INTERACTION.put(ItemRegistry.CONDENSED_MOONLIGHT_BOTTLE.get(), (state, level, pos, player, hand, stack) -> {
             if (!level.isClientSide) {
                 int currentLevel = state.getValue(LayeredCauldronBlock.LEVEL);
@@ -127,7 +120,5 @@ public class CauldronInteractions {
             }
             return InteractionResult.PASS;
         });
-        
-        // Prevent bottling from world sources by NOT registering bottle interactions with the fluid block
     }
 }

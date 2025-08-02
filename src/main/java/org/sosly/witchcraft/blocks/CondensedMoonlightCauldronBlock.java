@@ -25,17 +25,15 @@ public class CondensedMoonlightCauldronBlock extends LayeredCauldronBlock {
     
     @Override
     public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
-        // Emit light based on fill level (similar to the fluid block's light level of 6)
-        return state.getValue(LEVEL) * 2; // 2, 4, or 6 light level
+        return state.getValue(LEVEL) * 2;
     }
     
     @Override
     protected boolean canReceiveStalactiteDrip(Fluid fluid) {
-        return false; // Moonlight can't drip from stalactites
+        return false;
     }
     
     @Override
     public void handlePrecipitation(BlockState state, Level level, BlockPos pos, Biome.Precipitation precipitation) {
-        // Do nothing - moonlight isn't affected by rain
     }
 }

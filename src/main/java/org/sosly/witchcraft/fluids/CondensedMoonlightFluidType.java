@@ -31,7 +31,7 @@ public class CondensedMoonlightFluidType extends FluidType {
         consumer.accept(new IClientFluidTypeExtensions() {
             @Override
             public int getTintColor() {
-                return 0xAAC0D0E6; // Silvery-blue moonlight color with translucency
+                return 0xAAC0D0E6;
             }
             
             @Override
@@ -51,13 +51,11 @@ public class CondensedMoonlightFluidType extends FluidType {
             
             @Override
             public @NotNull Vector3f modifyFogColor(Camera camera, float partialTick, ClientLevel level, int renderDistance, float darkenWorldAmount, Vector3f fluidFogColor) {
-                // Moonlight fog color
                 return new Vector3f(0.67f, 0.75f, 0.82f);
             }
             
             @Override
             public void modifyFogRender(Camera camera, FogRenderer.FogMode mode, float renderDistance, float partialTick, float nearDistance, float farDistance, FogShape shape) {
-                // Use default fog rendering
             }
         });
     }

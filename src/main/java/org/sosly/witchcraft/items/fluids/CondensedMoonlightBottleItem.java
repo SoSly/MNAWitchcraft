@@ -28,7 +28,6 @@ public class CondensedMoonlightBottleItem extends Item {
         }
         
         if (!level.isClientSide) {
-            // Could add effects here when consumed
         }
         
         if (player != null) {
@@ -59,6 +58,6 @@ public class CondensedMoonlightBottleItem extends Item {
     
     @Override
     public boolean isFoil(@NotNull ItemStack stack) {
-        return true; // Make it shimmer like an enchanted item
+        return true;
     }
 }

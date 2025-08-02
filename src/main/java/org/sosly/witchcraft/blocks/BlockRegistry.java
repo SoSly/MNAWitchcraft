@@ -45,7 +45,6 @@ public class BlockRegistry {
 
     @SubscribeEvent
     public static void onClientSetupEvent(FMLClientSetupEvent event) {
-        // Set render layer for condensed moonlight cauldron
         ItemBlockRenderTypes.setRenderLayer(CONDENSED_MOONLIGHT_CAULDRON.get(), RenderType.translucent());
         
         BlockRegistry.BLOCKS.getEntries().stream().map(RegistryObject::get).forEach(block -> {

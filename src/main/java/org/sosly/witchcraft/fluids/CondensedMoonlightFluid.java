@@ -30,7 +30,7 @@ public abstract class CondensedMoonlightFluid extends ForgeFlowingFluid {
                 .levelDecreasePerBlock(1)
                 .block(FluidRegistry.CONDENSED_MOONLIGHT_BLOCK)
                 .bucket(ItemRegistry.CONDENSED_MOONLIGHT_BUCKET)
-                .tickRate(5)); // Same as water
+                .tickRate(5));
     }
     
     @Override
@@ -45,17 +45,16 @@ public abstract class CondensedMoonlightFluid extends ForgeFlowingFluid {
     
     @Override
     protected boolean canConvertToSource(Level level) {
-        return false; // No infinite sources
+        return false;
     }
     
     @Override
     protected void beforeDestroyingBlock(@NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockState state) {
-        // Default behavior
     }
     
     @Override
     protected int getSlopeFindDistance(@NotNull LevelReader level) {
-        return 8; // Same as water
+        return 8;
     }
     
     @Override
@@ -75,7 +74,7 @@ public abstract class CondensedMoonlightFluid extends ForgeFlowingFluid {
     
     @Override
     public int getTickDelay(@NotNull LevelReader level) {
-        return 5; // Same as water
+        return 5;
     }
     
     @Override
