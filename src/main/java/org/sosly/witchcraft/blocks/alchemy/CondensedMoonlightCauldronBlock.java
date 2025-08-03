@@ -1,4 +1,4 @@
-package org.sosly.witchcraft.blocks;
+package org.sosly.witchcraft.blocks.alchemy;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.cauldron.CauldronInteraction;
@@ -9,11 +9,8 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.Fluids;
-import org.sosly.witchcraft.fluids.FluidRegistry;
 
 import java.util.Map;
-import java.util.function.Predicate;
 
 public class CondensedMoonlightCauldronBlock extends LayeredCauldronBlock {
     

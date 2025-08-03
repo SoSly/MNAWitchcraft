@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - added Condensed Moonlight Cauldron that emits a soft glow when filled
 - added Moonthread item, an enhanced thread infused with moonlight for Coven crafting
 - added manaweaving recipe to create Moonthread from Condensed Moonlight and Infused Thread
+- added Witch's Cauldron, an enhanced crucible for Coven witches that passively collects moonlight at night
 
 ### Changed
 - migrated configuration from client-side to server-side (per-world configuration)

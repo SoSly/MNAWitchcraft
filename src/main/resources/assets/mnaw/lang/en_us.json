@@ -3,6 +3,9 @@
   "block.mnaw.bound_poppet": "Bound Poppet",
   "block.mnaw.bound_poppet.named.player": "Bound Poppet of %s",
   "block.mnaw.bound_poppet.named.mob": "Bound Poppet of a %s",
+  "block.mnaw.witchs_cauldron": "Witch's Cauldron",
+  "block.mnaw.empty_witchs_cauldron": "Witch's Cauldron",
+  "block.mnaw.moonlight_witchs_cauldron": "Witch's Cauldron",
 
   "effect.mnaw.broken_sympathy": "Broken Sympathy",
 
@@ -88,5 +91,7 @@
   "rituals.sympathy.not_a_witch": "Only coven witches can perform this ritual.",
   "rituals.sympathy.not_your_charm": "The player charm must be attuned to you.",
   "rituals.sympathy.poppet_broken": "Your poppet was destroyed",
-  "rituals.sympathy.target_protected": "Something is protecting your target."
+  "rituals.sympathy.target_protected": "Something is protecting your target.",
+  
+  "message.mnaw.requires_coven_tier3": "Only experienced Coven witches can use this cauldron."
 }

@@ -1,4 +1,4 @@
-package org.sosly.witchcraft.client;
+package org.sosly.witchcraft.events.client;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;

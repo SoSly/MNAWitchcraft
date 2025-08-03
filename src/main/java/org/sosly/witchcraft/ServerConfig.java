@@ -59,6 +59,10 @@ public class ServerConfig {
             .comment("Radius in blocks around players wearing full Moonthread armor where hostile mobs won't spawn at night above ground")
             .defineInRange("moonthreadArmorSpawnPreventionRadius", 32, 16, 128);
 
+    private static final ForgeConfigSpec.IntValue WITCHS_CAULDRON_MOONLIGHT_COLLECTION_CHANCE = BUILDER
+            .comment("Chance to collect moonlight each tick (1 in N). Higher values make collection slower.")
+            .defineInRange("witchsCauldronMoonlightCollectionChance", 1200, 20, 12000);
+
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
     public static boolean bossesBlockSympathy;
@@ -73,6 +77,7 @@ public class ServerConfig {
     public static int moonthreadArmorHarmfulNullificationChance;
     public static int moonthreadArmorHarmfulNullificationCooldown;
     public static int moonthreadArmorSpawnPreventionRadius;
+    public static int witchsCauldronMoonlightCollectionChance;
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
@@ -88,5 +93,6 @@ public class ServerConfig {
         moonthreadArmorHarmfulNullificationChance = MOONTHREAD_ARMOR_HARMFUL_NULLIFICATION_CHANCE.get();
         moonthreadArmorHarmfulNullificationCooldown = MOONTHREAD_ARMOR_HARMFUL_NULLIFICATION_COOLDOWN.get();
         moonthreadArmorSpawnPreventionRadius = MOONTHREAD_ARMOR_SPAWN_PREVENTION_RADIUS.get();
+        witchsCauldronMoonlightCollectionChance = WITCHS_CAULDRON_MOONLIGHT_COLLECTION_CHANCE.get();
     }
 }

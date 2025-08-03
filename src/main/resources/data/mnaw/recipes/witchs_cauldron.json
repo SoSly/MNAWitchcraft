@@ -1,0 +1,17 @@
+{
+  "type": "mna:manaweaving-recipe",
+  "output": "mnaw:empty_witchs_cauldron",
+  "tier": 3,
+  "requiredFaction": "mnaw:coven",
+  "items": [
+    "mysticalchemy:crucible_empty",
+    "mna:transmuted_silver",
+    "mna:transmuted_silver",
+    "mna:mote_arcane"
+  ],
+  "patterns": [
+    "mna:circle",
+    "mna:triangle",
+    "mna:circle"
+  ]
+}

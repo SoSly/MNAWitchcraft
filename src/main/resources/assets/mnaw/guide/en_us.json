@@ -127,6 +127,37 @@
       }
     ]
   },
+  "Witch's Cauldron": {
+    "index": 2,
+    "category": "artifice",
+    "sections": [
+      {
+        "type": "title",
+        "value": "Witch's Cauldron"
+      },
+      {
+        "type": "text",
+        "value": "",
+        "json": [
+          {
+            "text": "The Witch's Cauldron is a specialized crucible enhanced with silver and arcane energies. What sets it apart from ordinary crucibles is its ability to collect moonlight directly from the night sky.\n\n"
+          },
+          {
+            "text": "When empty and placed under open sky, the cauldron will gradually fill with condensed moonlight during the night hours. This captured moonlight glows with a gentle radiance and serves as a potent brewing medium superior to water.\n\n"
+          },
+          {
+            "text": "I can bottle this moonlight for later use, or transfer it between cauldrons using buckets. The cauldron functions as an enhanced crucible for all alchemical purposes, making it invaluable for advanced potion brewing."
+          }
+        ]
+      }
+    ],
+    "related_recipes": [
+      {
+        "type": "manaweaving_altar",
+        "location": "mnaw:witchs_cauldron"
+      }
+    ]
+  },
   "Factionless Mages": {
     "index": 11,
     "category": "basics",
