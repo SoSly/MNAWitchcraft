@@ -1,0 +1,19 @@
+{
+  "type": "mna:manaweaving-recipe",
+  "output": "mnaw:flying_broom",
+  "tier": 3,
+  "requiredFaction": "mnaw:coven",
+  "items": [
+    "mna:transmuted_silver",
+    "minecraft:stick",
+    "minecraft:stick",
+    "mnaw:condensed_moonlight_bottle",
+    "mna:infused_silk",
+    "minecraft:wheat"
+  ],
+  "patterns": [
+    "mna:circle",
+    "mna:slash",
+    "mna:triangle"
+  ]
+}

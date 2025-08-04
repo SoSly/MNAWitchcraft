@@ -388,6 +388,21 @@
       }
     ]
   },
+  "Flying Broom": {
+    "index": 0,
+    "category": "artifice",
+    "sections": [
+      {"type": "title", "value": "Flying Broom"},
+      {"type": "text", "json": [
+        {"text": "At last, I can craft my own flying broom! The ritual requires binding moonlight into the bristles and transmuted silver into the handle. Once enchanted, the broom should respond to its rider's will, carrying them through the skies."},
+        {"text": "\n\n"},
+        {"text": "I must remember to be cautious when flying in the Nether. The intense heat seems to interfere with the broom's enchantments, and I've heard tales of witches who found their brooms suddenly failing them above lakes of lava. Perhaps with stronger enchantments this limitation could be overcome, but for now I shall keep my flights there brief and close to solid ground."}
+      ]}
+    ],
+    "related_recipes": [
+      {"type": "manaweaving_altar", "location": "mnaw:flying_broom"}
+    ]
+  },
   "Moonthread Armor": {
     "index": 0,
     "category": "eldrin_altar",
