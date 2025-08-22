@@ -17,6 +17,7 @@ import org.sosly.witchcraft.blocks.EntityRegistry;
 import org.sosly.witchcraft.commands.CommandRegistry;
 import org.sosly.witchcraft.effects.EffectRegistry;
 import org.sosly.witchcraft.enchantments.EnchantmentRegistry;
+import org.sosly.witchcraft.entities.EntityTypeRegistry;
 import org.sosly.witchcraft.fluids.FluidRegistry;
 import org.sosly.witchcraft.guis.ContainerRegistry;
 import org.sosly.witchcraft.guis.ScreenRegistry;
@@ -36,6 +37,7 @@ public class Witchcraft {
         EffectRegistry.EFFECTS.register(modbus);
         EnchantmentRegistry.ENCHANTMENTS.register(modbus);
         EntityRegistry.BLOCK_ENTITIES.register(modbus);
+        EntityTypeRegistry.ENTITY_TYPES.register(modbus);
         FluidRegistry.FLUIDS.register(modbus);
         FluidRegistry.FLUID_TYPES.register(modbus);
         ItemRegistry.ITEMS.register(modbus);
