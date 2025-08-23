@@ -86,4 +86,14 @@ public interface ICovenCapability {
      * @return true if a broom is currently bonded to this player
      */
     boolean hasBondedBroom();
+
+    /**
+     * @return true if the player has ever unlocked brooms
+     */
+    boolean broomsUnlocked();
+
+    /**
+     * @param unlocked whether brooms are unlocked for this player
+     */
+    void setBroomsUnlocked(boolean unlocked);
 }

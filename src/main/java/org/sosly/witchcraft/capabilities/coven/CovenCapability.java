@@ -14,6 +14,7 @@ public class CovenCapability implements ICovenCapability {
     private boolean malice = false;
     private final Map<Integer, Map<ResourceLocation, Boolean>> tierEffectsProgress = new HashMap<>();
     private UUID bondedBroomId = null;
+    private boolean broomsUnlocked = false;
 
     @Override
     public boolean hasMalice() {
@@ -93,5 +94,15 @@ public class CovenCapability implements ICovenCapability {
     @Override
     public boolean hasBondedBroom() {
         return bondedBroomId != null;
+    }
+
+    @Override
+    public boolean broomsUnlocked() {
+        return broomsUnlocked;
+    }
+
+    @Override
+    public void setBroomsUnlocked(boolean unlocked) {
+        this.broomsUnlocked = unlocked;
     }
 }

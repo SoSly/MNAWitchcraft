@@ -25,6 +25,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.network.NetworkHooks;
@@ -42,6 +44,8 @@ public class FlyingBroomEntity extends PathfinderMob {
     private static final EntityDataAccessor<Float> DATA_HOVER_OFFSET = SynchedEntityData.defineId(FlyingBroomEntity.class, EntityDataSerializers.FLOAT);
 
     private UUID ownerUUID;
+    private Vec3 summonTarget = null;
+    private double baseFlightHeight = 0;
 
     private int brushTier = 1;
     private ResourceLocation handleWood = new ResourceLocation("minecraft:oak");
@@ -106,7 +110,55 @@ public class FlyingBroomEntity extends PathfinderMob {
         }
 
         regenerate();
-        seekTheGround();
+        
+        if (isSummoning()) {
+            handleSummoning();
+        } else {
+            seekTheGround();
+        }
+    }
+
+    private void handleSummoning() {
+        if (!isSummoning()) {
+            return;
+        }
+        
+        double distanceToTarget = this.position().distanceTo(summonTarget);
+        double horizontalDistance = Math.sqrt(Math.pow(this.getX() - summonTarget.x, 2) + Math.pow(this.getZ() - summonTarget.z, 2));
+        
+        if (distanceToTarget < 1.5) {
+            summonTarget = null;
+            return;
+        }
+
+        float speed = 2.0f;
+        
+        Vec3 flyTarget;
+        
+        if (horizontalDistance < 8.0) {
+            flyTarget = summonTarget;
+        } else {
+            double flyHeight = baseFlightHeight;
+            
+            if (hasObstaclesInPath()) {
+                baseFlightHeight = Math.min(baseFlightHeight + 2.0, summonTarget.y + 25.0);
+                flyHeight = baseFlightHeight;
+            }
+            
+            flyTarget = new Vec3(summonTarget.x, flyHeight, summonTarget.z);
+        }
+        
+        this.getMoveControl().setWantedPosition(flyTarget.x, flyTarget.y, flyTarget.z, speed);
+        
+        Vec3 lookDirection = summonTarget.subtract(this.position()).normalize();
+        this.setYRot((float) (Math.atan2(-lookDirection.x, lookDirection.z) * 180.0 / Math.PI));
+    }
+    
+    private float easeInOutCubic(float t) {
+        if (t < 0.5f) {
+            return 4.0f * t * t * t;
+        }
+        return 1.0f - (float) Math.pow(-2.0f * t + 2.0f, 3.0f) / 2.0f;
     }
 
     private boolean isOnGround() {
@@ -116,7 +168,7 @@ public class FlyingBroomEntity extends PathfinderMob {
     }
 
     private void seekTheGround() {
-        if (!this.getPassengers().isEmpty() || this.tickCount % 20 != 0 || this.isOnGround()) {
+        if (!this.getPassengers().isEmpty() || this.tickCount % 20 != 0 || this.isOnGround() || isSummoning()) {
             return;
         }
 
@@ -127,6 +179,34 @@ public class FlyingBroomEntity extends PathfinderMob {
         double targetZ = this.getZ() + Math.cos(yaw) * jitterAmount;
 
         this.getMoveControl().setWantedPosition(targetX, targetHoverY, targetZ, 1);
+    }
+
+    private boolean isSummoning() {
+        return summonTarget != null;
+    }
+
+    private boolean hasObstaclesInPath() {
+        if (summonTarget == null) {
+            return false;
+        }
+        
+        Vec3 direction = summonTarget.subtract(this.position()).normalize();
+        Vec3 checkPos = this.position();
+        
+        for (int i = 0; i < 20; i++) {
+            checkPos = checkPos.add(direction.scale(2.0));
+            BlockPos pos = new BlockPos((int) checkPos.x, (int) checkPos.y, (int) checkPos.z);
+            
+            if (!this.level().getBlockState(pos).isAir()) {
+                return true;
+            }
+            
+            if (checkPos.distanceTo(summonTarget) < 2.0) {
+                break;
+            }
+        }
+        
+        return false;
     }
 
     private double findGroundLevel() {
@@ -227,12 +307,14 @@ public class FlyingBroomEntity extends PathfinderMob {
         }
         if (!player.isShiftKeyDown()) {
             if (!canRide(player) || !canAddPassenger(player)) {
+                System.out.println("[Broom] Mount denied for " + player.getName().getString() + " (owner: " + (ownerUUID != null ? "set" : "none") + ")");
                 return InteractionResult.PASS;
             }
             player.startRiding(this);
             return InteractionResult.SUCCESS;
         }
         if (!isOwner(player)) {
+            System.out.println("[Broom] Pickup denied for " + player.getName().getString() + " (owner: " + (ownerUUID != null ? "set" : "none") + ")");
             return InteractionResult.FAIL;
         }
 
@@ -537,6 +619,11 @@ public class FlyingBroomEntity extends PathfinderMob {
 
         compound.put("CharmInventory", charmHandler.serializeNBT());
         compound.put("StorageInventory", storageHandler.serializeNBT());
+    }
+
+    public void flyTowardsTarget(Vec3 targetPos) {
+        this.summonTarget = targetPos;
+        this.baseFlightHeight = Math.max(targetPos.y + 8.0, this.getY());
     }
 
     @Override

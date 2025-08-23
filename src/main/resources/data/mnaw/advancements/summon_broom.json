@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "item": "mnaw:flying_broom"
+    },
+    "title": {
+      "translate": "advancement.mnaw.summon_broom.title"
+    },
+    "description": {
+      "translate": "advancement.mnaw.summon_broom.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_broom": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "mnaw:flying_broom"
+          }
+        ]
+      }
+    }
+  }
+}

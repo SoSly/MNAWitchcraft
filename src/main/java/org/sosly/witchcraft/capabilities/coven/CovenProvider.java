@@ -33,6 +33,9 @@ public class CovenProvider implements ICapabilitySerializable<Tag> {
         if (instance.getBondedBroomId() != null) {
             nbt.putUUID("bondedBroom", instance.getBondedBroomId());
         }
+        if (instance.broomsUnlocked()) {
+            nbt.putBoolean("broomsUnlocked", true);
+        }
         
         for (int tier = 3; tier <= 5; tier++) {
             Map<ResourceLocation, Boolean> progress = instance.getTierEffectsProgress(tier);
@@ -67,6 +70,7 @@ public class CovenProvider implements ICapabilitySerializable<Tag> {
         if (cnbt.hasUUID("bondedBroom")) {
             instance.setBondedBroomId(cnbt.getUUID("bondedBroom"));
         }
+        instance.setBroomsUnlocked(cnbt.getBoolean("broomsUnlocked"));
         
         for (int tier = 3; tier <= 5; tier++) {
             if (!cnbt.contains("tier_" + tier)) {

@@ -396,7 +396,9 @@
       {"type": "text", "json": [
         {"text": "At last, I can craft my own flying broom! The ritual requires binding moonlight into the bristles and transmuted silver into the handle. Once enchanted, the broom should respond to its rider's will, carrying them through the skies."},
         {"text": "\n\n"},
-        {"text": "I must remember to be cautious when flying in the Nether. The intense heat seems to interfere with the broom's enchantments, and I've heard tales of witches who found their brooms suddenly failing them above lakes of lava. Perhaps with stronger enchantments this limitation could be overcome, but for now I shall keep my flights there brief and close to solid ground."}
+        {"text": "I must remember to be cautious when flying in the Nether. The intense heat seems to interfere with the broom's enchantments, and I've heard tales of witches who found their brooms suddenly failing them above lakes of lava. Perhaps with stronger enchantments this limitation could be overcome, but for now I shall keep my flights there brief and close to solid ground."},
+        {"text": "\n\n"},
+        {"text": "After first placing my broom, I discovered I could summon it from a distance using a simple cantrip! The pattern requires an inverted triangle, circle, and bolt. When cast, my broom flies directly to me from up to 64 blocks away. If it's farther, it teleports closer first, then approaches. Quite convenient when I've left it parked somewhere!"}
       ]}
     ],
     "related_recipes": [

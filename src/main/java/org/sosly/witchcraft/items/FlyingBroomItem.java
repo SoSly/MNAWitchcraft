@@ -115,7 +115,10 @@ public class FlyingBroomItem extends TieredItem {
     
     private void bondBroomToPlayer(Player player, FlyingBroomEntity broomEntity) {
         LazyOptional<ICovenCapability> cap = player.getCapability(CovenProvider.COVEN);
-        cap.ifPresent(coven -> coven.setBondedBroomId(broomEntity.getUUID()));
+        cap.ifPresent(coven -> {
+            coven.setBondedBroomId(broomEntity.getUUID());
+            coven.setBroomsUnlocked(true);
+        });
     }
     
     private void consumeItem(ItemStack stack, Player player, UseOnContext context) {

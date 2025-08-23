@@ -8,6 +8,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.logging.log4j.LogManager;
@@ -22,6 +23,7 @@ import org.sosly.witchcraft.fluids.FluidRegistry;
 import org.sosly.witchcraft.guis.ContainerRegistry;
 import org.sosly.witchcraft.guis.ScreenRegistry;
 import org.sosly.witchcraft.items.ItemRegistry;
+import org.sosly.witchcraft.cantrips.Cantrips;
 
 @Mod(Witchcraft.MOD_ID)
 public class Witchcraft {
@@ -43,12 +45,19 @@ public class Witchcraft {
 
         MinecraftForge.EVENT_BUS.register(CommandRegistry.class);
         MinecraftForge.EVENT_BUS.register(this);
+        modbus.addListener(this::commonSetup);
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
 
         if (FMLEnvironment.dist.isClient()) {
             modbus.register(ScreenRegistry.class);
         }
+    }
+
+    private void commonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+            Cantrips.registerCantrips();
+        });
     }
 
     @SubscribeEvent
