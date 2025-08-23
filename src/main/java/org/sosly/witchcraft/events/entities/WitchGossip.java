@@ -9,6 +9,7 @@ import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -24,7 +25,7 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = Witchcraft.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class WitchGossip {
     private static final String LAST_GOSSIP_TIME_KEY = "mnaw:last_gossip_time";
-    
+
     @SubscribeEvent
     public static void onWitchUpdate(LivingEvent.LivingTickEvent event) {
         if (!(event.getEntity() instanceof Witch witch)) {

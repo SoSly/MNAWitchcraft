@@ -1,6 +1,8 @@
 package org.sosly.witchcraft.items;
 
 import com.mna.api.items.TieredItem;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -13,16 +15,38 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.common.util.NonNullLazy;
 import org.jetbrains.annotations.NotNull;
 import org.sosly.witchcraft.api.capabilities.ICovenCapability;
 import org.sosly.witchcraft.capabilities.coven.CovenProvider;
 import org.sosly.witchcraft.entities.EntityTypeRegistry;
 import org.sosly.witchcraft.entities.FlyingBroomEntity;
+import org.sosly.witchcraft.items.renderers.FlyingBroomItemRenderer;
+
+import java.util.function.Consumer;
 
 public class FlyingBroomItem extends TieredItem {
     public FlyingBroomItem() {
         super((new Item.Properties()).stacksTo(1));
+    }
+    
+    @Override
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+        consumer.accept(new IClientItemExtensions() {
+            private final NonNullLazy<BlockEntityWithoutLevelRenderer> renderer = NonNullLazy.of(() -> 
+                new FlyingBroomItemRenderer(
+                    Minecraft.getInstance().getBlockEntityRenderDispatcher(),
+                    Minecraft.getInstance().getEntityModels()
+                )
+            );
+
+            @Override
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                return renderer.get();
+            }
+        });
     }
 
     @Override

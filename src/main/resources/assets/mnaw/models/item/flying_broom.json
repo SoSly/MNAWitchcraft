@@ -1,65 +1,33 @@
 {
-  "parent": "forge:item/default",
-  "loader": "forge:composite",
-  "children": {
-    "haft": {
-      "loader": "forge:obj",
-      "automatic_culling": true,
-      "shade_quads": true,
-      "flip_v": true,
-      "emissive_ambient": false,
-      "model": "mnaw:models/item/obj/broom_haft.obj"
-    },
-    "brush": {
-      "loader": "forge:obj",
-      "automatic_culling": true,
-      "shade_quads": true,
-      "flip_v": true,
-      "emissive_ambient": false,
-      "model": "mnaw:models/item/obj/broom_brush.obj"
-    },
-    "connectors": {
-      "loader": "forge:obj",
-      "automatic_culling": true,
-      "shade_quads": true,
-      "flip_v": true,
-      "emissive_ambient": false,
-      "model": "mnaw:models/item/obj/broom_connectors.obj"
-    },
-    "ribbon": {
-      "loader": "forge:obj",
-      "automatic_culling": true,
-      "shade_quads": true,
-      "flip_v": true,
-      "emissive_ambient": false,
-      "model": "mnaw:models/item/obj/broom_ribbon.obj"
-    }
+  "parent": "builtin/entity",
+  "textures": {
+    "particle": "mnaw:item/flying_broom"
   },
   "display": {
     "gui": {
       "rotation": [45, -60, 0],
-      "translation": [-2, 0.5, 0],
-      "scale": [0.625, 0.625, 0.625]
+      "translation": [-0.25, 0.25, 0],
+      "scale": [0.65, 0.65, 0.65]
     },
     "firstperson_righthand": {
-      "rotation": [30, -45, 0],
-      "translation": [0, 0, 20],
+      "rotation": [30, 30, 0],
+      "translation": [-5, -5, -5],
       "scale": [2.0, 2.0, 2.0]
     },
     "firstperson_lefthand": {
-      "rotation": [30, 135, 0],
-      "translation": [20, 8, 0],
+      "rotation": [30, 30, 0],
+      "translation": [5, -5, -5],
       "scale": [2.0, 2.0, 2.0]
     },
     "thirdperson_righthand": {
       "rotation": [75, -45, 0],
-      "translation": [0, -10, 10],
-      "scale": [1.0, 1.0, 1.0]
+      "translation": [4, -3, -4],
+      "scale": [1.75, 1.75, 1.75]
     },
     "thirdperson_lefthand": {
       "rotation": [75, 135, 0],
-      "translation": [5, 5, 5],
-      "scale": [1.0, 1.0, 1.0]
+      "translation": [0, -3, -4],
+      "scale": [1.75, 1.75, 1.75]
     }
   }
 }

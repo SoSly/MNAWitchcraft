@@ -8,7 +8,7 @@
       "shade_quads": false,
       "flip_v": true,
       "emissive_ambient": false,
-      "model": "mnaw:models/block/obj/poppet.obj"
+      "model": "mnaw:models/obj/poppet.obj"
     }
   }
 }

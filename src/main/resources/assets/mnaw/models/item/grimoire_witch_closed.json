@@ -8,7 +8,7 @@
       "shade_quads": true,
       "flip_v": true,
       "emissive_ambient": false,
-      "model": "mnaw:models/item/obj/grimoire_witch_closed.obj"
+      "model": "mnaw:models/obj/grimoire_witch_closed.obj"
     }
   },
   "display": {
