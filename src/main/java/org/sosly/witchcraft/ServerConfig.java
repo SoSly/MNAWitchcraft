@@ -61,6 +61,10 @@ public class ServerConfig {
             .comment("Chance to collect moonlight each tick (1 in N). Higher values make collection slower.")
             .defineInRange("witchsCauldronMoonlightCollectionChance", 1200, 20, 12000);
 
+    private static final ForgeConfigSpec.DoubleValue FLYING_BROOM_SPEED = BUILDER
+            .comment("Flying broom flight speed in blocks per second")
+            .defineInRange("flyingBroomSpeed", 5.0, 1.0, 30.0);
+
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
     public static boolean bossesBlockSympathy;
@@ -76,6 +80,7 @@ public class ServerConfig {
     public static int moonthreadArmorHarmfulNullificationCooldown;
     public static int moonthreadArmorSpawnPreventionRadius;
     public static int witchsCauldronMoonlightCollectionChance;
+    public static double flyingBroomSpeed;
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
@@ -92,5 +97,6 @@ public class ServerConfig {
         moonthreadArmorHarmfulNullificationCooldown = MOONTHREAD_ARMOR_HARMFUL_NULLIFICATION_COOLDOWN.get();
         moonthreadArmorSpawnPreventionRadius = MOONTHREAD_ARMOR_SPAWN_PREVENTION_RADIUS.get();
         witchsCauldronMoonlightCollectionChance = WITCHS_CAULDRON_MOONLIGHT_COLLECTION_CHANCE.get();
+        flyingBroomSpeed = FLYING_BROOM_SPEED.get();
     }
 }

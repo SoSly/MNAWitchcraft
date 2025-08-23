@@ -1,6 +1,7 @@
 package org.sosly.witchcraft.entities;
 
-import net.minecraft.commands.arguments.EntityAnchorArgument;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -8,6 +9,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -16,7 +18,6 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
-import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
@@ -24,12 +25,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
+import org.sosly.witchcraft.ServerConfig;
 import org.sosly.witchcraft.api.capabilities.ICovenCapability;
 import org.sosly.witchcraft.capabilities.coven.CovenProvider;
 import org.sosly.witchcraft.items.ItemRegistry;
@@ -40,18 +40,27 @@ import java.util.UUID;
 
 public class FlyingBroomEntity extends PathfinderMob {
     private static final EntityDataAccessor<Float> DATA_HOVER_OFFSET = SynchedEntityData.defineId(FlyingBroomEntity.class, EntityDataSerializers.FLOAT);
-    
+
     private UUID ownerUUID;
-    
+
     private int brushTier = 1;
     private ResourceLocation handleWood = new ResourceLocation("minecraft:oak");
     private int ribbonColor = 16383998;
     private int storageLevel = 0;
 
     private final double jitterAmount = 0.0001;
-    
+
     private final ItemStackHandler charmHandler = new ItemStackHandler(3);
     private ItemStackHandler storageHandler = new ItemStackHandler(0);
+
+    private Vec3 currentMotion = Vec3.ZERO;
+    private double currentVerticalMotion = 0.0;
+    private static final double ACCELERATION = 0.08;
+    private static final double DECELERATION = 0.92;
+    private static final double VERTICAL_ACCELERATION = 0.1;
+    private static final double VERTICAL_DECELERATION = 0.9;
+    
+    private Vec3 previousMotion = Vec3.ZERO;
 
     public FlyingBroomEntity(EntityType<? extends FlyingBroomEntity> entityType, Level level) {
         super(entityType, level);
@@ -64,8 +73,8 @@ public class FlyingBroomEntity extends PathfinderMob {
     public static AttributeSupplier.Builder createAttributes() {
         return PathfinderMob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 6.0D)
-                .add(Attributes.MOVEMENT_SPEED, 5.0D)
-                .add(Attributes.FLYING_SPEED, 5.0D);
+                .add(Attributes.MOVEMENT_SPEED, 10.0D)
+                .add(Attributes.FLYING_SPEED, 10.0D);
     }
 
     @Override
@@ -112,21 +121,21 @@ public class FlyingBroomEntity extends PathfinderMob {
         }
 
         double targetHoverY = findGroundLevel() + 1.25;
-        
+
         float yaw = (float) Math.toRadians(this.getYRot());
         double targetX = this.getX() + Math.sin(-yaw) * jitterAmount;
         double targetZ = this.getZ() + Math.cos(yaw) * jitterAmount;
-        
+
         this.getMoveControl().setWantedPosition(targetX, targetHoverY, targetZ, 1);
     }
-    
+
     private double findGroundLevel() {
         Vec3 start = new Vec3(this.getX(), this.getY(), this.getZ());
         Vec3 end = new Vec3(this.getX(), this.getY() - 100, this.getZ());
-        
+
         ClipContext context = new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this);
         BlockHitResult result = this.level().clip(context);
-        
+
         if (result.getType() == HitResult.Type.BLOCK) {
             return result.getLocation().y;
         }
@@ -143,44 +152,44 @@ public class FlyingBroomEntity extends PathfinderMob {
         return this.ownerUUID;
     }
 
-    public int getBrushTier() { 
-        return brushTier; 
-    }
-    
-    public void setBrushTier(int tier) { 
-        this.brushTier = tier; 
+    public int getBrushTier() {
+        return brushTier;
     }
 
-    public ResourceLocation getHandleWood() { 
-        return handleWood; 
-    }
-    
-    public void setHandleWood(ResourceLocation wood) { 
-        this.handleWood = wood; 
+    public void setBrushTier(int tier) {
+        this.brushTier = tier;
     }
 
-    public int getRibbonColor() { 
-        return ribbonColor; 
-    }
-    
-    public void setRibbonColor(int color) { 
-        this.ribbonColor = color; 
+    public ResourceLocation getHandleWood() {
+        return handleWood;
     }
 
-    public int getStorageLevel() { 
-        return storageLevel; 
+    public void setHandleWood(ResourceLocation wood) {
+        this.handleWood = wood;
     }
-    
-    public void setStorageLevel(int level) { 
+
+    public int getRibbonColor() {
+        return ribbonColor;
+    }
+
+    public void setRibbonColor(int color) {
+        this.ribbonColor = color;
+    }
+
+    public int getStorageLevel() {
+        return storageLevel;
+    }
+
+    public void setStorageLevel(int level) {
         this.storageLevel = level;
         int slots = getSlotsForLevel(level);
         if (slots == storageHandler.getSlots()) {
             return;
         }
-        
+
         resizeStorageHandler(slots);
     }
-    
+
     private int getSlotsForLevel(int level) {
         return switch (level) {
             case 1 -> 9;
@@ -189,13 +198,13 @@ public class FlyingBroomEntity extends PathfinderMob {
             default -> 0;
         };
     }
-    
+
     private void resizeStorageHandler(int slots) {
         ItemStackHandler oldHandler = storageHandler;
         storageHandler = new ItemStackHandler(slots);
         copyItemsToNewHandler(oldHandler, slots);
     }
-    
+
     private void copyItemsToNewHandler(ItemStackHandler oldHandler, int newSlots) {
         int itemsToCopy = Math.min(oldHandler.getSlots(), newSlots);
         for (int i = 0; i < itemsToCopy; i++) {
@@ -203,12 +212,12 @@ public class FlyingBroomEntity extends PathfinderMob {
         }
     }
 
-    public ItemStackHandler getCharmHandler() { 
-        return charmHandler; 
+    public ItemStackHandler getCharmHandler() {
+        return charmHandler;
     }
-    
-    public ItemStackHandler getStorageHandler() { 
-        return storageHandler; 
+
+    public ItemStackHandler getStorageHandler() {
+        return storageHandler;
     }
 
     @Override
@@ -217,44 +226,48 @@ public class FlyingBroomEntity extends PathfinderMob {
             return InteractionResult.SUCCESS;
         }
         if (!player.isShiftKeyDown()) {
-            return super.interactAt(player, vec, hand);
+            if (!canRide(player) || !canAddPassenger(player)) {
+                return InteractionResult.PASS;
+            }
+            player.startRiding(this);
+            return InteractionResult.SUCCESS;
         }
         if (!isOwner(player)) {
             return InteractionResult.FAIL;
         }
-        
+
         ItemStack broomItem = createItemWithData();
         clearPlayerBond(player);
         giveItemToPlayer(player, broomItem);
         this.discard();
-        
+
         return InteractionResult.SUCCESS;
     }
-    
+
     private boolean isOwner(Player player) {
         return ownerUUID != null && player.getUUID().equals(ownerUUID);
     }
-    
+
     private ItemStack createItemWithData() {
         ItemStack broomItem = new ItemStack(ItemRegistry.FLYING_BROOM.get());
         CompoundTag nbt = new CompoundTag();
-        
+
         nbt.putInt("BrushTier", this.brushTier);
         nbt.putString("HandleWood", this.handleWood.toString());
         nbt.putInt("RibbonColor", this.ribbonColor);
         nbt.putInt("StorageLevel", this.storageLevel);
         nbt.put("CharmInventory", charmHandler.serializeNBT());
         nbt.put("StorageInventory", storageHandler.serializeNBT());
-        
+
         broomItem.setTag(nbt);
         return broomItem;
     }
-    
+
     private void clearPlayerBond(Player player) {
         LazyOptional<ICovenCapability> cap = player.getCapability(CovenProvider.COVEN);
         cap.ifPresent(coven -> coven.setBondedBroomId(null));
     }
-    
+
     private void giveItemToPlayer(Player player, ItemStack item) {
         if (!player.getInventory().add(item)) {
             player.drop(item, false);
@@ -267,23 +280,50 @@ public class FlyingBroomEntity extends PathfinderMob {
     }
 
     @Override
+    protected boolean canAddPassenger(@NotNull Entity passenger) {
+        if (!this.getPassengers().isEmpty()) {
+            return false;
+        }
+        if (!(passenger instanceof Player player)) {
+            return false;
+        }
+        if (ownerUUID != null && !player.getUUID().equals(ownerUUID)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public @Nullable LivingEntity getControllingPassenger() {
+        return this.getFirstPassenger() instanceof LivingEntity living ? living : null;
+    }
+
+    @Override
+    protected void positionRider(@NotNull Entity passenger, @NotNull Entity.MoveFunction moveFunction) {
+        super.positionRider(passenger, moveFunction);
+        if (passenger instanceof Player) {
+            moveFunction.accept(passenger, this.getX(), this.getY() - 0.5, this.getZ());
+        }
+    }
+
+    @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         if (compound.hasUUID("Owner")) {
             this.ownerUUID = compound.getUUID("Owner");
         }
-        
+
         this.brushTier = compound.getInt("BrushTier");
         if (compound.contains("HandleWood")) {
             this.handleWood = new ResourceLocation(compound.getString("HandleWood"));
         }
         this.ribbonColor = compound.getInt("RibbonColor");
-        
+
         int newStorageLevel = compound.getInt("StorageLevel");
         if (newStorageLevel != this.storageLevel) {
             setStorageLevel(newStorageLevel);
         }
-        
+
         if (compound.contains("CharmInventory")) {
             charmHandler.deserializeNBT(compound.getCompound("CharmInventory"));
         }
@@ -299,13 +339,137 @@ public class FlyingBroomEntity extends PathfinderMob {
 
     @Override
     public void travel(@NotNull Vec3 travelVector) {
-        super.travel(travelVector);
+        LivingEntity controllingPassenger = getControllingPassenger();
+        if (controllingPassenger == null) {
+            super.travel(travelVector);
+            return;
+        }
+
+        this.setYRot(controllingPassenger.getYRot());
+        this.yRotO = this.getYRot();
+        this.setXRot(controllingPassenger.getXRot() * 0.5F);
+        this.setRot(this.getYRot(), this.getXRot());
+        this.yBodyRot = this.getYRot();
+        this.yHeadRot = this.getYRot();
+
+        float strafe = controllingPassenger.xxa * 0.5F;
+        float forward = controllingPassenger.zza;
+
+        if (forward < 0.0F) {
+            forward = 0.0F;
+        }
+
+        Vec3 targetMotion = calculateTargetMotion(strafe, forward, controllingPassenger);
+        previousMotion = currentMotion;
+        currentMotion = applyHorizontalAcceleration(currentMotion, targetMotion);
+
+        double targetVerticalMotion = calculateVerticalMotion(controllingPassenger, travelVector);
+        currentVerticalMotion = applyVerticalAcceleration(currentVerticalMotion, targetVerticalMotion);
+
+        Vec3 finalMotion = new Vec3(currentMotion.x, currentVerticalMotion, currentMotion.z);
+        this.setDeltaMovement(finalMotion);
+        this.move(MoverType.SELF, this.getDeltaMovement());
+
+        this.calculateEntityAnimation(false);
+    }
+
+    private Vec3 calculateTargetMotion(float strafe, float forward, LivingEntity controllingPassenger) {
+        if (Math.abs(strafe) <= 0.1F && Math.abs(forward) <= 0.1F) {
+            return Vec3.ZERO;
+        }
+
+        float yaw = (float) Math.toRadians(this.getYRot());
+        double motionX = -Math.sin(yaw) * forward + Math.cos(yaw) * strafe;
+        double motionZ = Math.cos(yaw) * forward + Math.sin(yaw) * strafe;
+
+        double speed = ServerConfig.flyingBroomSpeed / 20.0;
+        if (isPlayerSprinting(controllingPassenger)) {
+            speed *= 1.5;
+        }
+
+        return new Vec3(motionX, 0, motionZ).normalize().scale(speed);
+    }
+
+    private Vec3 applyHorizontalAcceleration(Vec3 current, Vec3 target) {
+        if (target.equals(Vec3.ZERO)) {
+            return current.scale(DECELERATION);
+        }
+
+        Vec3 diff = target.subtract(current);
+        Vec3 acceleration = diff.scale(ACCELERATION);
+        return current.add(acceleration);
+    }
+
+    private double applyVerticalAcceleration(double current, double target) {
+        if (Math.abs(target) < 0.01) {
+            return current * VERTICAL_DECELERATION;
+        }
+
+        double diff = target - current;
+        double acceleration = diff * VERTICAL_ACCELERATION;
+        return current + acceleration;
+    }
+
+    private double calculateVerticalMotion(LivingEntity controllingPassenger, Vec3 travelVector) {
+        if (controllingPassenger instanceof LocalPlayer localPlayer) {
+            return calculateLocalPlayerVerticalMotion(localPlayer);
+        }
+        if (controllingPassenger instanceof ServerPlayer serverPlayer) {
+            return calculateServerPlayerVerticalMotion(serverPlayer, travelVector);
+        }
+        return 0;
+    }
+
+    private double calculateLocalPlayerVerticalMotion(LocalPlayer localPlayer) {
+        if (localPlayer.input.down) {
+            return -ServerConfig.flyingBroomSpeed / 20.0;
+        }
+        if (localPlayer.input.jumping) {
+            return ServerConfig.flyingBroomSpeed / 20.0;
+        }
+        return 0;
+    }
+
+    private double calculateServerPlayerVerticalMotion(ServerPlayer serverPlayer, Vec3 travelVector) {
+        if (travelVector.y > 0.0) {
+            return ServerConfig.flyingBroomSpeed / 20.0;
+        }
+        if (serverPlayer.isShiftKeyDown()) {
+            return -ServerConfig.flyingBroomSpeed / 20.0;
+        }
+        return 0;
+    }
+
+    private boolean isPlayerSprinting(LivingEntity controllingPassenger) {
+        if (controllingPassenger instanceof LocalPlayer localPlayer) {
+            boolean movingForward = localPlayer.zza > 0.0F;
+            boolean wantsSprint = Minecraft.getInstance().options.keySprint.isDown();
+            boolean isDecelerating = isDecelerating();
+            
+            if (!movingForward || isDecelerating) {
+                localPlayer.setSprinting(false);
+                return false;
+            }
+            
+            boolean shouldSprint = wantsSprint || localPlayer.isSprinting();
+            localPlayer.setSprinting(shouldSprint);
+            return shouldSprint;
+        }
+        return controllingPassenger.isSprinting();
+    }
+    
+    private boolean isDecelerating() {
+        if (previousMotion.equals(Vec3.ZERO)) {
+            return false;
+        }
+        double currentSpeed = currentMotion.horizontalDistance();
+        double previousSpeed = previousMotion.horizontalDistance();
+        return currentSpeed < previousSpeed - 0.001;
     }
 
     @Override
     protected void registerGoals() {
     }
-
 
     @Override
     protected boolean isImmobile() {
@@ -340,13 +504,13 @@ public class FlyingBroomEntity extends PathfinderMob {
         }
         super.die(damageSource);
     }
-    
+
     private void clearOwnerBondOnDeath() {
         Player owner = this.level().getPlayerByUUID(ownerUUID);
         if (owner == null) {
             return;
         }
-        
+
         LazyOptional<ICovenCapability> cap = owner.getCapability(CovenProvider.COVEN);
         cap.ifPresent(coven -> {
             if (this.uuid.equals(coven.getBondedBroomId())) {
@@ -365,12 +529,12 @@ public class FlyingBroomEntity extends PathfinderMob {
         if (this.ownerUUID != null) {
             compound.putUUID("Owner", this.ownerUUID);
         }
-        
+
         compound.putInt("BrushTier", this.brushTier);
         compound.putString("HandleWood", this.handleWood.toString());
         compound.putInt("RibbonColor", this.ribbonColor);
         compound.putInt("StorageLevel", this.storageLevel);
-        
+
         compound.put("CharmInventory", charmHandler.serializeNBT());
         compound.put("StorageInventory", storageHandler.serializeNBT());
     }
