@@ -63,7 +63,7 @@ public class ServerConfig {
 
     private static final ForgeConfigSpec.DoubleValue FLYING_BROOM_SPEED = BUILDER
             .comment("Flying broom flight speed in blocks per second")
-            .defineInRange("flyingBroomSpeed", 5.0, 1.0, 30.0);
+            .defineInRange("flyingBroomSpeed", 7.0, 1.0, 30.0);
 
     static final ForgeConfigSpec SPEC = BUILDER.build();
 

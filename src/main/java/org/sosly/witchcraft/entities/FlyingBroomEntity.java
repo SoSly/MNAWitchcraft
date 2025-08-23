@@ -46,6 +46,7 @@ public class FlyingBroomEntity extends PathfinderMob {
     private UUID ownerUUID;
     private Vec3 summonTarget = null;
     private double baseFlightHeight = 0;
+    private Boolean originalSprintToggle = null;
 
     private int brushTier = 1;
     private ResourceLocation handleWood = new ResourceLocation("minecraft:oak");
@@ -63,8 +64,6 @@ public class FlyingBroomEntity extends PathfinderMob {
     private static final double DECELERATION = 0.92;
     private static final double VERTICAL_ACCELERATION = 0.1;
     private static final double VERTICAL_DECELERATION = 0.9;
-    
-    private Vec3 previousMotion = Vec3.ZERO;
 
     public FlyingBroomEntity(EntityType<? extends FlyingBroomEntity> entityType, Level level) {
         super(entityType, level);
@@ -376,6 +375,22 @@ public class FlyingBroomEntity extends PathfinderMob {
     }
 
     @Override
+    protected void addPassenger(@NotNull Entity passenger) {
+        super.addPassenger(passenger);
+        if (this.level().isClientSide && passenger instanceof LocalPlayer) {
+            saveAndDisableSprintToggle();
+        }
+    }
+
+    @Override
+    protected void removePassenger(@NotNull Entity passenger) {
+        super.removePassenger(passenger);
+        if (this.level().isClientSide && passenger instanceof LocalPlayer) {
+            restoreSprintToggle();
+        }
+    }
+
+    @Override
     public @Nullable LivingEntity getControllingPassenger() {
         return this.getFirstPassenger() instanceof LivingEntity living ? living : null;
     }
@@ -442,7 +457,7 @@ public class FlyingBroomEntity extends PathfinderMob {
         }
 
         Vec3 targetMotion = calculateTargetMotion(strafe, forward, controllingPassenger);
-        previousMotion = currentMotion;
+        updateSprintingState(controllingPassenger);
         currentMotion = applyHorizontalAcceleration(currentMotion, targetMotion);
 
         double targetVerticalMotion = calculateVerticalMotion(controllingPassenger, travelVector);
@@ -465,9 +480,6 @@ public class FlyingBroomEntity extends PathfinderMob {
         double motionZ = Math.cos(yaw) * forward + Math.sin(yaw) * strafe;
 
         double speed = ServerConfig.flyingBroomSpeed / 20.0;
-        if (isPlayerSprinting(controllingPassenger)) {
-            speed *= 1.5;
-        }
 
         return new Vec3(motionX, 0, motionZ).normalize().scale(speed);
     }
@@ -503,7 +515,7 @@ public class FlyingBroomEntity extends PathfinderMob {
     }
 
     private double calculateLocalPlayerVerticalMotion(LocalPlayer localPlayer) {
-        if (localPlayer.input.down) {
+        if (Minecraft.getInstance().options.keySprint.isDown()) {
             return -ServerConfig.flyingBroomSpeed / 20.0;
         }
         if (localPlayer.input.jumping) {
@@ -522,31 +534,21 @@ public class FlyingBroomEntity extends PathfinderMob {
         return 0;
     }
 
-    private boolean isPlayerSprinting(LivingEntity controllingPassenger) {
-        if (controllingPassenger instanceof LocalPlayer localPlayer) {
-            boolean movingForward = localPlayer.zza > 0.0F;
-            boolean wantsSprint = Minecraft.getInstance().options.keySprint.isDown();
-            boolean isDecelerating = isDecelerating();
-            
-            if (!movingForward || isDecelerating) {
-                localPlayer.setSprinting(false);
-                return false;
-            }
-            
-            boolean shouldSprint = wantsSprint || localPlayer.isSprinting();
-            localPlayer.setSprinting(shouldSprint);
-            return shouldSprint;
+    private void saveAndDisableSprintToggle() {
+        if (originalSprintToggle == null) {
+            originalSprintToggle = Minecraft.getInstance().options.toggleSprint().get();
+            Minecraft.getInstance().options.toggleSprint().set(false);
         }
-        return controllingPassenger.isSprinting();
     }
-    
-    private boolean isDecelerating() {
-        if (previousMotion.equals(Vec3.ZERO)) {
-            return false;
+
+    private void restoreSprintToggle() {
+        if (originalSprintToggle != null) {
+            Minecraft.getInstance().options.toggleSprint().set(originalSprintToggle);
+            originalSprintToggle = null;
         }
-        double currentSpeed = currentMotion.horizontalDistance();
-        double previousSpeed = previousMotion.horizontalDistance();
-        return currentSpeed < previousSpeed - 0.001;
+    }
+
+    private void updateSprintingState(LivingEntity controllingPassenger) {
     }
 
     @Override
@@ -583,6 +585,9 @@ public class FlyingBroomEntity extends PathfinderMob {
     public void die(@NotNull DamageSource damageSource) {
         if (ownerUUID != null && !this.level().isClientSide) {
             clearOwnerBondOnDeath();
+        }
+        if (this.level().isClientSide) {
+            restoreSprintToggle();
         }
         super.die(damageSource);
     }
