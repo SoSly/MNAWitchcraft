@@ -26,8 +26,8 @@ public class FlyingBroomEntityRenderer extends EntityRenderer<FlyingBroomEntity>
     public void render(FlyingBroomEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight) {
         poseStack.pushPose();
         
-        poseStack.translate(0.5D, 0.5D, -0.5D);
         poseStack.mulPose(Axis.YP.rotationDegrees(90.0F - entityYaw));
+        poseStack.translate(0.5D, 0.5D, 0.5D);
         poseStack.scale(2.0F, 2.0F, 2.0F);
 
         ItemStack broomStack = new ItemStack(ItemRegistry.FLYING_BROOM.get());

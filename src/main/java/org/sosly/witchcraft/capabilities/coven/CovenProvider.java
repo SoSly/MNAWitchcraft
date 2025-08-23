@@ -29,6 +29,9 @@ public class CovenProvider implements ICapabilitySerializable<Tag> {
         if (instance.hasMalice()) {
             nbt.putBoolean("malice", true);
         }
+        if (instance.getBondedBroomId() != null) {
+            nbt.putUUID("bondedBroom", instance.getBondedBroomId());
+        }
         for (int tier = 3; tier <= 5; tier++) {
             Map<ResourceLocation, Boolean> progress = instance.getTierEffectsProgress(tier);
 
@@ -54,6 +57,9 @@ public class CovenProvider implements ICapabilitySerializable<Tag> {
         ICovenCapability instance = holder.orElse(new CovenCapability());
         if (nbt instanceof CompoundTag cnbt) {
             instance.setMalice(cnbt.getBoolean("malice"));
+            if (cnbt.hasUUID("bondedBroom")) {
+                instance.setBondedBroomId(cnbt.getUUID("bondedBroom"));
+            }
             for (int tier = 3; tier <= 5; tier++) {
                 if (cnbt.contains("tier_" + tier)) {
                     CompoundTag tierTag = cnbt.getCompound("tier_" + tier);
