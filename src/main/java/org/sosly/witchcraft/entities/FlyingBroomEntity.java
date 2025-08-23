@@ -43,17 +43,15 @@ public class FlyingBroomEntity extends PathfinderMob {
     
     private UUID ownerUUID;
     
-    // Broom customization data
-    private int brushTier = 1; // 1=Overworld, 2=Nether, 3=Universal
+    private int brushTier = 1;
     private ResourceLocation handleWood = new ResourceLocation("minecraft:oak");
-    private int ribbonColor = 16383998; // Default white
-    private int storageLevel = 0; // 0=None, 1=Small(9), 2=Medium(18), 3=Large(27)
+    private int ribbonColor = 16383998;
+    private int storageLevel = 0;
 
-    private final double jitterAmount = 0.0001; // Very small movement
+    private final double jitterAmount = 0.0001;
     
-    // Inventories
-    private final ItemStackHandler charmHandler = new ItemStackHandler(3); // 3 charm slots
-    private ItemStackHandler storageHandler = new ItemStackHandler(0); // Size varies by storage level
+    private final ItemStackHandler charmHandler = new ItemStackHandler(3);
+    private ItemStackHandler storageHandler = new ItemStackHandler(0);
 
     public FlyingBroomEntity(EntityType<? extends FlyingBroomEntity> entityType, Level level) {
         super(entityType, level);
@@ -77,7 +75,6 @@ public class FlyingBroomEntity extends PathfinderMob {
 
     @Override
     public void setItemSlot(@NotNull EquipmentSlot slot, @NotNull ItemStack stack) {
-        // Flying brooms don't have equipment slots, so do nothing
     }
 
     @Override
@@ -106,7 +103,6 @@ public class FlyingBroomEntity extends PathfinderMob {
     private boolean isOnGround() {
         double ground = findGroundLevel();
 
-        // Check if the broom is too low or too high above the ground
         return !(this.getY() > ground + 1.25 || this.getY() < ground + .5);
     }
 
@@ -117,7 +113,6 @@ public class FlyingBroomEntity extends PathfinderMob {
 
         double targetHoverY = findGroundLevel() + 1.25;
         
-        // Add tiny jitter in facing direction to maintain orientation
         float yaw = (float) Math.toRadians(this.getYRot());
         double targetX = this.getX() + Math.sin(-yaw) * jitterAmount;
         double targetZ = this.getZ() + Math.cos(yaw) * jitterAmount;
@@ -127,7 +122,7 @@ public class FlyingBroomEntity extends PathfinderMob {
     
     private double findGroundLevel() {
         Vec3 start = new Vec3(this.getX(), this.getY(), this.getZ());
-        Vec3 end = new Vec3(this.getX(), this.getY() - 100, this.getZ()); // Cast ray 100 blocks down
+        Vec3 end = new Vec3(this.getX(), this.getY() - 100, this.getZ());
         
         ClipContext context = new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this);
         BlockHitResult result = this.level().clip(context);
@@ -136,7 +131,6 @@ public class FlyingBroomEntity extends PathfinderMob {
             return result.getLocation().y;
         }
 
-        // If no ground found, just use current Y minus some distance
         return this.getY() - 50;
     }
 
@@ -149,23 +143,34 @@ public class FlyingBroomEntity extends PathfinderMob {
         return this.ownerUUID;
     }
 
-    // Broom customization getters/setters
-    public int getBrushTier() { return brushTier; }
+    public int getBrushTier() { 
+        return brushTier; 
+    }
+    
     public void setBrushTier(int tier) { 
         this.brushTier = tier; 
     }
 
-    public ResourceLocation getHandleWood() { return handleWood; }
+    public ResourceLocation getHandleWood() { 
+        return handleWood; 
+    }
+    
     public void setHandleWood(ResourceLocation wood) { 
         this.handleWood = wood; 
     }
 
-    public int getRibbonColor() { return ribbonColor; }
+    public int getRibbonColor() { 
+        return ribbonColor; 
+    }
+    
     public void setRibbonColor(int color) { 
         this.ribbonColor = color; 
     }
 
-    public int getStorageLevel() { return storageLevel; }
+    public int getStorageLevel() { 
+        return storageLevel; 
+    }
+    
     public void setStorageLevel(int level) { 
         this.storageLevel = level;
         int slots = getSlotsForLevel(level);
@@ -198,8 +203,13 @@ public class FlyingBroomEntity extends PathfinderMob {
         }
     }
 
-    public ItemStackHandler getCharmHandler() { return charmHandler; }
-    public ItemStackHandler getStorageHandler() { return storageHandler; }
+    public ItemStackHandler getCharmHandler() { 
+        return charmHandler; 
+    }
+    
+    public ItemStackHandler getStorageHandler() { 
+        return storageHandler; 
+    }
 
     @Override
     public @NotNull InteractionResult interactAt(@NotNull Player player, @NotNull Vec3 vec, @NotNull InteractionHand hand) {
@@ -263,20 +273,17 @@ public class FlyingBroomEntity extends PathfinderMob {
             this.ownerUUID = compound.getUUID("Owner");
         }
         
-        // Read customization data
         this.brushTier = compound.getInt("BrushTier");
         if (compound.contains("HandleWood")) {
             this.handleWood = new ResourceLocation(compound.getString("HandleWood"));
         }
         this.ribbonColor = compound.getInt("RibbonColor");
         
-        // Read storage level and resize handler if needed
         int newStorageLevel = compound.getInt("StorageLevel");
         if (newStorageLevel != this.storageLevel) {
             setStorageLevel(newStorageLevel);
         }
         
-        // Read inventories
         if (compound.contains("CharmInventory")) {
             charmHandler.deserializeNBT(compound.getCompound("CharmInventory"));
         }
@@ -297,7 +304,6 @@ public class FlyingBroomEntity extends PathfinderMob {
 
     @Override
     protected void registerGoals() {
-        // Don't register any goals - prevents look behavior
     }
 
 
@@ -351,7 +357,6 @@ public class FlyingBroomEntity extends PathfinderMob {
 
     @Override
     protected void dropAllDeathLoot(@NotNull DamageSource damageSource) {
-        // Don't drop any items on death - upgrades are lost permanently
     }
 
     @Override
@@ -361,13 +366,11 @@ public class FlyingBroomEntity extends PathfinderMob {
             compound.putUUID("Owner", this.ownerUUID);
         }
         
-        // Write customization data
         compound.putInt("BrushTier", this.brushTier);
         compound.putString("HandleWood", this.handleWood.toString());
         compound.putInt("RibbonColor", this.ribbonColor);
         compound.putInt("StorageLevel", this.storageLevel);
         
-        // Write inventories
         compound.put("CharmInventory", charmHandler.serializeNBT());
         compound.put("StorageInventory", storageHandler.serializeNBT());
     }
