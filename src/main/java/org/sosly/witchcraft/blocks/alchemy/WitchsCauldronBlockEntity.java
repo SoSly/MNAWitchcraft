@@ -56,8 +56,12 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
         }
         
         public static FluidType fromFluid(Fluid fluid) {
-            if (fluid == Fluids.WATER) return WATER;
-            if (fluid == FluidRegistry.CONDENSED_MOONLIGHT_SOURCE.get()) return MOONLIGHT;
+            if (fluid == Fluids.WATER) {
+                return WATER;
+            }
+            if (fluid == FluidRegistry.CONDENSED_MOONLIGHT_SOURCE.get()) {
+                return MOONLIGHT;
+            }
             return EMPTY;
         }
     }
@@ -115,13 +119,17 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
     }
     
     public boolean canAcceptFluid(Fluid fluid) {
-        if (isEmpty()) return true;
+        if (isEmpty()) {
+            return true;
+        }
         FluidType incomingType = FluidType.fromFluid(fluid);
         return incomingType != FluidType.EMPTY && incomingType == fluidType && fluidLevel < 3;
     }
     
     public boolean fill(Fluid fluid) {
-        if (!canAcceptFluid(fluid)) return false;
+        if (!canAcceptFluid(fluid)) {
+            return false;
+        }
         
         boolean wasEmpty = isEmpty();
         
@@ -144,7 +152,9 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
     }
     
     public boolean drain() {
-        if (isEmpty()) return false;
+        if (isEmpty()) {
+            return false;
+        }
         
         fluidLevel--;
         if (fluidLevel <= 0) {
@@ -279,16 +289,13 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
         if (level.getGameTime() % UPDATE_RATE != 0) {
             return;
         }
-        
         if (myBiome == null) {
             myBiome = level.getBiome(worldPosition).get();
         }
-        
         if (isEmpty()) {
             resetPotion();
             return;
         }
-        
         if (!level.isClientSide) {
             tickHeatAndStir();
         }
@@ -433,7 +440,9 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
         HashMap<MobEffect, Float> prominent = getProminentEffects();
         
         for (MobEffect e : recipe.getEffects().keySet()) {
-            if (e == null) continue;
+            if (e == null) {
+                continue;
+            }
             
             if (prominent.size() >= MAX_EFFECTS) {
                 float currentMagnitude = effectStrengths.getOrDefault(e, 0f);
@@ -462,10 +471,14 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
     
     private void mergeEffects(HashMap<MobEffect, Float> effectList, int quantity) {
         for (MobEffect e : effectList.keySet()) {
-            if (e == null) continue;
+            if (e == null) {
+                continue;
+            }
             
             ResourceLocation key = ForgeRegistries.MOB_EFFECTS.getKey(e);
-            if (key != null && BrewingConfig.isEffectDisabled(key)) continue;
+            if (key != null && BrewingConfig.isEffectDisabled(key)) {
+                continue;
+            }
             
             float newStrength = effectList.get(e) * quantity;
             float currentStrength = effectStrengths.getOrDefault(e, 0f);
@@ -521,10 +534,14 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
         HashMap<MobEffect, Float> effects = new HashMap<>();
         for (MobEffect e : effectStrengths.keySet()) {
             Float strength = effectStrengths.get(e);
-            if (strength < 1.0f) continue;
+            if (strength < 1.0f) {
+                continue;
+            }
             
             ResourceLocation key = ForgeRegistries.MOB_EFFECTS.getKey(e);
-            if (key != null && BrewingConfig.isEffectDisabled(key)) continue;
+            if (key != null && BrewingConfig.isEffectDisabled(key)) {
+                continue;
+            }
             
             effects.put(e, strength);
         }
@@ -595,12 +612,16 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
     }
     
     private void switchToEmptyCauldron() {
-        if (level == null || level.isClientSide) return;
+        if (level == null || level.isClientSide) {
+            return;
+        }
         CauldronStateManager.switchToEmptyBlock(level, worldPosition, this);
     }
     
     private void switchToFilledCauldron() {
-        if (level == null || level.isClientSide) return;
+        if (level == null || level.isClientSide) {
+            return;
+        }
         CauldronStateManager.switchToFilledBlock(level, worldPosition, this, fluidType, fluidLevel);
     }
     
@@ -609,7 +630,9 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
     }
     
     public void updateBlockStateLevel() {
-        if (level == null || level.isClientSide) return;
+        if (level == null || level.isClientSide) {
+            return;
+        }
         
         BlockState currentState = level.getBlockState(worldPosition);
         

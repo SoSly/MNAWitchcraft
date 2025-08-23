@@ -23,7 +23,6 @@ import org.sosly.witchcraft.guis.ContainerRegistry;
 import org.sosly.witchcraft.guis.ScreenRegistry;
 import org.sosly.witchcraft.items.ItemRegistry;
 
-// The value here should match an entry in the META-INF/mods.toml file
 @Mod(Witchcraft.MOD_ID)
 public class Witchcraft {
     public static final String MOD_ID = "mnaw";
@@ -45,7 +44,6 @@ public class Witchcraft {
         MinecraftForge.EVENT_BUS.register(CommandRegistry.class);
         MinecraftForge.EVENT_BUS.register(this);
 
-        // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
 
         if (FMLEnvironment.dist.isClient()) {

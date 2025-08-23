@@ -22,28 +22,30 @@ public class PotionPouchScreen extends AbstractPlayerInventoryScreen<PotionPouch
         int xPos = this.leftPos + (this.imageWidth / 2);
         int yPos = (this.topPos + this.imageHeight) - 90;
 
-        // Render the player inventory
         this.renderPlayerInventory(graphics, xPos, yPos);
 
         xPos -= 96;
         yPos -= 72;
 
-        // Render the potion inventory
         int pockets = menu.getPotionPouchInventory().getPouch().getOrCreateTag().getInt("pocket");
         switch (pockets) {
-            case 2:
+            case 2: {
                 graphics.blit(InventoryTexture, xPos, yPos, 0, 0, 104, 32);
-            case 1:
+                break;
+            }
+            case 1: {
                 graphics.blit(InventoryTexture, xPos, yPos, 0, 86, 104, 32);
-            default:
+                break;
+            }
+            default: {
                 graphics.blit(InventoryTexture, xPos, yPos, 0, 118, 104, 32);
+                break;
+            }
         }
 
-        // Render the patches
         yPos -= 32 * (pockets + 1);
         graphics.blit(InventoryTexture, xPos, yPos, 0, 150, 104, 36);
 
-        // Render the Conveyance Pouch
         graphics.blit(InventoryTexture, xPos + 99, yPos - 1, 105, 150, 36, 36);
     }
 

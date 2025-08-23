@@ -34,20 +34,22 @@ public class BloodyNeedleItem extends TieredItem {
         CompoundTag nbt = stack.getTag();
         if (nbt == null) {
             tooltip.add(Component.translatable("item.mnaw.bound_poppet/not_bound"));
-        } else {
-            if (!nbt.hasUUID("target")) {
-                tooltip.add(Component.translatable("item.mnaw.bound_poppet/not_bound").withStyle(ChatFormatting.DARK_PURPLE).withStyle(ChatFormatting.ITALIC));
-                return;
-            }
-
-            UUID targetID = nbt.getUUID("target");
-            Player target = Minecraft.getInstance().level.getPlayerByUUID(targetID);
-            if (target != null) {
-                tooltip.add(Component.translatable("item.mnaw.bound_poppet/player", target.getName().getString()).withStyle(ChatFormatting.DARK_PURPLE).withStyle(ChatFormatting.ITALIC));
-            } else {
-                String type = nbt.getString("type");
-                tooltip.add(Component.translatable("item.mnaw.bound_poppet/mob", type).withStyle(ChatFormatting.DARK_PURPLE).withStyle(ChatFormatting.ITALIC));
-            }
+            return;
         }
+        
+        if (!nbt.hasUUID("target")) {
+            tooltip.add(Component.translatable("item.mnaw.bound_poppet/not_bound").withStyle(ChatFormatting.DARK_PURPLE).withStyle(ChatFormatting.ITALIC));
+            return;
+        }
+
+        UUID targetID = nbt.getUUID("target");
+        Player target = Minecraft.getInstance().level.getPlayerByUUID(targetID);
+        if (target != null) {
+            tooltip.add(Component.translatable("item.mnaw.bound_poppet/player", target.getName().getString()).withStyle(ChatFormatting.DARK_PURPLE).withStyle(ChatFormatting.ITALIC));
+            return;
+        }
+        
+        String type = nbt.getString("type");
+        tooltip.add(Component.translatable("item.mnaw.bound_poppet/mob", type).withStyle(ChatFormatting.DARK_PURPLE).withStyle(ChatFormatting.ITALIC));
     }
 }

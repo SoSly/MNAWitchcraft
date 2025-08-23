@@ -15,9 +15,12 @@ public class BoundPoppetBlock extends PoppetBlock implements EntityBlock {
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         CompoundTag tag = stack.getTag();
         BoundPoppetEntity be = (BoundPoppetEntity) level.getBlockEntity(pos);
-        if (be != null && tag != null) {
-            be.load(tag);
+        if (be == null || tag == null) {
+            super.setPlacedBy(level, pos, state, placer, stack);
+            return;
         }
+        
+        be.load(tag);
         super.setPlacedBy(level, pos, state, placer, stack);
     }
 

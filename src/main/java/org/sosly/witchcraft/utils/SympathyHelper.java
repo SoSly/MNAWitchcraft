@@ -13,11 +13,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-/**
- * SympathyHelper is a utility class for Sympathy rituals and items.
- * Sympathy allow a witch to bind an entity to an item, and then use that
- * item to affect the entity from a distance.
- */
 public class SympathyHelper {
     public static boolean isBound(ItemStack item) {
         CompoundTag tag = item.getTag();

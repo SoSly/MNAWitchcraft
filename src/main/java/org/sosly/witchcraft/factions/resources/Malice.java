@@ -29,9 +29,10 @@ public class Malice extends SimpleCastingResource {
         if (coven.hasMalice()) {
             return super.getRegenerationModifier(caster) / 2;
         }
-
-        if (super.getRegenerationModifier(caster) == 1.0F)
+        if (super.getRegenerationModifier(caster) == 1.0F) {
             return 0;
+        }
+        
         return super.getRegenerationModifier(caster) + 1;
     }
 
@@ -47,8 +48,7 @@ public class Malice extends SimpleCastingResource {
 
     public static class ResourceGui implements ICastingResourceGuiProvider {
         public ResourceLocation getTexture() {
-            // todo: this texture is not being loaded, and the default MnA texture is being used instead.
-            //       I'm not sure why this is happening, but it's not a priority to fix.
+            // TODO: this texture is not being loaded, and the default MnA texture is being used instead.
             return new ResourceLocation(Witchcraft.MOD_ID, "textures/gui/resource_bars.png");
         }
 

@@ -38,14 +38,13 @@ public class MysticAlchemyCompat {
         if (recipe.isEmpty()) {
             return;
         }
-
+        
         tooltips.add(Component.translatable("item.mnaw.witch_eye/tooltip")
                 .withStyle(ChatFormatting.LIGHT_PURPLE)
                 .withStyle(ChatFormatting.ITALIC));
 
         Map<MobEffect, Float> effects = recipe.get().getEffects();
         
-        // Debug: Check if effects map is empty
         if (effects.isEmpty()) {
             tooltips.add(Component.literal("  [Debug: Recipe found but no effects loaded]")
                     .withStyle(ChatFormatting.RED));

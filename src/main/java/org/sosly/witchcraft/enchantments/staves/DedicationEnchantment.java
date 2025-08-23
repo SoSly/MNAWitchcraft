@@ -93,8 +93,9 @@ public class DedicationEnchantment extends MAEnchantmentBase {
         int mana = magnitude * (maxCharges / 5);
         if (charges + mana > maxCharges) {
             ItemUtils.writeCharges(stack, maxCharges);
-        } else {
-            ItemUtils.writeCharges(stack, charges + mana);
+            return;
         }
+        
+        ItemUtils.writeCharges(stack, charges + mana);
     }
 }

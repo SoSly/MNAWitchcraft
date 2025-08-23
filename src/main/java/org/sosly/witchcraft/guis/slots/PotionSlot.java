@@ -22,8 +22,8 @@ public class PotionSlot extends SlotItemHandler {
     public int getMaxStackSize(@NotNull ItemStack stack) {
         if (stack.getItem() instanceof PotionItem) {
             return inventory.getSlotLimit(getSlotIndex());
-        } else {
-            return super.getMaxStackSize(stack);
         }
+        
+        return super.getMaxStackSize(stack);
     }
 }

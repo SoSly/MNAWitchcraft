@@ -34,11 +34,15 @@ public class PotionPouch {
 
         ItemStack stack = event.pattern;
         ItemStack stack1 = event.material;
-        if (stack.getItem() == ItemRegistry.POTION_POUCH.get()) {
-            if (allowedPatches.contains(stack1.getItem())) {
-                event.setResult(Event.Result.ALLOW);
-            }
+        if (stack.getItem() != ItemRegistry.POTION_POUCH.get()) {
+            return;
         }
+        
+        if (!allowedPatches.contains(stack1.getItem())) {
+            return;
+        }
+        
+        event.setResult(Event.Result.ALLOW);
     }
 
     @SubscribeEvent

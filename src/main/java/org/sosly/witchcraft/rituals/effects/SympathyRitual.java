@@ -151,11 +151,25 @@ public class SympathyRitual extends RitualEffect {
         }
 
         float complexity = spell.getComplexity();
-        if (target instanceof Player playerTarget && isProtectedByCharm(playerTarget, (int)complexity)) {
+        if (!(target instanceof Player playerTarget)) {
+            IModifiedSpellPart<Shape> spellShape = spell.getShape();
+            SpellSource spellSource = new SpellSource(player, InteractionHand.MAIN_HAND);
+            SpellTarget spellTarget = new SpellTarget(target);
+            SpellContext spellContext = new SpellContext(level, spell);
+
+            spell.iterateComponents(component ->  {
+                Witchcraft.LOGGER.info("{} cast {} on {}.", player.getName().getString(), component.getPart()
+                                .getRegistryName(), target.getName().getString());
+                affectTarget(level, spellShape, spellSource, spellTarget, component, spellContext);
+            });
+            return true;
+        }
+        
+        if (isProtectedByCharm(playerTarget, (int)complexity)) {
             player.sendSystemMessage(Component.translatable("rituals.sympathy.target_protected"));
             return false;
         }
-
+        
         IModifiedSpellPart<Shape> spellShape = spell.getShape();
         SpellSource spellSource = new SpellSource(player, InteractionHand.MAIN_HAND);
         SpellTarget spellTarget = new SpellTarget(target);

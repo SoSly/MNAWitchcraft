@@ -30,8 +30,10 @@ public class RitualWitchHandler {
         witch.setDeltaMovement(0, 0, 0);
         
         long endTime = witch.getPersistentData().getLong("mnaw:ritual_end_time");
-        if (endTime > 0 && level.getGameTime() >= endTime) {
-            witch.remove(Entity.RemovalReason.DISCARDED);
+        if (endTime <= 0 || level.getGameTime() < endTime) {
+            return;
         }
+        
+        witch.remove(Entity.RemovalReason.DISCARDED);
     }
 }

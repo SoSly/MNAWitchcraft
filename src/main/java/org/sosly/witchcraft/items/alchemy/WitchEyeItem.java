@@ -13,7 +13,6 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.ModList;
 import org.sosly.witchcraft.compat.MysticAlchemyCompat;
 import org.sosly.witchcraft.items.ItemRegistry;
-import org.sosly.witchcraft.compat.MysticAlchemyCompat;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotResult;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
@@ -41,7 +40,6 @@ public class WitchEyeItem extends Item {
             return;
         }
 
-        // Delegate to compatibility class that only loads when needed
         MysticAlchemyCompat.revealAlchemicalProperties(level, item, tooltips);
     }
 

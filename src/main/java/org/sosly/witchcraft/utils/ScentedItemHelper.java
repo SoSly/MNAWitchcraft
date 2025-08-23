@@ -28,7 +28,9 @@ public class ScentedItemHelper {
         Set<String> scentedItems = new HashSet<>();
         
         for (ItemStack stack : player.getInventory().items) {
-            if (stack.isEmpty()) continue;
+            if (stack.isEmpty()) {
+                continue;
+            }
             
             String itemType = getScentedItemType(stack.getItem());
             if (itemType != null) {

@@ -8,7 +8,8 @@ import net.minecraft.world.entity.player.Player;
 import org.sosly.witchcraft.effects.EffectRegistry;
 
 public class BrokenSympathyRitual extends RitualEffect {
-    protected final int DURATION = 20 * 60 * 5; // 5 minutes in ticks
+    protected final int DURATION_MINUTES = 5;
+    protected final int DURATION = 20 * 60 * DURATION_MINUTES;
 
     public BrokenSympathyRitual(ResourceLocation ritualName) {
         super(ritualName);

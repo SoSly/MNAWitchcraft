@@ -15,11 +15,10 @@ public class PotionImmuneEnchantment extends MAEnchantmentBase {
         if (!stack.getItem().equals(ItemRegistry.POTION_AMULET.get())) {
             return false;
         }
-
         if (stack.getOrCreateTag().contains("potion_immune")) {
             return false;
         }
-
+        
         return true;
     }
 }

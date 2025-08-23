@@ -49,22 +49,24 @@ abstract class AbstractPlayerInventoryContainer extends AbstractContainerMenu {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(idx);
         int playerSlots = getSlotCount();
-        if (slot.hasItem()) {
-            ItemStack slotStack = slot.getItem();
-            itemstack = slotStack.copy();
-            if (idx < playerSlots) {
-                if (!this.moveItemStackTo(slotStack, playerSlots, this.slots.size(), true)) {
-                    return ItemStack.EMPTY;
-                }
-            } else if (!this.moveItemStackTo(slotStack, 0, playerSlots, false)) {
+        if (!slot.hasItem()) {
+            return itemstack;
+        }
+        
+        ItemStack slotStack = slot.getItem();
+        itemstack = slotStack.copy();
+        if (idx < playerSlots) {
+            if (!this.moveItemStackTo(slotStack, playerSlots, this.slots.size(), true)) {
                 return ItemStack.EMPTY;
             }
+        } else if (!this.moveItemStackTo(slotStack, 0, playerSlots, false)) {
+            return ItemStack.EMPTY;
+        }
 
-            if (slotStack.isEmpty()) {
-                slot.set(ItemStack.EMPTY);
-            } else {
-                slot.setChanged();
-            }
+        if (slotStack.isEmpty()) {
+            slot.set(ItemStack.EMPTY);
+        } else {
+            slot.setChanged();
         }
 
         return itemstack;
@@ -80,11 +82,11 @@ abstract class AbstractPlayerInventoryContainer extends AbstractContainerMenu {
 
         if (isStackable(startIdx, stack)) {
             while(!stack.isEmpty()) {
-                if (reverse) {
-                    if (i < startIdx) {
-                        break;
-                    }
-                } else if (i >= endIdx) {
+                if (reverse && i < startIdx) {
+                    break;
+                }
+                
+                if (!reverse && i >= endIdx) {
                     break;
                 }
 
@@ -122,11 +124,11 @@ abstract class AbstractPlayerInventoryContainer extends AbstractContainerMenu {
             }
 
             while(true) {
-                if (reverse) {
-                    if (i < startIdx) {
-                        break;
-                    }
-                } else if (i >= endIdx) {
+                if (reverse && i < startIdx) {
+                    break;
+                }
+                
+                if (!reverse && i >= endIdx) {
                     break;
                 }
 

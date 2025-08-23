@@ -87,24 +87,33 @@ public class PoppetBlock extends HorizontalDirectionalBlock implements SimpleWat
     @Override
     public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         super.playerWillDestroy(level, pos, state, player);
-        if (!level.isClientSide() && !player.isCreative()) {
-            BlockEntity blockEntity = level.getBlockEntity(pos);
-
-            ResourceLocation key = ForgeRegistries.BLOCKS.getKey(this);
-            if (key == null) {
-                return;
-            }
-            Item boundPoppetItem = ForgeRegistries.ITEMS.getValue(key);
-            ItemStack stack = new ItemStack(boundPoppetItem);
-
-            if (blockEntity instanceof BoundPoppetEntity boundPoppet) {
-                UUID target = boundPoppet.target();
-                String type = boundPoppet.type();
-                if (target != null) {
-                    ((BoundPoppetItem)stack.getItem()).setTarget(level, target, type, stack);
-                }
-            }
-            Block.popResource(level, pos, stack);
+        if (level.isClientSide() || player.isCreative()) {
+            return;
         }
+        
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+
+        ResourceLocation key = ForgeRegistries.BLOCKS.getKey(this);
+        if (key == null) {
+            return;
+        }
+        
+        Item boundPoppetItem = ForgeRegistries.ITEMS.getValue(key);
+        ItemStack stack = new ItemStack(boundPoppetItem);
+
+        if (!(blockEntity instanceof BoundPoppetEntity boundPoppet)) {
+            Block.popResource(level, pos, stack);
+            return;
+        }
+        
+        UUID target = boundPoppet.target();
+        String type = boundPoppet.type();
+        if (target == null) {
+            Block.popResource(level, pos, stack);
+            return;
+        }
+        
+        ((BoundPoppetItem)stack.getItem()).setTarget(level, target, type, stack);
+        Block.popResource(level, pos, stack);
     }
 }

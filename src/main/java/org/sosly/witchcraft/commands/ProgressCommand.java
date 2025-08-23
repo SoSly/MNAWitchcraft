@@ -64,14 +64,16 @@ public class ProgressCommand {
             if (progress == null || progress.isEmpty()) {
                 source.sendSuccess(() -> Component.literal("  Not generated")
                         .withStyle(ChatFormatting.GRAY), false);
-                return;
+                continue;
             }
 
             int completed = 0;
             for (Map.Entry<ResourceLocation, Boolean> entry : progress.entrySet()) {
                 ResourceLocation effectId = entry.getKey();
                 boolean isCompleted = entry.getValue();
-                if (isCompleted) completed++;
+                if (isCompleted) {
+                    completed++;
+                }
                 
                 ChatFormatting color = isCompleted ? ChatFormatting.GREEN : ChatFormatting.RED;
                 String symbol = isCompleted ? "✓" : "✗";

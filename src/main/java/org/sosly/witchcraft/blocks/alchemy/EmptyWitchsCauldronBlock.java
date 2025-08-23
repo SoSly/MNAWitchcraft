@@ -38,10 +38,19 @@ public class EmptyWitchsCauldronBlock extends AbstractWitchsCauldronBlock {
     private static void emptyTick(Level level, BlockPos pos, BlockState state, WitchsCauldronBlockEntity blockEntity) {
         WitchsCauldronBlockEntity.tick(level, pos, state, blockEntity);
         
-        if (!level.isClientSide && level.random.nextInt(ServerConfig.witchsCauldronMoonlightCollectionChance) == 0) {
-            if (!level.isDay() && level.canSeeSky(pos.above())) {
-                blockEntity.setFluid(WitchsCauldronBlockEntity.FluidType.MOONLIGHT, 1);
-            }
+        if (level.isClientSide) {
+            return;
         }
+        if (level.random.nextInt(ServerConfig.witchsCauldronMoonlightCollectionChance) != 0) {
+            return;
+        }
+        if (level.isDay()) {
+            return;
+        }
+        if (!level.canSeeSky(pos.above())) {
+            return;
+        }
+        
+        blockEntity.setFluid(WitchsCauldronBlockEntity.FluidType.MOONLIGHT, 1);
     }
 }

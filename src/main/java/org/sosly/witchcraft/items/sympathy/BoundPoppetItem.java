@@ -44,55 +44,59 @@ public class BoundPoppetItem extends PlayerCharm {
 
     public InteractionResult useOn(UseOnContext pContext) {
         InteractionResult interactionresult = this.place(new BlockPlaceContext(pContext));
-        if (!interactionresult.consumesAction() && this.isEdible()) {
-            InteractionResult interactionresult1 = this.use(pContext.getLevel(), pContext.getPlayer(), pContext.getHand()).getResult();
-            return interactionresult1 == InteractionResult.CONSUME ? InteractionResult.CONSUME_PARTIAL : interactionresult1;
-        } else {
+        if (interactionresult.consumesAction() || !this.isEdible()) {
             return interactionresult;
         }
+        
+        InteractionResult interactionresult1 = this.use(pContext.getLevel(), pContext.getPlayer(), pContext.getHand()).getResult();
+        return interactionresult1 == InteractionResult.CONSUME ? InteractionResult.CONSUME_PARTIAL : interactionresult1;
     }
 
     public InteractionResult place(BlockPlaceContext pContext) {
         if (!this.getBlock().isEnabled(pContext.getLevel().enabledFeatures())) {
             return InteractionResult.FAIL;
-        } else if (!pContext.canPlace()) {
+        }
+        
+        if (!pContext.canPlace()) {
             return InteractionResult.FAIL;
-        } else {
-            BlockPlaceContext blockplacecontext = this.updatePlacementContext(pContext);
-            if (blockplacecontext == null) {
-                return InteractionResult.FAIL;
-            } else {
-                BlockState blockstate = this.getPlacementState(blockplacecontext);
-                if (blockstate == null) {
-                    return InteractionResult.FAIL;
-                } else if (!this.placeBlock(blockplacecontext, blockstate)) {
-                    return InteractionResult.FAIL;
-                } else {
-                    BlockPos blockpos = blockplacecontext.getClickedPos();
-                    Level level = blockplacecontext.getLevel();
-                    Player player = blockplacecontext.getPlayer();
-                    ItemStack itemstack = blockplacecontext.getItemInHand();
-                    BlockState blockstate1 = level.getBlockState(blockpos);
-                    if (blockstate1.is(blockstate.getBlock())) {
-                        blockstate1 = this.updateBlockStateFromTag(blockpos, level, itemstack, blockstate1);
-                        this.updateCustomBlockEntityTag(blockpos, level, player, itemstack, blockstate1);
-                        blockstate1.getBlock().setPlacedBy(level, blockpos, blockstate1, player, itemstack);
-                        if (player instanceof ServerPlayer) {
-                            CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer)player, blockpos, itemstack);
-                        }
-                    }
-
-                    SoundType soundtype = blockstate1.getSoundType(level, blockpos, pContext.getPlayer());
-                    level.playSound(player, blockpos, this.getPlaceSound(blockstate1, level, blockpos, pContext.getPlayer()), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
-                    level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(player, blockstate1));
-                    if (player == null || !player.getAbilities().instabuild) {
-                        itemstack.shrink(1);
-                    }
-
-                    return InteractionResult.sidedSuccess(level.isClientSide);
-                }
+        }
+        
+        BlockPlaceContext blockplacecontext = this.updatePlacementContext(pContext);
+        if (blockplacecontext == null) {
+            return InteractionResult.FAIL;
+        }
+        
+        BlockState blockstate = this.getPlacementState(blockplacecontext);
+        if (blockstate == null) {
+            return InteractionResult.FAIL;
+        }
+        
+        if (!this.placeBlock(blockplacecontext, blockstate)) {
+            return InteractionResult.FAIL;
+        }
+        
+        BlockPos blockpos = blockplacecontext.getClickedPos();
+        Level level = blockplacecontext.getLevel();
+        Player player = blockplacecontext.getPlayer();
+        ItemStack itemstack = blockplacecontext.getItemInHand();
+        BlockState blockstate1 = level.getBlockState(blockpos);
+        if (blockstate1.is(blockstate.getBlock())) {
+            blockstate1 = this.updateBlockStateFromTag(blockpos, level, itemstack, blockstate1);
+            this.updateCustomBlockEntityTag(blockpos, level, player, itemstack, blockstate1);
+            blockstate1.getBlock().setPlacedBy(level, blockpos, blockstate1, player, itemstack);
+            if (player instanceof ServerPlayer) {
+                CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer)player, blockpos, itemstack);
             }
         }
+
+        SoundType soundtype = blockstate1.getSoundType(level, blockpos, pContext.getPlayer());
+        level.playSound(player, blockpos, this.getPlaceSound(blockstate1, level, blockpos, pContext.getPlayer()), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
+        level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(player, blockstate1));
+        if (player == null || !player.getAbilities().instabuild) {
+            itemstack.shrink(1);
+        }
+
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     protected boolean canPlace(BlockPlaceContext pContext, BlockState pState) {
@@ -162,28 +166,32 @@ public class BoundPoppetItem extends PlayerCharm {
         MinecraftServer minecraftserver = pLevel.getServer();
         if (minecraftserver == null) {
             return false;
-        } else {
-            CompoundTag compoundtag = getBlockEntityData(pStack);
-            if (compoundtag != null) {
-                BlockEntity blockentity = pLevel.getBlockEntity(pPos);
-                if (blockentity != null) {
-                    if (!pLevel.isClientSide && blockentity.onlyOpCanSetNbt() && (pPlayer == null || !pPlayer.canUseGameMasterBlocks())) {
-                        return false;
-                    }
-
-                    CompoundTag compoundtag1 = blockentity.saveWithoutMetadata();
-                    CompoundTag compoundtag2 = compoundtag1.copy();
-                    compoundtag1.merge(compoundtag);
-                    if (!compoundtag1.equals(compoundtag2)) {
-                        blockentity.load(compoundtag1);
-                        blockentity.setChanged();
-                        return true;
-                    }
-                }
-            }
-
+        }
+        
+        CompoundTag compoundtag = getBlockEntityData(pStack);
+        if (compoundtag == null) {
             return false;
         }
+        
+        BlockEntity blockentity = pLevel.getBlockEntity(pPos);
+        if (blockentity == null) {
+            return false;
+        }
+        
+        if (!pLevel.isClientSide && blockentity.onlyOpCanSetNbt() && (pPlayer == null || !pPlayer.canUseGameMasterBlocks())) {
+            return false;
+        }
+
+        CompoundTag compoundtag1 = blockentity.saveWithoutMetadata();
+        CompoundTag compoundtag2 = compoundtag1.copy();
+        compoundtag1.merge(compoundtag);
+        if (!compoundtag1.equals(compoundtag2)) {
+            blockentity.load(compoundtag1);
+            blockentity.setChanged();
+            return true;
+        }
+        
+        return false;
     }
 
     public BlockPlaceContext updatePlacementContext(BlockPlaceContext pContext) {
@@ -231,13 +239,15 @@ public class BoundPoppetItem extends PlayerCharm {
         CompoundTag nbt = stack.getTag();
         if (nbt == null) {
             tooltip.add(Component.translatable("item.mnaw.bound_poppet/not_bound").withStyle(ChatFormatting.DARK_PURPLE).withStyle(ChatFormatting.ITALIC));
-        } else {
-            Entity target = this.getTarget(stack, level);
-            if (target instanceof Player player) {
-                tooltip.add(Component.translatable("item.mnaw.bound_poppet/player", player.getDisplayName()).withStyle(ChatFormatting.DARK_PURPLE).withStyle(ChatFormatting.ITALIC));
-            } else {
-                tooltip.add(Component.translatable("item.mnaw.bound_poppet/mob", nbt.getString("type")).withStyle(ChatFormatting.DARK_PURPLE).withStyle(ChatFormatting.ITALIC));
-            }
+            return;
         }
+        
+        Entity target = this.getTarget(stack, level);
+        if (target instanceof Player player) {
+            tooltip.add(Component.translatable("item.mnaw.bound_poppet/player", player.getDisplayName()).withStyle(ChatFormatting.DARK_PURPLE).withStyle(ChatFormatting.ITALIC));
+            return;
+        }
+        
+        tooltip.add(Component.translatable("item.mnaw.bound_poppet/mob", nbt.getString("type")).withStyle(ChatFormatting.DARK_PURPLE).withStyle(ChatFormatting.ITALIC));
     }
 }

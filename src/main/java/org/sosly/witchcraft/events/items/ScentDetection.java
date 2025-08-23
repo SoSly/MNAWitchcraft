@@ -24,15 +24,20 @@ public class ScentDetection {
             return;
         }
         
-        if (ScentedItemHelper.hasAnyScentedItem(player)) {
-            if (!player.hasEffect(EffectRegistry.NICE_SMELL.get())) {
-                player.addEffect(new MobEffectInstance(EffectRegistry.NICE_SMELL.get(), 100, 0, false, false));
-            } else {
-                MobEffectInstance existingEffect = player.getEffect(EffectRegistry.NICE_SMELL.get());
-                if (existingEffect != null && existingEffect.getDuration() < 60) {
-                    player.addEffect(new MobEffectInstance(EffectRegistry.NICE_SMELL.get(), 100, 0, false, false));
-                }
-            }
+        if (!ScentedItemHelper.hasAnyScentedItem(player)) {
+            return;
         }
+        
+        if (!player.hasEffect(EffectRegistry.NICE_SMELL.get())) {
+            player.addEffect(new MobEffectInstance(EffectRegistry.NICE_SMELL.get(), 100, 0, false, false));
+            return;
+        }
+        
+        MobEffectInstance existingEffect = player.getEffect(EffectRegistry.NICE_SMELL.get());
+        if (existingEffect == null || existingEffect.getDuration() >= 60) {
+            return;
+        }
+        
+        player.addEffect(new MobEffectInstance(EffectRegistry.NICE_SMELL.get(), 100, 0, false, false));
     }
 }

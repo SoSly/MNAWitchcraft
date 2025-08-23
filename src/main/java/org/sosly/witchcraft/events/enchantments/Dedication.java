@@ -64,14 +64,17 @@ public class Dedication {
             }
         });
 
-        if (success.get()) {
-            int existingLevel = state.getValue(LayeredCauldronBlock.LEVEL);
-            if (existingLevel == 1) {
-                level.setBlock(pos, MysticAlchemyCompat.getEmptyCrucibleState(), 3);
-            } else {
-                level.setBlock(pos, state.setValue(LayeredCauldronBlock.LEVEL, existingLevel - 1), 3);
-            }
+        if (!success.get()) {
+            return;
         }
+        
+        int existingLevel = state.getValue(LayeredCauldronBlock.LEVEL);
+        if (existingLevel == 1) {
+            level.setBlock(pos, MysticAlchemyCompat.getEmptyCrucibleState(), 3);
+            return;
+        }
+        
+        level.setBlock(pos, state.setValue(LayeredCauldronBlock.LEVEL, existingLevel - 1), 3);
     }
 
     @SubscribeEvent
@@ -90,10 +93,8 @@ public class Dedication {
         ItemStack bottom = event.getBottomItem();
         ItemStack output = event.getOutput();
 
-        if (output.isEmpty()) {
-            if (top.isEmpty() ^ bottom.isEmpty()) {
-                output = (top.isEmpty() ? bottom : top).copy();
-            }
+        if (output.isEmpty() && (top.isEmpty() ^ bottom.isEmpty())) {
+            output = (top.isEmpty() ? bottom : top).copy();
         }
 
         if (!output.isEmpty()) {

@@ -52,13 +52,19 @@ public class PotionPouchItem extends ItemBagBase implements IRadialInventorySele
         if (patchItem.getPatch() == PractitionersPouchPatches.DEPTH) {
             pouch.getOrCreateTag().putInt("depth", patchItem.getLevel());
             return true;
-        } else if (patchItem.getPatch() == PractitionersPouchPatches.SPEED) {
+        }
+        
+        if (patchItem.getPatch() == PractitionersPouchPatches.SPEED) {
             pouch.getOrCreateTag().putInt("speed", patchItem.getLevel());
             return true;
-        } else if (patchItem.getPatch() == PractitionersPouchPatches.CONVEYANCE) {
+        }
+        
+        if (patchItem.getPatch() == PractitionersPouchPatches.CONVEYANCE) {
             pouch.getOrCreateTag().putInt("conveyance", 1);
             return true;
-        } else if (patchItem.getPatch() == PractitionersPouchPatches.COLLECTION) {
+        }
+        
+        if (patchItem.getPatch() == PractitionersPouchPatches.COLLECTION) {
             pouch.getOrCreateTag().putInt("collection", 1);
             return true;
         }
@@ -125,10 +131,11 @@ public class PotionPouchItem extends ItemBagBase implements IRadialInventorySele
     @Override
     public int capacity(@Nullable Player player) {
         ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
-        if (stack.getItem() instanceof PotionPouchItem) {
-            return ((PotionPouchItem) stack.getItem()).capacity(stack);
+        if (!(stack.getItem() instanceof PotionPouchItem)) {
+            return 0;
         }
-        return 0;
+        
+        return ((PotionPouchItem) stack.getItem()).capacity(stack);
     }
 
     @Override
@@ -146,23 +153,31 @@ public class PotionPouchItem extends ItemBagBase implements IRadialInventorySele
         if (potionStack.isEmpty()) {
             return pouch;
         }
-        if (pouch.getOrCreateTag().getInt("conveyance") == 1 && pouch.getOrCreateTag().contains("conveyance_target")) {
-            UUID targetUUID = pouch.getOrCreateTag().getUUID("conveyance_target");
-            Player playerTarget = level.getPlayerByUUID(targetUUID);
-            if (playerTarget != null) {
-                if (ServerConfig.bossesBlockSympathy && SympathyHelper.isInBossArena((ServerLevel) level, target)) {
-                    target.sendSystemMessage(Component.translatable("rituals.sympathy.target_protected"));
-                    return pouch;
-                }
-
-                if (ServerConfig.bossesImmuneToSympathy && SympathyHelper.isBoss(target)) {
-                    target.sendSystemMessage(Component.translatable("rituals.sympathy.target_protected"));
-                    return pouch;
-                }
-                // todo: support broken sympathy ritual
-                target = playerTarget;
-            }
+        if (pouch.getOrCreateTag().getInt("conveyance") != 1 || !pouch.getOrCreateTag().contains("conveyance_target")) {
+            potionStack.finishUsingItem(level, target);
+            getInventory(pouch).setStackInSlot(getIndex(pouch), potionStack);
+            return pouch;
         }
+        
+        UUID targetUUID = pouch.getOrCreateTag().getUUID("conveyance_target");
+        Player playerTarget = level.getPlayerByUUID(targetUUID);
+        if (playerTarget == null) {
+            potionStack.finishUsingItem(level, target);
+            getInventory(pouch).setStackInSlot(getIndex(pouch), potionStack);
+            return pouch;
+        }
+        
+        if (ServerConfig.bossesBlockSympathy && SympathyHelper.isInBossArena((ServerLevel) level, target)) {
+            target.sendSystemMessage(Component.translatable("rituals.sympathy.target_protected"));
+            return pouch;
+        }
+
+        if (ServerConfig.bossesImmuneToSympathy && SympathyHelper.isBoss(target)) {
+            target.sendSystemMessage(Component.translatable("rituals.sympathy.target_protected"));
+            return pouch;
+        }
+        
+        target = playerTarget;
         potionStack.finishUsingItem(level, target);
         getInventory(pouch).setStackInSlot(getIndex(pouch), potionStack);
         return pouch;
@@ -188,16 +203,22 @@ public class PotionPouchItem extends ItemBagBase implements IRadialInventorySele
         int depth = stack.getOrCreateTag().getInt("depth");
         if (depth == 1) {
             patches.add("depth");
-        } else if (depth == 2) {
+        }
+        
+        if (depth == 2) {
             patches.add("depth_2");
         }
 
         int speed = stack.getOrCreateTag().getInt("speed");
         if (speed == 1) {
             patches.add("speed");
-        } else if (speed == 2) {
+        }
+        
+        if (speed == 2) {
             patches.add("speed_2");
-        } else if (speed == 3) {
+        }
+        
+        if (speed == 3) {
             patches.add("speed_3");
         }
 
@@ -217,9 +238,11 @@ public class PotionPouchItem extends ItemBagBase implements IRadialInventorySele
         if (depth == 1) {
             return 32;
         }
+        
         if (depth == 2) {
             return 64;
         }
+        
         return 16;
     }
 

@@ -27,9 +27,6 @@ public class CondensedMoonlightBottleItem extends Item {
             CriteriaTriggers.CONSUME_ITEM.trigger((ServerPlayer)player, stack);
         }
         
-        if (!level.isClientSide) {
-        }
-        
         if (player != null) {
             player.awardStat(Stats.ITEM_USED.get(this));
             if (!player.getAbilities().instabuild) {

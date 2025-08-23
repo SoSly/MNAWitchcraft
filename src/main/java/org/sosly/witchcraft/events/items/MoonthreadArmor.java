@@ -89,7 +89,6 @@ public class MoonthreadArmor {
         
         player.addEffect(extendedEffect);
         
-        // Damage a random piece of armor
         MoonthreadArmorItem.damageRandomArmorPiece(player, 1);
     }
     
@@ -177,6 +176,7 @@ public class MoonthreadArmor {
         if (!level.canSeeSky(event.getEntity().blockPosition())) {
             return;
         }
+        
         double spawnX = event.getX();
         double spawnY = event.getY();
         double spawnZ = event.getZ();
@@ -188,14 +188,13 @@ public class MoonthreadArmor {
             if (!MoonthreadArmorItem.isWearingFullSet(player)) {
                 continue;
             }
-
+            
             double distance = player.distanceToSqr(spawnX, spawnY, spawnZ);
             double radiusSqr = ServerConfig.moonthreadArmorSpawnPreventionRadius * ServerConfig.moonthreadArmorSpawnPreventionRadius;
-
             if (distance > radiusSqr) {
                 continue;
             }
-
+            
             event.setSpawnCancelled(true);
             Witchcraft.LOGGER.info("Moonthread Armor prevented {} from spawning at ({}, {}, {}) near player {}", 
                 event.getEntity().getType().getDescription(),

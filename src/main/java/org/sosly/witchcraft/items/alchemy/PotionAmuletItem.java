@@ -104,20 +104,22 @@ public class PotionAmuletItem extends Item implements ICurioItem {
     @Override
     public List<Component> getAttributesTooltip(List<Component> tooltips, ItemStack stack) {
         CompoundTag tag = stack.getTag();
-        if (tag != null) {
-            int count = tag.getInt("immunityCount");
-            for (int i = 0; i < count; i++) {
-                CompoundTag effectTag = tag.getCompound("immunity" + i);
-                MobEffectInstance instance = MobEffectInstance.load(effectTag);
-                if (instance == null) {
-                    continue;
-                }
-
-                Component component = Component.translatable("item.mnaw.potion_amulet/tooltip", instance.getEffect().getDisplayName())
-                    .withStyle(ChatFormatting.ITALIC)
-                    .withStyle(ChatFormatting.LIGHT_PURPLE);
-                tooltips.add(component);
+        if (tag == null) {
+            return ICurioItem.super.getAttributesTooltip(tooltips, stack);
+        }
+        
+        int count = tag.getInt("immunityCount");
+        for (int i = 0; i < count; i++) {
+            CompoundTag effectTag = tag.getCompound("immunity" + i);
+            MobEffectInstance instance = MobEffectInstance.load(effectTag);
+            if (instance == null) {
+                continue;
             }
+
+            Component component = Component.translatable("item.mnaw.potion_amulet/tooltip", instance.getEffect().getDisplayName())
+                .withStyle(ChatFormatting.ITALIC)
+                .withStyle(ChatFormatting.LIGHT_PURPLE);
+            tooltips.add(component);
         }
 
         return ICurioItem.super.getAttributesTooltip(tooltips, stack);

@@ -79,7 +79,6 @@ public class Factions {
             return;
         }
         
-        // Only generate for tiers 3-5
         int nextTier = progression.getTier() + 1;
         if (nextTier < 3 || nextTier > 5) {
             return;
@@ -91,7 +90,6 @@ public class Factions {
             return;
         }
         
-        // Generate requirements for the next tier if not already set
         if (covenCap.getTierEffectsRequired(nextTier) == null) {
             var requirements = TierEffectManager.generateTierRequirements(nextTier, player.getRandom(), player.level());
             covenCap.setTierEffectsRequired(nextTier, requirements);

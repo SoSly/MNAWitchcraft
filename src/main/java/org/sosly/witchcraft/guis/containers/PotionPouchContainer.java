@@ -28,10 +28,12 @@ public class PotionPouchContainer extends AbstractPlayerInventoryContainer {
 
     @Override
     public void broadcastChanges() {
-        if (!this.isClientside) {
-            inventory.writeItemStack();
+        if (this.isClientside) {
+            super.broadcastChanges();
+            return;
         }
-
+        
+        inventory.writeItemStack();
         super.broadcastChanges();
     }
 
@@ -65,12 +67,14 @@ public class PotionPouchContainer extends AbstractPlayerInventoryContainer {
             this.addSlot(new SlotNoPickup(inventory, slotIndex++, slotX, slotY));
         }
 
-        if (inventory.getPouch().getOrCreateTag().getInt("conveyance") == 1) {
-            int slotX = 40 + (5 * 18) + 14;
-            int slotY = 102 - (32 * (row + 1));
-            this.addSlot(new SlotItemHandler(inventory, slotIndex++, slotX, slotY));
+        if (inventory.getPouch().getOrCreateTag().getInt("conveyance") != 1) {
+            super.initializeSlots(playerInventory, slotIndex);
+            return;
         }
-
+        
+        int slotX = 40 + (5 * 18) + 14;
+        int slotY = 102 - (32 * (row + 1));
+        this.addSlot(new SlotItemHandler(inventory, slotIndex++, slotX, slotY));
         super.initializeSlots(playerInventory, slotIndex);
     }
 

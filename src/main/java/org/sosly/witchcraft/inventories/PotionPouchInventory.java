@@ -71,9 +71,6 @@ public class PotionPouchInventory extends ItemStackHandler {
         if (slot == conveyancePatchSlot && pouch.getOrCreateTag().contains("conveyance")) {
             return new ItemStack(ItemInit.PATCH_CONVEYANCE.get());
         }
-//        if (slot == pocketPatchSlot && pouch.getOrCreateTag().contains("pocket")) {
-//            return new ItemStack(ItemInit.PATCH_POCKET.get());
-//        }
         if (slot == speedPatchSlot && pouch.getOrCreateTag().contains("speed")) {
             switch (pouch.getOrCreateTag().getInt("speed")) {
                 case 1:
@@ -110,7 +107,7 @@ public class PotionPouchInventory extends ItemStackHandler {
                     pouch.getOrCreateTag().putUUID("conveyance_target", target);
                 }
             }
-
+            
             super.setStackInSlot(slot, stack);
             writeItemStack();
         }

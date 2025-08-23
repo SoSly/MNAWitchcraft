@@ -59,7 +59,6 @@ public class BloodyNeedle {
             event.setCanceled(true);
             return;
         }
-
         if (!SympathyHelper.isBound(needle)) {
             event.setResult(Event.Result.DENY);
             event.setCanceled(true);
@@ -79,7 +78,6 @@ public class BloodyNeedle {
             return;
         }
 
-        // check if the player is targeting water or a cauldron
         BlockHitResult hitResult = getPlayerPOVHitResult(player.level(), player);
         if (hitResult.getType() == BlockHitResult.Type.MISS) {
             return;

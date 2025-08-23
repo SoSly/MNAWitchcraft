@@ -27,9 +27,11 @@ public class MaliceCommand {
                                 ICovenCapability coven = player.getCapability(CovenProvider.COVEN).orElse(new CovenCapability());
                                 boolean malice = !coven.hasMalice();
                                 coven.setMalice(malice);
-                                if (malice) {
-                                    progress.setAlliedFaction(FactionRegistry.DARK_COVEN, player);
+                                if (!malice) {
+                                    return;
                                 }
+                                
+                                progress.setAlliedFaction(FactionRegistry.DARK_COVEN, player);
                             });
                             return 0;
                         })

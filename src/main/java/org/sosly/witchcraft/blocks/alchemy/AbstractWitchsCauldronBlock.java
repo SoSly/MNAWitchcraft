@@ -117,11 +117,13 @@ public abstract class AbstractWitchsCauldronBlock extends BlockCrucible implemen
             return;
         }
         
-        if (cauldron.getHeat() >= WitchsCauldronBlockEntity.BOIL_POINT) {
-            level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-                SoundEvents.LAVA_POP, SoundSource.BLOCKS,
-                1.0f, (float) (0.8f + Math.random() * 0.4f), false);
+        if (cauldron.getHeat() < WitchsCauldronBlockEntity.BOIL_POINT) {
+            return;
         }
+        
+        level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+            SoundEvents.LAVA_POP, SoundSource.BLOCKS,
+            1.0f, (float) (0.8f + Math.random() * 0.4f), false);
     }
     
     @Override
@@ -158,10 +160,14 @@ public abstract class AbstractWitchsCauldronBlock extends BlockCrucible implemen
             return;
         }
         
-        if (entity instanceof net.minecraft.world.entity.LivingEntity && 
-                cauldron.getHeat() > WitchsCauldronBlockEntity.MAX_TEMP / 2) {
-            entity.hurt(level.damageSources().inFire(), 1);
+        if (!(entity instanceof net.minecraft.world.entity.LivingEntity)) {
+            return;
         }
+        if (cauldron.getHeat() <= WitchsCauldronBlockEntity.MAX_TEMP / 2) {
+            return;
+        }
+        
+        entity.hurt(level.damageSources().inFire(), 1);
     }
     
     @Override
@@ -312,7 +318,7 @@ public abstract class AbstractWitchsCauldronBlock extends BlockCrucible implemen
         
         HashMap<MobEffect, Float> allEffects = cauldron.getAllEffects();
         
-        if (allEffects.size() == 0) {
+        if (allEffects.isEmpty()) {
             player.sendSystemMessage(Component.translatable("chat.mysticalchemy.no_effects"));
             return InteractionResult.SUCCESS;
         }

@@ -58,12 +58,12 @@ public class BlockRegistry {
         ItemBlockRenderTypes.setRenderLayer(CONDENSED_MOONLIGHT_CAULDRON.get(), RenderType.translucent());
         
         BlockRegistry.BLOCKS.getEntries().stream().map(RegistryObject::get).forEach(block -> {
-            if (!(block instanceof ICutoutBlock) && !(block instanceof FlowerPotBlock)) {
-                if (block instanceof ITranslucentBlock) {
-                    ItemBlockRenderTypes.setRenderLayer(block, RenderType.translucent());
-                }
-            } else {
+            if (block instanceof ICutoutBlock || block instanceof FlowerPotBlock) {
                 ItemBlockRenderTypes.setRenderLayer(block, RenderType.cutout());
+                return;
+            }
+            if (block instanceof ITranslucentBlock) {
+                ItemBlockRenderTypes.setRenderLayer(block, RenderType.translucent());
             }
         });
     }

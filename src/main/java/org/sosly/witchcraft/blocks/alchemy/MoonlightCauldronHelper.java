@@ -15,9 +15,11 @@ public class MoonlightCauldronHelper {
     public static void moonlightTick(Level level, BlockPos pos, BlockState state, WitchsCauldronBlockEntity blockEntity) {
         WitchsCauldronBlockEntity.tick(level, pos, state, blockEntity);
         
-        if (!level.isClientSide) {
-            tickMoonlightCollection(level, pos, blockEntity);
+        if (level.isClientSide) {
+            return;
         }
+        
+        tickMoonlightCollection(level, pos, blockEntity);
     }
     
     private static void tickMoonlightCollection(Level level, BlockPos pos, WitchsCauldronBlockEntity blockEntity) {
@@ -29,13 +31,15 @@ public class MoonlightCauldronHelper {
             return;
         }
         
-        if (level.random.nextInt(ServerConfig.witchsCauldronMoonlightCollectionChance) == 0) {
-            blockEntity.setFluidLevel(blockEntity.getFluidLevel() + 1);
-            blockEntity.updateBlockStateLevel();
-            
-            blockEntity.setChanged();
-            level.sendBlockUpdated(pos, blockEntity.getBlockState(), blockEntity.getBlockState(), Block.UPDATE_ALL);
-            level.getLightEngine().checkBlock(pos);
+        if (level.random.nextInt(ServerConfig.witchsCauldronMoonlightCollectionChance) != 0) {
+            return;
         }
+        
+        blockEntity.setFluidLevel(blockEntity.getFluidLevel() + 1);
+        blockEntity.updateBlockStateLevel();
+        
+        blockEntity.setChanged();
+        level.sendBlockUpdated(pos, blockEntity.getBlockState(), blockEntity.getBlockState(), Block.UPDATE_ALL);
+        level.getLightEngine().checkBlock(pos);
     }
 }

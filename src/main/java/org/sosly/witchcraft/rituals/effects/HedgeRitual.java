@@ -122,15 +122,25 @@ public class HedgeRitual extends RitualEffect {
         int currentTier = progression.getTier();
         int nextTier = currentTier + 1;
         
-        if (nextTier <= 5) {
-            progression.setTier(nextTier, caster);
-            
-            if (nextTier < 5) {
-                var requirements = TierEffectManager.generateTierRequirements(nextTier + 1, 
-                    caster.getRandom(), level);
-                covenCap.setTierEffectsRequired(nextTier + 1, requirements);
-            }
+        if (nextTier > 5) {
+            caster.sendSystemMessage(Component.translatable("ritual.mnaw.hedge.success"));
+            level.playSound(null, context.getCenter(), SoundEvents.WITCH_CELEBRATE, 
+                SoundSource.NEUTRAL, 1.0F, 1.0F);
+            return true;
         }
+        
+        progression.setTier(nextTier, caster);
+        
+        if (nextTier >= 5) {
+            caster.sendSystemMessage(Component.translatable("ritual.mnaw.hedge.success"));
+            level.playSound(null, context.getCenter(), SoundEvents.WITCH_CELEBRATE, 
+                SoundSource.NEUTRAL, 1.0F, 1.0F);
+            return true;
+        }
+        
+        var requirements = TierEffectManager.generateTierRequirements(nextTier + 1, 
+            caster.getRandom(), level);
+        covenCap.setTierEffectsRequired(nextTier + 1, requirements);
 
         caster.sendSystemMessage(Component.translatable("ritual.mnaw.hedge.success"));
         
@@ -155,11 +165,13 @@ public class HedgeRitual extends RitualEffect {
                 center.x + offsetX, center.y + offsetY, center.z + offsetZ,
                 1, 0, 0, 0, 0.05);
                 
-            if (i % 3 == 0) {
-                level.sendParticles(ParticleTypes.HAPPY_VILLAGER,
-                    center.x + offsetX, center.y + offsetY, center.z + offsetZ,
-                    1, 0, 0, 0, 0.02);
+            if (i % 3 != 0) {
+                continue;
             }
+            
+            level.sendParticles(ParticleTypes.HAPPY_VILLAGER,
+                center.x + offsetX, center.y + offsetY, center.z + offsetZ,
+                1, 0, 0, 0, 0.02);
         }
     }
 

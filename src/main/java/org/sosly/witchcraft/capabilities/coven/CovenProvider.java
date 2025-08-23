@@ -26,28 +26,31 @@ public class CovenProvider implements ICapabilitySerializable<Tag> {
     public Tag serializeNBT() {
         ICovenCapability instance = holder.orElse(new CovenCapability());
         CompoundTag nbt = new CompoundTag();
+        
         if (instance.hasMalice()) {
             nbt.putBoolean("malice", true);
         }
         if (instance.getBondedBroomId() != null) {
             nbt.putUUID("bondedBroom", instance.getBondedBroomId());
         }
+        
         for (int tier = 3; tier <= 5; tier++) {
             Map<ResourceLocation, Boolean> progress = instance.getTierEffectsProgress(tier);
-
-            if (progress != null) {
-                CompoundTag tierTag = new CompoundTag();
-                tierTag.putInt("size", progress.size());
-
-                AtomicInteger index = new AtomicInteger(0);
-                progress.forEach((effectId, completed) -> {
-                    int i = index.getAndIncrement();
-                    tierTag.putString("effect_" + i, effectId.toString());
-                    tierTag.putBoolean("completed_" + i, completed);
-                });
-
-                nbt.put("tier_" + tier, tierTag);
+            if (progress == null) {
+                continue;
             }
+            
+            CompoundTag tierTag = new CompoundTag();
+            tierTag.putInt("size", progress.size());
+
+            AtomicInteger index = new AtomicInteger(0);
+            progress.forEach((effectId, completed) -> {
+                int i = index.getAndIncrement();
+                tierTag.putString("effect_" + i, effectId.toString());
+                tierTag.putBoolean("completed_" + i, completed);
+            });
+
+            nbt.put("tier_" + tier, tierTag);
         }
         return nbt;
     }
@@ -55,28 +58,35 @@ public class CovenProvider implements ICapabilitySerializable<Tag> {
     @Override
     public void deserializeNBT(Tag nbt) {
         ICovenCapability instance = holder.orElse(new CovenCapability());
-        if (nbt instanceof CompoundTag cnbt) {
-            instance.setMalice(cnbt.getBoolean("malice"));
-            if (cnbt.hasUUID("bondedBroom")) {
-                instance.setBondedBroomId(cnbt.getUUID("bondedBroom"));
+        
+        if (!(nbt instanceof CompoundTag cnbt)) {
+            return;
+        }
+        
+        instance.setMalice(cnbt.getBoolean("malice"));
+        if (cnbt.hasUUID("bondedBroom")) {
+            instance.setBondedBroomId(cnbt.getUUID("bondedBroom"));
+        }
+        
+        for (int tier = 3; tier <= 5; tier++) {
+            if (!cnbt.contains("tier_" + tier)) {
+                continue;
             }
-            for (int tier = 3; tier <= 5; tier++) {
-                if (cnbt.contains("tier_" + tier)) {
-                    CompoundTag tierTag = cnbt.getCompound("tier_" + tier);
-                    Set<ResourceLocation> effects = new HashSet<>();
-                    for (int i = 0; i < tierTag.getInt("size"); i++) {
-                        ResourceLocation effectId = new ResourceLocation(tierTag.getString("effect_" + i));
-                        effects.add(effectId);
-                    }
-                    instance.setTierEffectsRequired(tier, effects);
-                    
-                    for (int i = 0; i < tierTag.getInt("size"); i++) {
-                        if (tierTag.getBoolean("completed_" + i)) {
-                            ResourceLocation effectId = new ResourceLocation(tierTag.getString("effect_" + i));
-                            instance.markEffectCompleted(tier, effectId);
-                        }
-                    }
+            
+            CompoundTag tierTag = cnbt.getCompound("tier_" + tier);
+            Set<ResourceLocation> effects = new HashSet<>();
+            for (int i = 0; i < tierTag.getInt("size"); i++) {
+                ResourceLocation effectId = new ResourceLocation(tierTag.getString("effect_" + i));
+                effects.add(effectId);
+            }
+            instance.setTierEffectsRequired(tier, effects);
+            
+            for (int i = 0; i < tierTag.getInt("size"); i++) {
+                if (!tierTag.getBoolean("completed_" + i)) {
+                    continue;
                 }
+                ResourceLocation effectId = new ResourceLocation(tierTag.getString("effect_" + i));
+                instance.markEffectCompleted(tier, effectId);
             }
         }
     }
