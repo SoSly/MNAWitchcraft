@@ -41,6 +41,7 @@ import java.util.UUID;
 
 public class FlyingBroomEntity extends PathfinderMob {
     private static final EntityDataAccessor<Float> DATA_HOVER_OFFSET = SynchedEntityData.defineId(FlyingBroomEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Integer> DATA_RIBBON_COLOR = SynchedEntityData.defineId(FlyingBroomEntity.class, EntityDataSerializers.INT);
 
     private UUID ownerUUID;
     private Vec3 summonTarget = null;
@@ -97,6 +98,7 @@ public class FlyingBroomEntity extends PathfinderMob {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_HOVER_OFFSET, 0.0F);
+        this.entityData.define(DATA_RIBBON_COLOR, 16383998);
     }
 
     @Override
@@ -247,11 +249,12 @@ public class FlyingBroomEntity extends PathfinderMob {
     }
 
     public int getRibbonColor() {
-        return ribbonColor;
+        return this.entityData.get(DATA_RIBBON_COLOR);
     }
 
     public void setRibbonColor(int color) {
         this.ribbonColor = color;
+        this.entityData.set(DATA_RIBBON_COLOR, color);
     }
 
     public int getStorageLevel() {
@@ -414,6 +417,7 @@ public class FlyingBroomEntity extends PathfinderMob {
             this.handleWood = new ResourceLocation(compound.getString("HandleWood"));
         }
         this.ribbonColor = compound.getInt("RibbonColor");
+        this.entityData.set(DATA_RIBBON_COLOR, this.ribbonColor);
 
         int newStorageLevel = compound.getInt("StorageLevel");
         if (newStorageLevel != this.storageLevel) {

@@ -6,14 +6,20 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.util.LazyOptional;
@@ -25,11 +31,25 @@ import org.sosly.witchcraft.entities.EntityTypeRegistry;
 import org.sosly.witchcraft.entities.FlyingBroomEntity;
 import org.sosly.witchcraft.items.renderers.FlyingBroomItemRenderer;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public class FlyingBroomItem extends TieredItem {
     public FlyingBroomItem() {
         super((new Item.Properties()).stacksTo(1));
+    }
+    
+    private void ensureDefaultNBT(ItemStack stack) {
+        if (stack.getTag() != null) {
+            return;
+        }
+        
+        CompoundTag nbt = new CompoundTag();
+        nbt.putInt("BrushTier", 1);
+        nbt.putString("HandleWood", "minecraft:oak");
+        nbt.putInt("RibbonColor", 16383998);
+        nbt.putInt("StorageLevel", 0);
+        stack.setTag(nbt);
     }
     
     @Override
@@ -48,6 +68,21 @@ public class FlyingBroomItem extends TieredItem {
             }
         });
     }
+    
+    @Override
+    public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flag) {
+        super.appendHoverText(stack, level, tooltip, flag);
+        
+        if (flag.isAdvanced()) {
+            ensureDefaultNBT(stack);
+            CompoundTag nbt = stack.getTag();
+            if (nbt != null && nbt.contains("RibbonColor")) {
+                int color = nbt.getInt("RibbonColor");
+                String hexColor = String.format("#%06X", color);
+                tooltip.add(Component.literal("Ribbon Color: " + hexColor));
+            }
+        }
+    }
 
     @Override
     public @NotNull InteractionResult useOn(@NotNull UseOnContext context) {
@@ -57,19 +92,51 @@ public class FlyingBroomItem extends TieredItem {
         }
         
         Level level = context.getLevel();
+        ItemStack stack = context.getItemInHand();
+        
+        if (tryWashInCauldron(context, player, stack, level)) {
+            return InteractionResult.SUCCESS;
+        }
+        
         if (level.isClientSide) {
             return InteractionResult.SUCCESS;
         }
         
+        ensureDefaultNBT(stack);
+        
         cleanupExistingBroom(player, level);
         FlyingBroomEntity broomEntity = createAndPositionBroom(context);
-        transferNBTToBroom(context.getItemInHand(), broomEntity);
+        transferNBTToBroom(stack, broomEntity);
         bondBroomToPlayer(player, broomEntity);
         
         level.addFreshEntity(broomEntity);
-        consumeItem(context.getItemInHand(), player, context);
+        consumeItem(stack, player, context);
         
         return InteractionResult.SUCCESS;
+    }
+    
+    private boolean tryWashInCauldron(UseOnContext context, Player player, ItemStack stack, Level level) {
+        if (!(level.getBlockState(context.getClickedPos()).getBlock() instanceof LayeredCauldronBlock)) {
+            return false;
+        }
+        
+        ensureDefaultNBT(stack);
+        CompoundTag nbt = stack.getTag();
+        if (nbt == null || !nbt.contains("RibbonColor")) {
+            return false;
+        }
+        
+        int currentColor = nbt.getInt("RibbonColor");
+        if (currentColor == 16383998) {
+            return false;
+        }
+        
+        if (!level.isClientSide) {
+            nbt.putInt("RibbonColor", 16383998);
+            LayeredCauldronBlock.lowerFillLevel(level.getBlockState(context.getClickedPos()), level, context.getClickedPos());
+        }
+        
+        return true;
     }
     
     private void cleanupExistingBroom(Player player, Level level) {
@@ -150,5 +217,73 @@ public class FlyingBroomItem extends TieredItem {
         if (player.isCreative()) {
             player.setItemInHand(context.getHand(), ItemStack.EMPTY);
         }
+    }
+    
+    public static ItemStack dyeBroom(ItemStack broomStack, DyeColor dyeColor) {
+        ItemStack result = broomStack.copy();
+        ensureDefaultNBTStatic(result);
+        
+        CompoundTag nbt = result.getOrCreateTag();
+        int currentColor = nbt.getInt("RibbonColor");
+        
+        int blendedColor = blendColorsMinecraft(currentColor, dyeColor);
+        nbt.putInt("RibbonColor", blendedColor);
+        
+        return result;
+    }
+    
+    private static void ensureDefaultNBTStatic(ItemStack stack) {
+        if (stack.getTag() != null) {
+            return;
+        }
+        
+        CompoundTag nbt = new CompoundTag();
+        nbt.putInt("BrushTier", 1);
+        nbt.putString("HandleWood", "minecraft:oak");
+        nbt.putInt("RibbonColor", 16383998);
+        nbt.putInt("StorageLevel", 0);
+        stack.setTag(nbt);
+    }
+    
+    private static int blendColorsMinecraft(int currentColor, DyeColor dyeColor) {
+        int[] colorComponents = new int[3];
+        int maxBrightness = 0;
+        int totalComponents = 0;
+        
+        if (currentColor != 0) {
+            float currentRed = (float)(currentColor >> 16 & 255) / 255.0F;
+            float currentGreen = (float)(currentColor >> 8 & 255) / 255.0F;
+            float currentBlue = (float)(currentColor & 255) / 255.0F;
+            
+            maxBrightness += (int)(Math.max(currentRed, Math.max(currentGreen, currentBlue)) * 255.0F);
+            colorComponents[0] += (int)(currentRed * 255.0F);
+            colorComponents[1] += (int)(currentGreen * 255.0F);
+            colorComponents[2] += (int)(currentBlue * 255.0F);
+            totalComponents++;
+        }
+        
+        float[] dyeColors = dyeColor.getTextureDiffuseColors();
+        int dyeRed = (int)(dyeColors[0] * 255.0F);
+        int dyeGreen = (int)(dyeColors[1] * 255.0F);
+        int dyeBlue = (int)(dyeColors[2] * 255.0F);
+        
+        maxBrightness += Math.max(dyeRed, Math.max(dyeGreen, dyeBlue));
+        colorComponents[0] += dyeRed;
+        colorComponents[1] += dyeGreen;
+        colorComponents[2] += dyeBlue;
+        totalComponents++;
+        
+        int avgRed = colorComponents[0] / totalComponents;
+        int avgGreen = colorComponents[1] / totalComponents;
+        int avgBlue = colorComponents[2] / totalComponents;
+        
+        float brightness = (float)maxBrightness / (float)totalComponents;
+        float maxComponent = (float)Math.max(avgRed, Math.max(avgGreen, avgBlue));
+        
+        avgRed = (int)((float)avgRed * brightness / maxComponent);
+        avgGreen = (int)((float)avgGreen * brightness / maxComponent);
+        avgBlue = (int)((float)avgBlue * brightness / maxComponent);
+        
+        return (avgRed << 16) | (avgGreen << 8) | avgBlue;
     }
 }

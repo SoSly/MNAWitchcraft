@@ -23,6 +23,7 @@ import org.sosly.witchcraft.fluids.FluidRegistry;
 import org.sosly.witchcraft.guis.ContainerRegistry;
 import org.sosly.witchcraft.guis.ScreenRegistry;
 import org.sosly.witchcraft.items.ItemRegistry;
+import org.sosly.witchcraft.recipes.RecipeSerializerRegistry;
 import org.sosly.witchcraft.cantrips.Cantrips;
 
 @Mod(Witchcraft.MOD_ID)
@@ -42,6 +43,7 @@ public class Witchcraft {
         FluidRegistry.FLUIDS.register(modbus);
         FluidRegistry.FLUID_TYPES.register(modbus);
         ItemRegistry.ITEMS.register(modbus);
+        RecipeSerializerRegistry.SERIALIZERS.register(modbus);
 
         MinecraftForge.EVENT_BUS.register(CommandRegistry.class);
         MinecraftForge.EVENT_BUS.register(this);

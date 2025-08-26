@@ -148,7 +148,7 @@ public class FlyingBroomItemRenderer extends BlockEntityWithoutLevelRenderer {
         if (nbt != null && nbt.contains("RibbonColor")) {
             return nbt.getInt("RibbonColor");
         }
-        return 0xFF0000;
+        return 16383998;
     }
     
     private int getBrushColor(ItemStack stack) {

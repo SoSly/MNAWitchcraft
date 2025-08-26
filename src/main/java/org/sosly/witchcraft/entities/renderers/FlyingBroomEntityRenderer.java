@@ -86,7 +86,7 @@ public class FlyingBroomEntityRenderer extends EntityRenderer<FlyingBroomEntity>
         poseStack.translate(-0.217d, -0.125d, -0.25d);
         poseStack.scale(0.45f, 0.45f, 0.45f);
         
-        TintedMultiBufferSource tintedBuffer = new TintedMultiBufferSource(buffer, 0xFF0000);
+        TintedMultiBufferSource tintedBuffer = new TintedMultiBufferSource(buffer, entity.getRibbonColor());
         RandomSource random = RandomSource.create();
         renderBakedModel(ribbonModel, poseStack, tintedBuffer, packedLight, random);
         
@@ -103,7 +103,8 @@ public class FlyingBroomEntityRenderer extends EntityRenderer<FlyingBroomEntity>
         poseStack.translate(-0.25d, -0.125d, -0.25d);
         poseStack.scale(0.5f, 0.5f, 0.5f);
         
-        TintedMultiBufferSource tintedBuffer = new TintedMultiBufferSource(buffer, 0xE7C77B);
+        int brushColor = getBrushColorForTier(entity.getBrushTier());
+        TintedMultiBufferSource tintedBuffer = new TintedMultiBufferSource(buffer, brushColor);
         RandomSource random = RandomSource.create();
         renderBakedModel(brushModel, poseStack, tintedBuffer, packedLight, random);
         
@@ -145,6 +146,15 @@ public class FlyingBroomEntityRenderer extends EntityRenderer<FlyingBroomEntity>
         }
         
         return model;
+    }
+    
+    private int getBrushColorForTier(int tier) {
+        return switch (tier) {
+            case 1 -> 0xE7C77B;
+            case 2 -> 0xD4AF37;
+            case 3 -> 0xC0C0C0;
+            default -> 0xE7C77B;
+        };
     }
 
     private static class TintedMultiBufferSource implements MultiBufferSource {
