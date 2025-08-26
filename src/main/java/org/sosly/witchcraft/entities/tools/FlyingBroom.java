@@ -26,7 +26,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
-import org.sosly.witchcraft.Witchcraft;
 import org.sosly.witchcraft.api.capabilities.IBroomCapability;
 import org.sosly.witchcraft.capabilities.broom.BroomProvider;
 import org.sosly.witchcraft.config.ServerConfig;
@@ -183,9 +182,29 @@ public class FlyingBroom extends PathfinderMob {
         }
     }
     private void regenerate() {
-        if (this.tickCount % 20 == 0 && this.getHealth() < this.getMaxHealth()) {
-            this.heal(1.0F);
+        if (this.tickCount % 20 != 0 || this.getHealth() >= this.getMaxHealth()) {
+            return;
         }
+        if (this.isOnFire()) {
+            return;
+        }
+        
+        this.heal(1.0F);
+    }
+
+    private void handleNetherFire() {
+        if (!this.level().dimension().location().getPath().equals("the_nether")) {
+            return;
+        }
+        
+        if (this.random.nextFloat() < 0.1f / 20.0f) {
+            this.setSecondsOnFire(5);
+        }
+    }
+
+    private boolean canFlyInCurrentDimension() {
+        String dimensionPath = this.level().dimension().location().getPath();
+        return "overworld".equals(dimensionPath) || "the_nether".equals(dimensionPath);
     }
 
     @Override
@@ -209,6 +228,7 @@ public class FlyingBroom extends PathfinderMob {
         }
 
         updateChunkLoading();
+        handleNetherFire();
         regenerate();
     }
 
@@ -220,7 +240,13 @@ public class FlyingBroom extends PathfinderMob {
             return;
         }
 
-        flightController.handlePlayerControlledTravel(this, travelVector, ServerConfig.flyingBroomSpeed);
+        if (!canFlyInCurrentDimension()) {
+            super.travel(travelVector);
+            return;
+        }
+
+        double speed = this.isOnFire() ? ServerConfig.flyingBroomSpeed * 0.75 : ServerConfig.flyingBroomSpeed;
+        flightController.handlePlayerControlledTravel(this, travelVector, speed);
     }
 
     // Chunk Loading
