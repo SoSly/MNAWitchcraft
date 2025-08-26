@@ -9,7 +9,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
-import org.sosly.witchcraft.ServerConfig;
+import org.sosly.witchcraft.config.ServerConfig;
 
 public class DedicationEnchantment extends MAEnchantmentBase {
     private static final int chargeModifier = 40;
@@ -44,7 +44,7 @@ public class DedicationEnchantment extends MAEnchantmentBase {
 
         stack.getOrCreateTag().putInt("dedication", level);
 
-        float tierModifier = 1.0F + ((level - 1) * (float)ServerConfig.dedicationTierMultiplier);
+        float tierModifier = 1.0F + ((level - 1) * (float) ServerConfig.dedicationTierMultiplier);
         float charges = ServerConfig.dedicationCharges * chargeModifier * tierModifier;
         if (ItemUtils.getCharges(stack) == 0) {
             ItemUtils.writeCharges(stack, (int) charges);

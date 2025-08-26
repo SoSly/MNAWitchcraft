@@ -25,7 +25,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
-import org.sosly.witchcraft.ServerConfig;
+import org.sosly.witchcraft.config.ServerConfig;
 import org.sosly.witchcraft.guis.providers.PotionPouchProvider;
 import org.sosly.witchcraft.inventories.PotionPouchInventory;
 import org.sosly.witchcraft.utils.SympathyHelper;

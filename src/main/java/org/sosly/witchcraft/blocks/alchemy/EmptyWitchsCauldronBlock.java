@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import org.sosly.witchcraft.blocks.EntityRegistry;
-import org.sosly.witchcraft.ServerConfig;
+import org.sosly.witchcraft.config.ServerConfig;
 
 /**
  * Empty variant of the Witch's Cauldron.

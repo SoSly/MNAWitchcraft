@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.sosly.witchcraft.blocks.BlockRegistry;
 import org.sosly.witchcraft.blocks.EntityRegistry;
 import org.sosly.witchcraft.commands.CommandRegistry;
+import org.sosly.witchcraft.config.ServerConfig;
 import org.sosly.witchcraft.effects.EffectRegistry;
 import org.sosly.witchcraft.enchantments.EnchantmentRegistry;
 import org.sosly.witchcraft.entities.EntityTypeRegistry;

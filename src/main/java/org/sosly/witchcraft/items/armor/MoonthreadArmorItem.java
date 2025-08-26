@@ -24,7 +24,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.NotNull;
-import org.sosly.witchcraft.ServerConfig;
+import org.sosly.witchcraft.config.ServerConfig;
 import org.sosly.witchcraft.Witchcraft;
 import org.sosly.witchcraft.factions.FactionRegistry;
 import org.sosly.witchcraft.renderers.items.MoonthreadArmorRenderer;

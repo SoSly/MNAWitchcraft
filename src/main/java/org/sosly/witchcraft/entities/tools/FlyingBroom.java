@@ -2,7 +2,6 @@ package org.sosly.witchcraft.entities.tools;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -10,7 +9,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -19,25 +18,29 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
+import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
-import org.sosly.witchcraft.ServerConfig;
 import org.sosly.witchcraft.Witchcraft;
 import org.sosly.witchcraft.api.capabilities.ICovenCapability;
 import org.sosly.witchcraft.capabilities.coven.CovenProvider;
+import org.sosly.witchcraft.config.ServerConfig;
 import org.sosly.witchcraft.data.FlyingBroomData;
+import org.sosly.witchcraft.entities.ai.Hover;
+import org.sosly.witchcraft.entities.ai.ReturnToOwner;
+import org.sosly.witchcraft.entities.ai.SafelyDescend;
+import org.sosly.witchcraft.utils.ChunkLoader;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.UUID;
 
 public class FlyingBroom extends PathfinderMob {
@@ -47,12 +50,11 @@ public class FlyingBroom extends PathfinderMob {
 
     private UUID ownerUUID;
     private Vec3 summonTarget = null;
-    private double baseFlightHeight = 0;
     private Boolean originalSprintToggle = null;
+    private ChunkLoader chunkLoader = null;
 
     private FlyingBroomData broomData = new FlyingBroomData();
 
-    private final double jitterAmount = 0.0001;
 
     private Vec3 currentMotion = Vec3.ZERO;
     private double currentVerticalMotion = 0.0;
@@ -63,17 +65,21 @@ public class FlyingBroom extends PathfinderMob {
 
     public FlyingBroom(EntityType<? extends FlyingBroom> entityType, Level level) {
         super(entityType, level);
-        this.moveControl = new FlyingMoveControl(this, 0, true);
+        this.moveControl = new FlyingMoveControl(this, 20, true);
         this.blocksBuilding = true;
         this.noCulling = true;
         this.setNoGravity(true);
+
+        Objects.requireNonNull(this.getAttribute(Attributes.MOVEMENT_SPEED)).setBaseValue(ServerConfig.flyingBroomSpeed);
+        Objects.requireNonNull(this.getAttribute(Attributes.FLYING_SPEED)).setBaseValue(ServerConfig.flyingBroomSpeed);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return PathfinderMob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 6.0D)
-                .add(Attributes.MOVEMENT_SPEED, 10.0D)
-                .add(Attributes.FLYING_SPEED, 10.0D);
+                .add(Attributes.MOVEMENT_SPEED, 0)
+                .add(Attributes.FLYING_SPEED, 0)
+            ;
     }
 
     @Override
@@ -88,6 +94,15 @@ public class FlyingBroom extends PathfinderMob {
     @Override
     public @NotNull ItemStack getItemBySlot(@NotNull EquipmentSlot slot) {
         return ItemStack.EMPTY;
+    }
+
+    @Override
+    protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
+        FlyingPathNavigation flyingpathnavigation = new FlyingPathNavigation(this, level);
+        flyingpathnavigation.setCanOpenDoors(false);
+        flyingpathnavigation.setCanFloat(true);
+        flyingpathnavigation.setCanPassDoors(false);
+        return flyingpathnavigation;
     }
 
     @Override
@@ -106,119 +121,8 @@ public class FlyingBroom extends PathfinderMob {
             return;
         }
 
+        updateChunkLoading();
         regenerate();
-        
-        if (isSummoning()) {
-            handleSummoning();
-            return;
-        }
-        
-        seekTheGround();
-    }
-
-    private void handleSummoning() {
-        if (!isSummoning()) {
-            return;
-        }
-        
-        double distanceToTarget = this.position().distanceTo(summonTarget);
-        if (distanceToTarget < 1.5) {
-            summonTarget = null;
-            return;
-        }
-
-        Vec3 flyTarget = calculateSummonFlyTarget();
-        float speed = 2.0f;
-        
-        this.getMoveControl().setWantedPosition(flyTarget.x, flyTarget.y, flyTarget.z, speed);
-        
-        Vec3 lookDirection = summonTarget.subtract(this.position()).normalize();
-        this.setYRot((float) (Math.atan2(-lookDirection.x, lookDirection.z) * 180.0 / Math.PI));
-    }
-    
-    private Vec3 calculateSummonFlyTarget() {
-        double horizontalDistance = Math.sqrt(Math.pow(this.getX() - summonTarget.x, 2) + Math.pow(this.getZ() - summonTarget.z, 2));
-        
-        if (horizontalDistance < 8.0) {
-            return summonTarget;
-        }
-        
-        double flyHeight = baseFlightHeight;
-        if (hasObstaclesInPath()) {
-            baseFlightHeight = Math.min(baseFlightHeight + 2.0, summonTarget.y + 25.0);
-            flyHeight = baseFlightHeight;
-        }
-        
-        return new Vec3(summonTarget.x, flyHeight, summonTarget.z);
-    }
-    
-    private float easeInOutCubic(float t) {
-        if (t < 0.5f) {
-            return 4.0f * t * t * t;
-        }
-        return 1.0f - (float) Math.pow(-2.0f * t + 2.0f, 3.0f) / 2.0f;
-    }
-
-    private boolean isOnGround() {
-        double ground = findGroundLevel();
-
-        return !(this.getY() > ground + 1.25 || this.getY() < ground + .5);
-    }
-
-    private void seekTheGround() {
-        if (!this.getPassengers().isEmpty() || this.tickCount % 20 != 0 || this.isOnGround() || isSummoning()) {
-            return;
-        }
-
-        double targetHoverY = findGroundLevel() + 1.25;
-
-        float yaw = (float) Math.toRadians(this.getYRot());
-        double targetX = this.getX() + Math.sin(-yaw) * jitterAmount;
-        double targetZ = this.getZ() + Math.cos(yaw) * jitterAmount;
-
-        this.getMoveControl().setWantedPosition(targetX, targetHoverY, targetZ, 1);
-    }
-
-    private boolean isSummoning() {
-        return summonTarget != null;
-    }
-
-    private boolean hasObstaclesInPath() {
-        if (summonTarget == null) {
-            return false;
-        }
-        
-        Vec3 direction = summonTarget.subtract(this.position()).normalize();
-        Vec3 checkPos = this.position();
-        
-        for (int i = 0; i < 20; i++) {
-            checkPos = checkPos.add(direction.scale(2.0));
-            BlockPos pos = new BlockPos((int) checkPos.x, (int) checkPos.y, (int) checkPos.z);
-            
-            if (!this.level().getBlockState(pos).isAir()) {
-                return true;
-            }
-            
-            if (checkPos.distanceTo(summonTarget) < 2.0) {
-                break;
-            }
-        }
-        
-        return false;
-    }
-
-    private double findGroundLevel() {
-        Vec3 start = new Vec3(this.getX(), this.getY(), this.getZ());
-        Vec3 end = new Vec3(this.getX(), this.getY() - 100, this.getZ());
-
-        ClipContext context = new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this);
-        BlockHitResult result = this.level().clip(context);
-
-        if (result.getType() == HitResult.Type.BLOCK) {
-            return result.getLocation().y;
-        }
-
-        return this.getY() - 50;
     }
 
     public void setOwner(@Nullable Player player) {
@@ -390,7 +294,7 @@ public class FlyingBroom extends PathfinderMob {
     @Override
     protected void removePassenger(@NotNull Entity passenger) {
         super.removePassenger(passenger);
-        if (this.level().isClientSide && passenger instanceof LocalPlayer) {
+        if (this.level().isClientSide && passenger instanceof Player) {
             restoreSprintToggle();
         }
     }
@@ -435,6 +339,11 @@ public class FlyingBroom extends PathfinderMob {
         if (controllingPassenger == null) {
             super.travel(travelVector);
             return;
+        }
+        
+        if (this.getNavigation().isInProgress()) {
+            Witchcraft.LOGGER.warn("Navigation still in progress while player is riding broom!");
+            this.getNavigation().stop();
         }
 
         this.setYRot(controllingPassenger.getYRot());
@@ -499,9 +408,6 @@ public class FlyingBroom extends PathfinderMob {
         if (controllingPassenger instanceof LocalPlayer localPlayer) {
             return calculateLocalPlayerVerticalMotion(localPlayer);
         }
-        if (controllingPassenger instanceof ServerPlayer serverPlayer) {
-            return calculateServerPlayerVerticalMotion(serverPlayer, travelVector);
-        }
         return 0;
     }
 
@@ -511,16 +417,6 @@ public class FlyingBroom extends PathfinderMob {
         }
         if (localPlayer.input.jumping) {
             return ServerConfig.flyingBroomSpeed / 20.0;
-        }
-        return 0;
-    }
-
-    private double calculateServerPlayerVerticalMotion(ServerPlayer serverPlayer, Vec3 travelVector) {
-        if (travelVector.y > 0.0) {
-            return ServerConfig.flyingBroomSpeed / 20.0;
-        }
-        if (serverPlayer.isShiftKeyDown()) {
-            return -ServerConfig.flyingBroomSpeed / 20.0;
         }
         return 0;
     }
@@ -538,12 +434,20 @@ public class FlyingBroom extends PathfinderMob {
             originalSprintToggle = null;
         }
     }
+    
+    public static void forceRestoreSprintToggle() {
+        // Failsafe method to restore sprint toggle in case of unexpected dismount
+        // This can be called from client event handlers as needed
+    }
 
     private void updateSprintingState(LivingEntity controllingPassenger) {
     }
 
     @Override
     protected void registerGoals() {
+        this.goalSelector.addGoal(1, new ReturnToOwner(this));
+        this.goalSelector.addGoal(3, new SafelyDescend(this));
+        this.goalSelector.addGoal(4, new Hover(this));
     }
 
     @Override
@@ -568,18 +472,24 @@ public class FlyingBroom extends PathfinderMob {
     }
 
     @Override
-    public boolean isInvulnerableTo(DamageSource damageSource) {
-        return damageSource.is(DamageTypes.IN_WALL) || damageSource.is(DamageTypes.DROWN) || super.isInvulnerableTo(damageSource);
+    public boolean isInvulnerableTo(@NotNull DamageSource damageSource) {
+        return super.isInvulnerableTo(damageSource)
+                || damageSource.is(DamageTypes.IN_WALL)
+                || damageSource.is(DamageTypes.DROWN)
+                || damageSource.is(DamageTypes.FALL)
+            ;
     }
 
     @Override
     public void die(@NotNull DamageSource damageSource) {
+        System.out.println("Died to " + damageSource.getMsgId() + " during summon");
+
         if (ownerUUID != null && !this.level().isClientSide) {
             clearOwnerBondOnDeath();
         }
-        if (this.level().isClientSide) {
-            restoreSprintToggle();
-        }
+        
+        restoreSprintToggle();
+        cleanupChunkLoader();
         super.die(damageSource);
     }
 
@@ -610,14 +520,61 @@ public class FlyingBroom extends PathfinderMob {
 
         compound.put("BroomData", broomData.toNBT());
     }
+    
+    public boolean hasSummonTarget() {
+        return summonTarget != null;
+    }
 
-    public void flyTowardsTarget(Vec3 targetPos) {
-        this.summonTarget = targetPos;
-        this.baseFlightHeight = Math.max(targetPos.y + 8.0, this.getY());
+    public void setSummonTarget(Vec3 target) {
+        if (target == null) {
+            return;
+        }
+        this.summonTarget = target;
+        initializeChunkLoader();
+    }
+    
+    @Nullable
+    public Vec3 getSummonTarget() {
+        return summonTarget;
+    }
+    
+    public void clearSummonTarget() {
+        summonTarget = null;
+        cleanupChunkLoader();
+    }
+    
+    private void initializeChunkLoader() {
+        if (this.level().isClientSide || !(this.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        
+        if (chunkLoader == null) {
+            chunkLoader = new ChunkLoader(serverLevel, this.getUUID());
+        }
+    }
+    
+    private void updateChunkLoading() {
+        if (chunkLoader == null || summonTarget == null) {
+            return;
+        }
+        
+        chunkLoader.loadChunksAround(this.position());
+    }
+    
+    private void cleanupChunkLoader() {
+        if (chunkLoader != null) {
+            chunkLoader.unloadAll();
+            chunkLoader = null;
+        }
     }
 
     @Override
     public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
+    }
+
+    @Override
+    public void checkDespawn() {
+        // Do nothing - we don't want the broom to despawn automatically
     }
 }

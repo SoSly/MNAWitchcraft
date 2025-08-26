@@ -1,9 +1,10 @@
-package org.sosly.witchcraft;
+package org.sosly.witchcraft.config;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
+import org.sosly.witchcraft.Witchcraft;
 
 @Mod.EventBusSubscriber(modid = Witchcraft.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ServerConfig {
@@ -65,7 +66,7 @@ public class ServerConfig {
             .comment("Flying broom flight speed in blocks per second")
             .defineInRange("flyingBroomSpeed", 7.0, 1.0, 30.0);
 
-    static final ForgeConfigSpec SPEC = BUILDER.build();
+    public static final ForgeConfigSpec SPEC = BUILDER.build();
 
     public static boolean bossesBlockSympathy;
     public static boolean bossesImmuneToSympathy;

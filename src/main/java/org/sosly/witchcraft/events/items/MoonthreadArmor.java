@@ -18,7 +18,7 @@ import net.minecraftforge.event.entity.living.MobEffectEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.sosly.witchcraft.ServerConfig;
+import org.sosly.witchcraft.config.ServerConfig;
 import org.sosly.witchcraft.Witchcraft;
 import org.sosly.witchcraft.api.capabilities.IMoonthreadArmorData;
 import org.sosly.witchcraft.capabilities.armor.MoonthreadArmorProvider;
