@@ -13,6 +13,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.ForgeHooksClient;
 import org.sosly.witchcraft.api.renderers.IFlyingBroomRenderer;
+import org.sosly.witchcraft.data.FlyingBroomData;
 import org.sosly.witchcraft.renderers.FlyingBroomRenderHelper;
 
 public class FlyingBroomItemRenderer extends BlockEntityWithoutLevelRenderer implements IFlyingBroomRenderer {
@@ -98,37 +99,28 @@ public class FlyingBroomItemRenderer extends BlockEntityWithoutLevelRenderer imp
     @Override
     public ResourceLocation getHandleWood() {
         if (currentStack == null) {
-            return new ResourceLocation("minecraft:oak");
+            return FlyingBroomData.DEFAULT_HANDLE_WOOD;
         }
-        CompoundTag nbt = currentStack.getTag();
-        if (nbt != null && nbt.contains("HandleWood")) {
-            return new ResourceLocation(nbt.getString("HandleWood"));
-        }
-        return new ResourceLocation("minecraft:oak");
+        FlyingBroomData data = FlyingBroomData.fromItemStack(currentStack);
+        return data.getHandleWood();
     }
 
     @Override
     public int getRibbonColor() {
         if (currentStack == null) {
-            return 16383998;
+            return FlyingBroomData.DEFAULT_RIBBON_COLOR;
         }
-        CompoundTag nbt = currentStack.getTag();
-        if (nbt != null && nbt.contains("RibbonColor")) {
-            return nbt.getInt("RibbonColor");
-        }
-        return 16383998;
+        FlyingBroomData data = FlyingBroomData.fromItemStack(currentStack);
+        return data.getRibbonColor();
     }
 
     @Override
     public int getBrushTier() {
         if (currentStack == null) {
-            return 1;
+            return FlyingBroomData.DEFAULT_BRUSH_TIER;
         }
-        CompoundTag nbt = currentStack.getTag();
-        if (nbt != null && nbt.contains("BrushTier")) {
-            return nbt.getInt("BrushTier");
-        }
-        return 1;
+        FlyingBroomData data = FlyingBroomData.fromItemStack(currentStack);
+        return data.getBrushTier();
     }
     
 }

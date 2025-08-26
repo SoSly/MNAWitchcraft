@@ -34,7 +34,7 @@ import org.sosly.witchcraft.ServerConfig;
 import org.sosly.witchcraft.Witchcraft;
 import org.sosly.witchcraft.api.capabilities.ICovenCapability;
 import org.sosly.witchcraft.capabilities.coven.CovenProvider;
-import org.sosly.witchcraft.items.ItemRegistry;
+import org.sosly.witchcraft.data.FlyingBroomData;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -50,15 +50,9 @@ public class FlyingBroom extends PathfinderMob {
     private double baseFlightHeight = 0;
     private Boolean originalSprintToggle = null;
 
-    private int brushTier = 1;
-    private ResourceLocation handleWood = new ResourceLocation("minecraft:oak");
-    private int ribbonColor = 16383998;
-    private int storageLevel = 0;
+    private FlyingBroomData broomData = new FlyingBroomData();
 
     private final double jitterAmount = 0.0001;
-
-    private final ItemStackHandler charmHandler = new ItemStackHandler(3);
-    private ItemStackHandler storageHandler = new ItemStackHandler(0);
 
     private Vec3 currentMotion = Vec3.ZERO;
     private double currentVerticalMotion = 0.0;
@@ -100,8 +94,8 @@ public class FlyingBroom extends PathfinderMob {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_HOVER_OFFSET, 0.0F);
-        this.entityData.define(DATA_RIBBON_COLOR, 16383998);
-        this.entityData.define(DATA_HANDLE_WOOD, "minecraft:oak");
+        this.entityData.define(DATA_RIBBON_COLOR, FlyingBroomData.DEFAULT_RIBBON_COLOR);
+        this.entityData.define(DATA_HANDLE_WOOD, FlyingBroomData.DEFAULT_HANDLE_WOOD.toString());
     }
 
     @Override
@@ -237,73 +231,72 @@ public class FlyingBroom extends PathfinderMob {
     }
 
     public int getBrushTier() {
-        return brushTier;
+        return broomData.getBrushTier();
     }
 
     public void setBrushTier(int tier) {
-        this.brushTier = tier;
+        this.broomData = new FlyingBroomData(tier, broomData.getHandleWood(), broomData.getRibbonColor(), broomData.getStorageLevel());
+        copyInventoriesToNewData();
     }
 
     public ResourceLocation getHandleWood() {
-        return new ResourceLocation(this.entityData.get(DATA_HANDLE_WOOD));
+        if (this.level().isClientSide) {
+            return new ResourceLocation(this.entityData.get(DATA_HANDLE_WOOD));
+        }
+        return broomData.getHandleWood();
     }
 
     public void setHandleWood(ResourceLocation wood) {
-        this.handleWood = wood;
+        this.broomData = broomData.withNewWood(wood);
         this.entityData.set(DATA_HANDLE_WOOD, wood.toString());
     }
 
     public int getRibbonColor() {
-        return this.entityData.get(DATA_RIBBON_COLOR);
+        if (this.level().isClientSide) {
+            return this.entityData.get(DATA_RIBBON_COLOR);
+        }
+        return broomData.getRibbonColor();
     }
 
     public void setRibbonColor(int color) {
-        this.ribbonColor = color;
+        this.broomData = broomData.withNewColor(color);
         this.entityData.set(DATA_RIBBON_COLOR, color);
     }
 
     public int getStorageLevel() {
-        return storageLevel;
+        return broomData.getStorageLevel();
     }
 
     public void setStorageLevel(int level) {
-        this.storageLevel = level;
-        int slots = getSlotsForLevel(level);
-        if (slots == storageHandler.getSlots()) {
-            return;
-        }
-
-        resizeStorageHandler(slots);
+        this.broomData = broomData.upgradeStorage(level);
     }
 
-    private int getSlotsForLevel(int level) {
-        return switch (level) {
-            case 1 -> 9;
-            case 2 -> 18;
-            case 3 -> 27;
-            default -> 0;
-        };
-    }
-
-    private void resizeStorageHandler(int slots) {
-        ItemStackHandler oldHandler = storageHandler;
-        storageHandler = new ItemStackHandler(slots);
-        copyItemsToNewHandler(oldHandler, slots);
-    }
-
-    private void copyItemsToNewHandler(ItemStackHandler oldHandler, int newSlots) {
-        int itemsToCopy = Math.min(oldHandler.getSlots(), newSlots);
-        for (int i = 0; i < itemsToCopy; i++) {
-            storageHandler.setStackInSlot(i, oldHandler.getStackInSlot(i));
-        }
-    }
 
     public ItemStackHandler getCharmHandler() {
-        return charmHandler;
+        return broomData.getCharmHandler();
     }
 
     public ItemStackHandler getStorageHandler() {
-        return storageHandler;
+        return broomData.getStorageHandler();
+    }
+    
+    public FlyingBroomData getBroomData() {
+        return broomData;
+    }
+    
+    public void setBroomData(FlyingBroomData data) {
+        this.broomData = data;
+        syncDataToClient();
+    }
+    
+    private void copyInventoriesToNewData() {
+        // This method is called when we create a new data object but need to preserve inventories
+        // The data class handles inventory copying in its withXXX methods
+    }
+    
+    private void syncDataToClient() {
+        this.entityData.set(DATA_RIBBON_COLOR, broomData.getRibbonColor());
+        this.entityData.set(DATA_HANDLE_WOOD, broomData.getHandleWood().toString());
     }
 
     @Override
@@ -352,18 +345,7 @@ public class FlyingBroom extends PathfinderMob {
     }
 
     private ItemStack createItemWithData() {
-        ItemStack broomItem = new ItemStack(ItemRegistry.FLYING_BROOM.get());
-        CompoundTag nbt = new CompoundTag();
-
-        nbt.putInt("BrushTier", this.brushTier);
-        nbt.putString("HandleWood", this.handleWood.toString());
-        nbt.putInt("RibbonColor", this.ribbonColor);
-        nbt.putInt("StorageLevel", this.storageLevel);
-        nbt.put("CharmInventory", charmHandler.serializeNBT());
-        nbt.put("StorageInventory", storageHandler.serializeNBT());
-
-        broomItem.setTag(nbt);
-        return broomItem;
+        return broomData.toItemStack();
     }
 
     private void clearPlayerBond(Player player) {
@@ -433,25 +415,13 @@ public class FlyingBroom extends PathfinderMob {
             this.ownerUUID = compound.getUUID("Owner");
         }
 
-        this.brushTier = compound.getInt("BrushTier");
-        if (compound.contains("HandleWood")) {
-            this.handleWood = new ResourceLocation(compound.getString("HandleWood"));
+        if (compound.contains("BroomData")) {
+            this.broomData = FlyingBroomData.fromNBT(compound.getCompound("BroomData"));
+        } else {
+            this.broomData = new FlyingBroomData();
         }
-        this.ribbonColor = compound.getInt("RibbonColor");
-        this.entityData.set(DATA_RIBBON_COLOR, this.ribbonColor);
-        this.entityData.set(DATA_HANDLE_WOOD, this.handleWood.toString());
-
-        int newStorageLevel = compound.getInt("StorageLevel");
-        if (newStorageLevel != this.storageLevel) {
-            setStorageLevel(newStorageLevel);
-        }
-
-        if (compound.contains("CharmInventory")) {
-            charmHandler.deserializeNBT(compound.getCompound("CharmInventory"));
-        }
-        if (compound.contains("StorageInventory")) {
-            storageHandler.deserializeNBT(compound.getCompound("StorageInventory"));
-        }
+        
+        syncDataToClient();
     }
 
     @Override
@@ -638,13 +608,7 @@ public class FlyingBroom extends PathfinderMob {
             compound.putUUID("Owner", this.ownerUUID);
         }
 
-        compound.putInt("BrushTier", this.brushTier);
-        compound.putString("HandleWood", this.handleWood.toString());
-        compound.putInt("RibbonColor", this.ribbonColor);
-        compound.putInt("StorageLevel", this.storageLevel);
-
-        compound.put("CharmInventory", charmHandler.serializeNBT());
-        compound.put("StorageInventory", storageHandler.serializeNBT());
+        compound.put("BroomData", broomData.toNBT());
     }
 
     public void flyTowardsTarget(Vec3 targetPos) {

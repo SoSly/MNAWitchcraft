@@ -10,6 +10,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.sosly.witchcraft.api.renderers.IFlyingBroomRenderer;
+import org.sosly.witchcraft.data.FlyingBroomData;
 import org.sosly.witchcraft.entities.tools.FlyingBroom;
 import org.sosly.witchcraft.renderers.FlyingBroomRenderHelper;
 
@@ -80,17 +81,17 @@ public class FlyingBroomEntityRenderer extends EntityRenderer<FlyingBroom> imple
 
     @Override
     public ResourceLocation getHandleWood() {
-        return currentEntity != null ? currentEntity.getHandleWood() : new ResourceLocation("minecraft:oak");
+        return currentEntity != null ? currentEntity.getHandleWood() : FlyingBroomData.DEFAULT_HANDLE_WOOD;
     }
 
     @Override
     public int getRibbonColor() {
-        return currentEntity != null ? currentEntity.getRibbonColor() : 16383998;
+        return currentEntity != null ? currentEntity.getRibbonColor() : FlyingBroomData.DEFAULT_RIBBON_COLOR;
     }
 
     @Override
     public int getBrushTier() {
-        return currentEntity != null ? currentEntity.getBrushTier() : 1;
+        return currentEntity != null ? currentEntity.getBrushTier() : FlyingBroomData.DEFAULT_BRUSH_TIER;
     }
 
     @Override
