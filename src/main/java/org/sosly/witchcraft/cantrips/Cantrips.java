@@ -28,7 +28,7 @@ public class Cantrips {
 
     public static void registerCantrips() {
         CantripRegistry.INSTANCE.registerCantrip(
-            new ResourceLocation(Witchcraft.MOD_ID, "cantrips/summon_broom"),
+            new ResourceLocation(Witchcraft.MOD_ID, "summon_broom"),
             new ResourceLocation(Witchcraft.MOD_ID, "textures/gui/cantrips/summon_broom.png"), 
             3, 
             Cantrips::summonBroom,

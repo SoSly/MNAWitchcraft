@@ -96,9 +96,11 @@
   
   "message.mnaw.requires_coven_tier3": "Only experienced Coven witches can use this cauldron.",
   
-  "advancement.mnaw.summon_broom.title": "Master of the Skies",
-  "advancement.mnaw.summon_broom.description": "Place your first Flying Broom to unlock the summoning cantrip",
+  "advancement.mnaw.summon_broom.title": "Swept Away",
+  "advancement.mnaw.summon_broom.description": "Place your first Flying Broom to unlock the summon broom cantrip.",
   
+  "cantrip.mnaw.summon_broom": "Summon Broom",
+  "cantrip.mnaw.summon_broom.desc": "I can summon my broom, and it will quickly fly towards me from any distance!",
   "cantrip.mnaw.summon_broom.no_broom": "You have no bonded broom to summon.",
   "cantrip.mnaw.summon_broom.not_found": "Your bonded broom could not be found.",
   "cantrip.mnaw.summon_broom.wrong_dimension": "Your broom is in another dimension.",
