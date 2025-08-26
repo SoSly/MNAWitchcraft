@@ -18,8 +18,5 @@ public class ModelRegistry {
         event.register(new ResourceLocation(Witchcraft.MOD_ID, "item/flying_broom_connectors"));
         event.register(new ResourceLocation(Witchcraft.MOD_ID, "item/flying_broom_ribbon"));
         event.register(new ResourceLocation(Witchcraft.MOD_ID, "item/flying_broom_brush"));
-        event.register(new ResourceLocation(Witchcraft.MOD_ID, "entity/flying_broom"));
-        event.register(new ResourceLocation(Witchcraft.MOD_ID, "entity/flying_broom_ribbon"));
-        event.register(new ResourceLocation(Witchcraft.MOD_ID, "entity/flying_broom_brush"));
     }
 }

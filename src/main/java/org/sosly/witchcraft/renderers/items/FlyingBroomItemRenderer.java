@@ -1,6 +1,7 @@
 package org.sosly.witchcraft.renderers.items;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -15,11 +16,23 @@ import org.sosly.witchcraft.api.renderers.IFlyingBroomRenderer;
 import org.sosly.witchcraft.renderers.FlyingBroomRenderHelper;
 
 public class FlyingBroomItemRenderer extends BlockEntityWithoutLevelRenderer implements IFlyingBroomRenderer {
+    private static FlyingBroomItemRenderer INSTANCE;
+    
     private ItemStack currentStack;
     private ItemDisplayContext currentDisplayContext;
 
-    public FlyingBroomItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet) {
+    private FlyingBroomItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet) {
         super(dispatcher, modelSet);
+    }
+    
+    public static FlyingBroomItemRenderer getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new FlyingBroomItemRenderer(
+                Minecraft.getInstance().getBlockEntityRenderDispatcher(),
+                Minecraft.getInstance().getEntityModels()
+            );
+        }
+        return INSTANCE;
     }
 
     @Override
