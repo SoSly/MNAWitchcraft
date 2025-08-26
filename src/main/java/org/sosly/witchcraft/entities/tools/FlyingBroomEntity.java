@@ -459,10 +459,6 @@ public class FlyingBroomEntity extends PathfinderMob {
         float strafe = controllingPassenger.xxa * 0.5F;
         float forward = controllingPassenger.zza;
 
-        if (forward < 0.0F) {
-            forward = 0.0F;
-        }
-
         Vec3 targetMotion = calculateTargetMotion(strafe, forward, controllingPassenger);
         updateSprintingState(controllingPassenger);
         currentMotion = applyHorizontalAcceleration(currentMotion, targetMotion);
