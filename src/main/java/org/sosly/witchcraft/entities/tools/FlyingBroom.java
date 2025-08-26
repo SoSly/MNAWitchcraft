@@ -31,6 +31,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.sosly.witchcraft.ServerConfig;
+import org.sosly.witchcraft.Witchcraft;
 import org.sosly.witchcraft.api.capabilities.ICovenCapability;
 import org.sosly.witchcraft.capabilities.coven.CovenProvider;
 import org.sosly.witchcraft.items.ItemRegistry;
@@ -39,10 +40,10 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.UUID;
 
-public class FlyingBroomEntity extends PathfinderMob {
-    private static final EntityDataAccessor<Float> DATA_HOVER_OFFSET = SynchedEntityData.defineId(FlyingBroomEntity.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Integer> DATA_RIBBON_COLOR = SynchedEntityData.defineId(FlyingBroomEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<String> DATA_HANDLE_WOOD = SynchedEntityData.defineId(FlyingBroomEntity.class, EntityDataSerializers.STRING);
+public class FlyingBroom extends PathfinderMob {
+    private static final EntityDataAccessor<Float> DATA_HOVER_OFFSET = SynchedEntityData.defineId(FlyingBroom.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Integer> DATA_RIBBON_COLOR = SynchedEntityData.defineId(FlyingBroom.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<String> DATA_HANDLE_WOOD = SynchedEntityData.defineId(FlyingBroom.class, EntityDataSerializers.STRING);
 
     private UUID ownerUUID;
     private Vec3 summonTarget = null;
@@ -66,7 +67,7 @@ public class FlyingBroomEntity extends PathfinderMob {
     private static final double VERTICAL_ACCELERATION = 0.1;
     private static final double VERTICAL_DECELERATION = 0.9;
 
-    public FlyingBroomEntity(EntityType<? extends FlyingBroomEntity> entityType, Level level) {
+    public FlyingBroom(EntityType<? extends FlyingBroom> entityType, Level level) {
         super(entityType, level);
         this.moveControl = new FlyingMoveControl(this, 0, true);
         this.blocksBuilding = true;
@@ -115,9 +116,10 @@ public class FlyingBroomEntity extends PathfinderMob {
         
         if (isSummoning()) {
             handleSummoning();
-        } else {
-            seekTheGround();
+            return;
         }
+        
+        seekTheGround();
     }
 
     private void handleSummoning() {
@@ -126,34 +128,34 @@ public class FlyingBroomEntity extends PathfinderMob {
         }
         
         double distanceToTarget = this.position().distanceTo(summonTarget);
-        double horizontalDistance = Math.sqrt(Math.pow(this.getX() - summonTarget.x, 2) + Math.pow(this.getZ() - summonTarget.z, 2));
-        
         if (distanceToTarget < 1.5) {
             summonTarget = null;
             return;
         }
 
+        Vec3 flyTarget = calculateSummonFlyTarget();
         float speed = 2.0f;
-        
-        Vec3 flyTarget;
-        
-        if (horizontalDistance < 8.0) {
-            flyTarget = summonTarget;
-        } else {
-            double flyHeight = baseFlightHeight;
-            
-            if (hasObstaclesInPath()) {
-                baseFlightHeight = Math.min(baseFlightHeight + 2.0, summonTarget.y + 25.0);
-                flyHeight = baseFlightHeight;
-            }
-            
-            flyTarget = new Vec3(summonTarget.x, flyHeight, summonTarget.z);
-        }
         
         this.getMoveControl().setWantedPosition(flyTarget.x, flyTarget.y, flyTarget.z, speed);
         
         Vec3 lookDirection = summonTarget.subtract(this.position()).normalize();
         this.setYRot((float) (Math.atan2(-lookDirection.x, lookDirection.z) * 180.0 / Math.PI));
+    }
+    
+    private Vec3 calculateSummonFlyTarget() {
+        double horizontalDistance = Math.sqrt(Math.pow(this.getX() - summonTarget.x, 2) + Math.pow(this.getZ() - summonTarget.z, 2));
+        
+        if (horizontalDistance < 8.0) {
+            return summonTarget;
+        }
+        
+        double flyHeight = baseFlightHeight;
+        if (hasObstaclesInPath()) {
+            baseFlightHeight = Math.min(baseFlightHeight + 2.0, summonTarget.y + 25.0);
+            flyHeight = baseFlightHeight;
+        }
+        
+        return new Vec3(summonTarget.x, flyHeight, summonTarget.z);
     }
     
     private float easeInOutCubic(float t) {
@@ -309,16 +311,31 @@ public class FlyingBroomEntity extends PathfinderMob {
         if (this.level().isClientSide) {
             return InteractionResult.SUCCESS;
         }
-        if (!player.isShiftKeyDown()) {
-            if (!canRide(player) || !canAddPassenger(player)) {
-                System.out.println("[Broom] Mount denied for " + player.getName().getString() + " (owner: " + (ownerUUID != null ? "set" : "none") + ")");
-                return InteractionResult.PASS;
-            }
-            player.startRiding(this);
-            return InteractionResult.SUCCESS;
+        
+        if (player.isShiftKeyDown()) {
+            return handlePickupAttempt(player);
         }
+
+        return handleMountAttempt(player);
+    }
+    
+    private InteractionResult handleMountAttempt(Player player) {
+        if (!canRide(player) || !canAddPassenger(player)) {
+            Witchcraft.LOGGER.warn("Broom mount denied for {} (owner: {})", 
+                player.getName().getString(), 
+                ownerUUID != null ? "set" : "none");
+            return InteractionResult.PASS;
+        }
+        
+        player.startRiding(this);
+        return InteractionResult.SUCCESS;
+    }
+    
+    private InteractionResult handlePickupAttempt(Player player) {
         if (!isOwner(player)) {
-            System.out.println("[Broom] Pickup denied for " + player.getName().getString() + " (owner: " + (ownerUUID != null ? "set" : "none") + ")");
+            Witchcraft.LOGGER.warn("Broom pickup denied for {} (owner: {})", 
+                player.getName().getString(), 
+                ownerUUID != null ? "set" : "none");
             return InteractionResult.FAIL;
         }
 
@@ -376,6 +393,7 @@ public class FlyingBroomEntity extends PathfinderMob {
         if (ownerUUID != null && !player.getUUID().equals(ownerUUID)) {
             return false;
         }
+        
         return true;
     }
 

@@ -17,7 +17,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.sosly.witchcraft.Witchcraft;
 import org.sosly.witchcraft.api.capabilities.ICovenCapability;
 import org.sosly.witchcraft.capabilities.coven.CovenProvider;
-import org.sosly.witchcraft.entities.tools.FlyingBroomEntity;
+import org.sosly.witchcraft.entities.tools.FlyingBroom;
 
 import java.util.UUID;
 
@@ -59,7 +59,7 @@ public class Cantrips {
         }
 
         Entity entity = serverLevel.getEntity(broomId);
-        if (!(entity instanceof FlyingBroomEntity broom)) {
+        if (!(entity instanceof FlyingBroom broom)) {
             player.sendSystemMessage(Component.translatable("cantrip.mnaw.summon_broom.not_found"));
             return;
         }

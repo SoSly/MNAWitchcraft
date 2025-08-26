@@ -10,18 +10,18 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.sosly.witchcraft.api.renderers.IFlyingBroomRenderer;
-import org.sosly.witchcraft.entities.tools.FlyingBroomEntity;
+import org.sosly.witchcraft.entities.tools.FlyingBroom;
 import org.sosly.witchcraft.renderers.FlyingBroomRenderHelper;
 
-public class FlyingBroomEntityRenderer extends EntityRenderer<FlyingBroomEntity> implements IFlyingBroomRenderer {
-    private FlyingBroomEntity currentEntity;
+public class FlyingBroomEntityRenderer extends EntityRenderer<FlyingBroom> implements IFlyingBroomRenderer {
+    private FlyingBroom currentEntity;
 
     public FlyingBroomEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
     }
 
     @Override
-    public void render(FlyingBroomEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight) {
+    public void render(FlyingBroom entity, float entityYaw, float partialTicks, PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight) {
         poseStack.pushPose();
         
         poseStack.mulPose(Axis.YP.rotationDegrees(90.0F - entityYaw));
@@ -35,7 +35,7 @@ public class FlyingBroomEntityRenderer extends EntityRenderer<FlyingBroomEntity>
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
     }
 
-    private void renderBroomWithTintedRibbon(FlyingBroomEntity entity, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+    private void renderBroomWithTintedRibbon(FlyingBroom entity, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
         this.currentEntity = entity;
         
         poseStack.pushPose();
@@ -94,7 +94,7 @@ public class FlyingBroomEntityRenderer extends EntityRenderer<FlyingBroomEntity>
     }
 
     @Override
-    public @NotNull ResourceLocation getTextureLocation(@NotNull FlyingBroomEntity entity) {
+    public @NotNull ResourceLocation getTextureLocation(@NotNull FlyingBroom entity) {
         return new ResourceLocation("minecraft", "textures/item/stick.png");
     }
 }

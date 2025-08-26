@@ -12,7 +12,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
-import org.sosly.witchcraft.items.FlyingBroomItem;
+import org.sosly.witchcraft.items.tools.FlyingBroom;
 
 public class FlyingBroomHandleWoodRecipe extends CustomRecipe {
     
@@ -31,7 +31,7 @@ public class FlyingBroomHandleWoodRecipe extends CustomRecipe {
                 continue;
             }
 
-            if (stack.getItem() instanceof FlyingBroomItem) {
+            if (stack.getItem() instanceof FlyingBroom) {
                 if (!broomStack.isEmpty()) {
                     return false;
                 }
@@ -60,7 +60,7 @@ public class FlyingBroomHandleWoodRecipe extends CustomRecipe {
                 continue;
             }
 
-            if (stack.getItem() instanceof FlyingBroomItem) {
+            if (stack.getItem() instanceof FlyingBroom) {
                 broomStack = stack;
             } else if (stack.getItem() instanceof BlockItem blockItem && isStrippedLog(blockItem.getBlock())) {
                 strippedLog = blockItem.getBlock();
@@ -71,7 +71,7 @@ public class FlyingBroomHandleWoodRecipe extends CustomRecipe {
             return ItemStack.EMPTY;
         }
 
-        return FlyingBroomItem.changeHandleWood(broomStack, strippedLog);
+        return FlyingBroom.changeHandleWood(broomStack, strippedLog);
     }
 
     private boolean isStrippedLog(Block block) {

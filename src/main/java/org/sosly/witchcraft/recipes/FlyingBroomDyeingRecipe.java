@@ -12,8 +12,7 @@ import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
-import org.sosly.witchcraft.items.FlyingBroomItem;
-import org.sosly.witchcraft.items.ItemRegistry;
+import org.sosly.witchcraft.items.tools.FlyingBroom;
 
 public class FlyingBroomDyeingRecipe extends CustomRecipe {
     
@@ -32,7 +31,7 @@ public class FlyingBroomDyeingRecipe extends CustomRecipe {
                 continue;
             }
 
-            if (stack.getItem() instanceof FlyingBroomItem) {
+            if (stack.getItem() instanceof FlyingBroom) {
                 if (!broomStack.isEmpty()) {
                     return false;
                 }
@@ -61,7 +60,7 @@ public class FlyingBroomDyeingRecipe extends CustomRecipe {
                 continue;
             }
 
-            if (stack.getItem() instanceof FlyingBroomItem) {
+            if (stack.getItem() instanceof FlyingBroom) {
                 broomStack = stack;
             } else if (stack.getItem() instanceof DyeItem dyeItem) {
                 dyeColor = dyeItem.getDyeColor();
@@ -72,7 +71,7 @@ public class FlyingBroomDyeingRecipe extends CustomRecipe {
             return ItemStack.EMPTY;
         }
 
-        return FlyingBroomItem.dyeBroom(broomStack, dyeColor);
+        return FlyingBroom.dyeBroom(broomStack, dyeColor);
     }
 
     @Override

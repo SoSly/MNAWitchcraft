@@ -21,7 +21,7 @@ import org.sosly.witchcraft.items.grimoire.CovenGrimoire;
 import org.sosly.witchcraft.items.fluids.CondensedMoonlightBucketItem;
 import org.sosly.witchcraft.items.fluids.CondensedMoonlightBottleItem;
 import org.sosly.witchcraft.fluids.FluidRegistry;
-import org.sosly.witchcraft.items.FlyingBroomItem;
+import org.sosly.witchcraft.items.tools.FlyingBroom;
 
 @Mod.EventBusSubscriber(modid= Witchcraft.MOD_ID, bus=Mod.EventBusSubscriber.Bus.MOD)
 public class ItemRegistry {
@@ -46,7 +46,7 @@ public class ItemRegistry {
     public static final RegistryObject<Item> CONDENSED_MOONLIGHT_BOTTLE = ITEMS.register("condensed_moonlight_bottle", 
             () -> new CondensedMoonlightBottleItem(new Item.Properties()));
     public static final RegistryObject<Item> MOONTHREAD = ITEMS.register("moonthread", () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> FLYING_BROOM = ITEMS.register("flying_broom", FlyingBroomItem::new);
+    public static final RegistryObject<Item> FLYING_BROOM = ITEMS.register("flying_broom", FlyingBroom::new);
 
     @SubscribeEvent
     public static void FillCreativeTabs(BuildCreativeModeTabContentsEvent event) {
