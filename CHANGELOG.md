@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/SoSly/MNAWitchcraft/tree/1.20.1)
 ### Added
+- added Flying Broom, a customizable rideable entity that allows flight in the overworld and nether
 - added Coven progression spell effect tracking system for tiers 3-5
 - added `/mnaw progress <player>` command to view coven progression status
 - added `/mnaw progress <player> complete` command to mark current tier progression as complete
