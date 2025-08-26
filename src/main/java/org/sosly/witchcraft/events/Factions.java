@@ -13,8 +13,10 @@ import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.sosly.witchcraft.Witchcraft;
+import org.sosly.witchcraft.api.capabilities.IBroomCapability;
 import org.sosly.witchcraft.api.capabilities.ICovenCapability;
 import org.sosly.witchcraft.api.capabilities.IMoonthreadArmorData;
+import org.sosly.witchcraft.capabilities.broom.BroomProvider;
 import org.sosly.witchcraft.capabilities.coven.CovenProvider;
 import org.sosly.witchcraft.capabilities.armor.MoonthreadArmorProvider;
 import org.sosly.witchcraft.items.ItemRegistry;
@@ -28,6 +30,7 @@ public class Factions {
     @SubscribeEvent
     public static void onAttachCapability(AttachCapabilitiesEvent<?> event) {
         if (event.getObject() instanceof Player) {
+            event.addCapability(IBroomCapability.BROOM_CAPABILITY, new BroomProvider());
             event.addCapability(ICovenCapability.COVEN_CAPABILITY, new CovenProvider());
             event.addCapability(IMoonthreadArmorData.MOONTHREAD_ARMOR_DATA, new MoonthreadArmorProvider());
         }

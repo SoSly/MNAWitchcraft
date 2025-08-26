@@ -3,11 +3,9 @@ package org.sosly.witchcraft.api.capabilities;
 import net.minecraft.resources.ResourceLocation;
 import org.sosly.witchcraft.Witchcraft;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * ICovenCapability tracks a coven witch's progression.
@@ -71,29 +69,4 @@ public interface ICovenCapability {
      */
     Map<ResourceLocation, Boolean> getTierEffectsProgress(int tier);
 
-    /**
-     * @return the UUID of the bonded broom entity, or null if no broom is bonded
-     */
-    @Nullable
-    UUID getBondedBroomId();
-
-    /**
-     * @param entityId the UUID of the broom entity to bond, or null to unbond
-     */
-    void setBondedBroomId(@Nullable UUID entityId);
-
-    /**
-     * @return true if a broom is currently bonded to this player
-     */
-    boolean hasBondedBroom();
-
-    /**
-     * @return true if the player has ever unlocked brooms
-     */
-    boolean broomsUnlocked();
-
-    /**
-     * @param unlocked whether brooms are unlocked for this player
-     */
-    void setBroomsUnlocked(boolean unlocked);
 }

@@ -3,18 +3,14 @@ package org.sosly.witchcraft.capabilities.coven;
 import net.minecraft.resources.ResourceLocation;
 import org.sosly.witchcraft.api.capabilities.ICovenCapability;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 public class CovenCapability implements ICovenCapability {
     private boolean malice = false;
     private final Map<Integer, Map<ResourceLocation, Boolean>> tierEffectsProgress = new HashMap<>();
-    private UUID bondedBroomId = null;
-    private boolean broomsUnlocked = false;
 
     @Override
     public boolean hasMalice() {
@@ -78,31 +74,5 @@ public class CovenCapability implements ICovenCapability {
     @Override
     public Map<ResourceLocation, Boolean> getTierEffectsProgress(int tier) {
         return tierEffectsProgress.get(tier);
-    }
-
-    @Override
-    @Nullable
-    public UUID getBondedBroomId() {
-        return bondedBroomId;
-    }
-
-    @Override
-    public void setBondedBroomId(@Nullable UUID entityId) {
-        this.bondedBroomId = entityId;
-    }
-
-    @Override
-    public boolean hasBondedBroom() {
-        return bondedBroomId != null;
-    }
-
-    @Override
-    public boolean broomsUnlocked() {
-        return broomsUnlocked;
-    }
-
-    @Override
-    public void setBroomsUnlocked(boolean unlocked) {
-        this.broomsUnlocked = unlocked;
     }
 }

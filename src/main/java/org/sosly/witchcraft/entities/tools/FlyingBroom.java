@@ -29,8 +29,8 @@ import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.sosly.witchcraft.Witchcraft;
-import org.sosly.witchcraft.api.capabilities.ICovenCapability;
-import org.sosly.witchcraft.capabilities.coven.CovenProvider;
+import org.sosly.witchcraft.api.capabilities.IBroomCapability;
+import org.sosly.witchcraft.capabilities.broom.BroomProvider;
 import org.sosly.witchcraft.config.ServerConfig;
 import org.sosly.witchcraft.data.FlyingBroomData;
 import org.sosly.witchcraft.entities.ai.Hover;
@@ -253,8 +253,8 @@ public class FlyingBroom extends PathfinderMob {
     }
 
     private void clearPlayerBond(Player player) {
-        LazyOptional<ICovenCapability> cap = player.getCapability(CovenProvider.COVEN);
-        cap.ifPresent(coven -> coven.setBondedBroomId(null));
+        LazyOptional<IBroomCapability> cap = player.getCapability(BroomProvider.BROOM);
+        cap.ifPresent(broom -> broom.setBondedBroomId(null));
     }
 
     private void giveItemToPlayer(Player player, ItemStack item) {
@@ -296,6 +296,10 @@ public class FlyingBroom extends PathfinderMob {
         super.removePassenger(passenger);
         if (this.level().isClientSide && passenger instanceof Player) {
             restoreSprintToggle();
+        }
+        
+        if (!this.level().isClientSide && passenger instanceof Player player) {
+            cacheBroomLocation(player);
         }
     }
 
@@ -482,8 +486,6 @@ public class FlyingBroom extends PathfinderMob {
 
     @Override
     public void die(@NotNull DamageSource damageSource) {
-        System.out.println("Died to " + damageSource.getMsgId() + " during summon");
-
         if (ownerUUID != null && !this.level().isClientSide) {
             clearOwnerBondOnDeath();
         }
@@ -499,10 +501,22 @@ public class FlyingBroom extends PathfinderMob {
             return;
         }
 
-        LazyOptional<ICovenCapability> cap = owner.getCapability(CovenProvider.COVEN);
-        cap.ifPresent(coven -> {
-            if (this.uuid.equals(coven.getBondedBroomId())) {
-                coven.setBondedBroomId(null);
+        LazyOptional<IBroomCapability> cap = owner.getCapability(BroomProvider.BROOM);
+        cap.ifPresent(broom -> {
+            if (this.uuid.equals(broom.getBondedBroomId())) {
+                broom.setBondedBroomId(null);
+                broom.setLastKnownPosition(null);
+                broom.setLastKnownDimension(null);
+            }
+        });
+    }
+
+    private void cacheBroomLocation(Player player) {
+        LazyOptional<IBroomCapability> cap = player.getCapability(BroomProvider.BROOM);
+        cap.ifPresent(broom -> {
+            if (this.uuid.equals(broom.getBondedBroomId())) {
+                broom.setLastKnownPosition(this.blockPosition());
+                broom.setLastKnownDimension(this.level().dimension().location());
             }
         });
     }

@@ -15,10 +15,10 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.LazyOptional;
 import org.sosly.witchcraft.Witchcraft;
-import org.sosly.witchcraft.api.capabilities.ICovenCapability;
-import org.sosly.witchcraft.capabilities.coven.CovenCapability;
-import org.sosly.witchcraft.capabilities.coven.CovenProvider;
+import org.sosly.witchcraft.api.capabilities.IBroomCapability;
+import org.sosly.witchcraft.capabilities.broom.BroomProvider;
 import org.sosly.witchcraft.entities.tools.FlyingBroom;
+import org.sosly.witchcraft.utils.ChunkLoader;
 
 import java.util.UUID;
 
@@ -29,13 +29,13 @@ public class SummonBroom {
     public static int TIER = 3;
 
     public static void execute(Player player, ICantrip cantrip, InteractionHand hand) {
-        ICovenCapability coven = player.getCapability(CovenProvider.COVEN).orElse(null);
-        if (!coven.hasBondedBroom()) {
+        IBroomCapability broom = player.getCapability(BroomProvider.BROOM).orElse(null);
+        if (!broom.hasBondedBroom()) {
             player.sendSystemMessage(Component.translatable("cantrip.mnaw.summon_broom.no_broom"));
             return;
         }
 
-        UUID broomId = coven.getBondedBroomId();
+        UUID broomId = broom.getBondedBroomId();
         if (broomId == null) {
             return;
         }
@@ -49,33 +49,37 @@ public class SummonBroom {
             entity = findBroomAcrossChunks(serverLevel, broomId);
         }
 
-        if (!(entity instanceof FlyingBroom broom)) {
+        if (!(entity instanceof FlyingBroom)) {
+            entity = findBroomWithChunkLoading(serverLevel, broomId, broom);
+        }
+
+        if (!(entity instanceof FlyingBroom broomEntity)) {
             player.sendSystemMessage(Component.translatable("cantrip.mnaw.summon_broom.not_found"));
             return;
         }
 
-        if (!broom.level().dimension().equals(player.level().dimension())) {
+        if (!broomEntity.level().dimension().equals(player.level().dimension())) {
             player.sendSystemMessage(Component.translatable("cantrip.mnaw.summon_broom.wrong_dimension"));
             return;
         }
 
-        broom.ejectPassengers();
+        broomEntity.ejectPassengers();
         
         Vec3 playerPos = player.position();
-        Vec3 broomPos = broom.position();
+        Vec3 broomPos = broomEntity.position();
         double distance = playerPos.distanceTo(broomPos);
 
-        if (distance > 64.0) {
+        if (distance > 32.0) {
             Vec3 direction = broomPos.subtract(playerPos).normalize();
-            Vec3 teleportPos = playerPos.add(direction.scale(64.0));
+            Vec3 teleportPos = playerPos.add(direction.scale(32.0));
             
             double safeHeight = findSafeHeight(serverLevel, teleportPos.x, teleportPos.z, playerPos.y);
             teleportPos = new Vec3(teleportPos.x, safeHeight, teleportPos.z);
-            broom.setPos(teleportPos);
+            broomEntity.setPos(teleportPos);
         }
 
         Vec3 targetPos = playerPos.add(0, 1.5, 0);
-        broom.setSummonTarget(targetPos);
+        broomEntity.setSummonTarget(targetPos);
         
         player.sendSystemMessage(Component.translatable("cantrip.mnaw.summon_broom.success"));
     }
@@ -88,6 +92,31 @@ public class SummonBroom {
         }
         
         return null;
+    }
+
+    private static Entity findBroomWithChunkLoading(ServerLevel level, UUID entityId, IBroomCapability broomCap) {
+        if (broomCap.getLastKnownPosition() == null || broomCap.getLastKnownDimension() == null) {
+            return null;
+        }
+
+        if (!broomCap.getLastKnownDimension().equals(level.dimension().location())) {
+            return null;
+        }
+
+        ChunkLoader chunkLoader = new ChunkLoader(level, entityId);
+        try {
+            Vec3 cachedPos = Vec3.atCenterOf(broomCap.getLastKnownPosition());
+            chunkLoader.loadChunksAround(cachedPos);
+            
+            Entity entity = level.getEntity(entityId);
+            if (entity instanceof FlyingBroom) {
+                return entity;
+            }
+            
+            return null;
+        } finally {
+            chunkLoader.unloadAll();
+        }
     }
 
     private static double findSafeHeight(ServerLevel level, double x, double z, double playerY) {

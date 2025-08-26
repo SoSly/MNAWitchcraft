@@ -18,8 +18,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
-import org.sosly.witchcraft.api.capabilities.ICovenCapability;
-import org.sosly.witchcraft.capabilities.coven.CovenProvider;
+import org.sosly.witchcraft.api.capabilities.IBroomCapability;
+import org.sosly.witchcraft.capabilities.broom.BroomProvider;
 import org.sosly.witchcraft.data.FlyingBroomData;
 import org.sosly.witchcraft.entities.EntityTypeRegistry;
 import org.sosly.witchcraft.renderers.items.FlyingBroomItemRenderer;
@@ -106,24 +106,24 @@ public class FlyingBroom extends TieredItem {
     }
     
     private void cleanupExistingBroom(Player player, Level level) {
-        LazyOptional<ICovenCapability> cap = player.getCapability(CovenProvider.COVEN);
-        cap.ifPresent(coven -> {
-            if (!coven.hasBondedBroom()) {
+        LazyOptional<IBroomCapability> cap = player.getCapability(BroomProvider.BROOM);
+        cap.ifPresent(broom -> {
+            if (!broom.hasBondedBroom()) {
                 return;
             }
             
-            org.sosly.witchcraft.entities.tools.FlyingBroom existingBroom = findBondedBroom(level, player, coven);
+            org.sosly.witchcraft.entities.tools.FlyingBroom existingBroom = findBondedBroom(level, player, broom);
             if (existingBroom != null) {
                 existingBroom.discard();
             }
-            coven.setBondedBroomId(null);
+            broom.setBondedBroomId(null);
         });
     }
     
-    private org.sosly.witchcraft.entities.tools.FlyingBroom findBondedBroom(Level level, Player player, ICovenCapability coven) {
+    private org.sosly.witchcraft.entities.tools.FlyingBroom findBondedBroom(Level level, Player player, IBroomCapability broom) {
         for (org.sosly.witchcraft.entities.tools.FlyingBroom entity : level.getEntitiesOfClass(org.sosly.witchcraft.entities.tools.FlyingBroom.class,
                 player.getBoundingBox().inflate(1000))) {
-            if (coven.getBondedBroomId().equals(entity.getUUID())) {
+            if (broom.getBondedBroomId().equals(entity.getUUID())) {
                 return entity;
             }
         }
@@ -146,10 +146,12 @@ public class FlyingBroom extends TieredItem {
     
     
     private void bondBroomToPlayer(Player player, org.sosly.witchcraft.entities.tools.FlyingBroom broomEntity) {
-        LazyOptional<ICovenCapability> cap = player.getCapability(CovenProvider.COVEN);
-        cap.ifPresent(coven -> {
-            coven.setBondedBroomId(broomEntity.getUUID());
-            coven.setBroomsUnlocked(true);
+        LazyOptional<IBroomCapability> cap = player.getCapability(BroomProvider.BROOM);
+        cap.ifPresent(broom -> {
+            broom.setBondedBroomId(broomEntity.getUUID());
+            broom.setBroomsUnlocked(true);
+            broom.setLastKnownPosition(broomEntity.blockPosition());
+            broom.setLastKnownDimension(broomEntity.level().dimension().location());
         });
     }
     
