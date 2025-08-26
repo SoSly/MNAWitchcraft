@@ -91,7 +91,5 @@ public class ReturnToOwner extends Goal {
         broom.clearSummonTarget();
         broom.getNavigation().stop();
         speedModifier = 1.0;
-
-        System.out.println("ReturnToOwner stopped");
     }
 }

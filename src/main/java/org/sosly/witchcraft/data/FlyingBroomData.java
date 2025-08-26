@@ -150,6 +150,24 @@ public class FlyingBroomData {
         };
     }
 
+    /**
+     * Blends the current color with a given DyeColor using Minecraft's color blending logic.
+     * <p>
+     * This method mimics the way Minecraft blends colors when applying dyes to items (such as leather armor).
+     * The algorithm works as follows:
+     * <ul>
+     *   <li>Extracts the RGB components of the current color (if present) and the dye color.</li>
+     *   <li>Accumulates the sum of each RGB component and the maximum brightness (the largest component) for each color.</li>
+     *   <li>Calculates the average RGB values and average brightness across all colors involved.</li>
+     *   <li>Normalizes the averaged RGB values so that the brightest component matches the average brightness, preserving color vibrancy.</li>
+     *   <li>Returns the final blended color as an integer in 0xRRGGBB format.</li>
+     * </ul>
+     * This approach ensures that the resulting color maintains the vibrancy and brightness expected in Minecraft's dye system.
+     *
+     * @param currentColor The current color as an integer (0xRRGGBB). If 0, only the dye color is used.
+     * @param dyeColor The DyeColor to blend with the current color.
+     * @return The blended color as an integer (0xRRGGBB).
+     */
     private static int blendColorsMinecraft(int currentColor, DyeColor dyeColor) {
         int[] colorComponents = new int[3];
         int maxBrightness = 0;
