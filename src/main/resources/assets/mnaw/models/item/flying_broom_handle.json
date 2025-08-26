@@ -1,0 +1,12 @@
+{
+  "parent": "builtin/entity",
+  "loader": "forge:obj",
+  "automatic_culling": true,
+  "shade_quads": true,
+  "flip_v": true,
+  "emissive_ambient": false,
+  "model": "mnaw:models/obj/broom_haft.obj",
+  "textures": {
+    "particle": "mnaw:item/flying_broom"
+  }
+}

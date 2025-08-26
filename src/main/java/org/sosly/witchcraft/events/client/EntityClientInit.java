@@ -23,6 +23,8 @@ public class EntityClientInit {
 
     @SubscribeEvent
     public static void onRegisterAdditionalModels(ModelEvent.RegisterAdditional event) {
+        event.register(new ResourceLocation(Witchcraft.MOD_ID, "entity/flying_broom_handle"));
+        event.register(new ResourceLocation(Witchcraft.MOD_ID, "entity/flying_broom_connectors"));
         event.register(new ResourceLocation(Witchcraft.MOD_ID, "entity/flying_broom_ribbon"));
         event.register(new ResourceLocation(Witchcraft.MOD_ID, "entity/flying_broom_brush"));
     }

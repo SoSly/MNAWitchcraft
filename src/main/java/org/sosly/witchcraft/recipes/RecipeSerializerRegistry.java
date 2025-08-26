@@ -18,4 +18,11 @@ public class RecipeSerializerRegistry {
                 (id, category) -> new FlyingBroomDyeingRecipe(id, CraftingBookCategory.EQUIPMENT)
             )
         );
+    
+    public static final RegistryObject<RecipeSerializer<FlyingBroomHandleWoodRecipe>> FLYING_BROOM_HANDLE_WOOD = 
+        SERIALIZERS.register("flying_broom_handle_wood", 
+            () -> new SimpleCraftingRecipeSerializer<>(
+                (id, category) -> new FlyingBroomHandleWoodRecipe(id, CraftingBookCategory.EQUIPMENT)
+            )
+        );
 }

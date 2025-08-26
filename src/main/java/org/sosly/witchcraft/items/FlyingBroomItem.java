@@ -17,6 +17,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.block.Block;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
@@ -76,10 +78,16 @@ public class FlyingBroomItem extends TieredItem {
         if (flag.isAdvanced()) {
             ensureDefaultNBT(stack);
             CompoundTag nbt = stack.getTag();
-            if (nbt != null && nbt.contains("RibbonColor")) {
-                int color = nbt.getInt("RibbonColor");
-                String hexColor = String.format("#%06X", color);
-                tooltip.add(Component.literal("Ribbon Color: " + hexColor));
+            if (nbt != null) {
+                if (nbt.contains("RibbonColor")) {
+                    int color = nbt.getInt("RibbonColor");
+                    String hexColor = String.format("#%06X", color);
+                    tooltip.add(Component.literal("Ribbon Color: " + hexColor).withStyle(net.minecraft.ChatFormatting.GRAY));
+                }
+                if (nbt.contains("HandleWood")) {
+                    String woodType = nbt.getString("HandleWood");
+                    tooltip.add(Component.literal("Handle Wood: " + woodType).withStyle(net.minecraft.ChatFormatting.GRAY));
+                }
             }
         }
     }
@@ -230,6 +238,41 @@ public class FlyingBroomItem extends TieredItem {
         nbt.putInt("RibbonColor", blendedColor);
         
         return result;
+    }
+    
+    public static ItemStack changeHandleWood(ItemStack broomStack, Block strippedLog) {
+        ItemStack result = broomStack.copy();
+        ensureDefaultNBTStatic(result);
+        
+        CompoundTag nbt = result.getOrCreateTag();
+        ResourceLocation woodType = getWoodTypeFromStrippedLog(strippedLog);
+        nbt.putString("HandleWood", woodType.toString());
+        
+        return result;
+    }
+    
+    private static ResourceLocation getWoodTypeFromStrippedLog(Block strippedLog) {
+        ResourceLocation blockId = ForgeRegistries.BLOCKS.getKey(strippedLog);
+        if (blockId == null) {
+            return new ResourceLocation("minecraft:oak");
+        }
+        
+        String blockPath = blockId.getPath();
+        if (blockPath.startsWith("stripped_") && (blockPath.endsWith("_log") || blockPath.endsWith("_stem"))) {
+            String woodType = blockPath.substring(9);
+            if (woodType.endsWith("_log")) {
+                woodType = woodType.substring(0, woodType.length() - 4);
+            } else if (woodType.endsWith("_stem")) {
+                woodType = woodType.substring(0, woodType.length() - 5);
+            }
+            return new ResourceLocation(blockId.getNamespace(), woodType);
+        }
+        
+        if (blockPath.equals("stripped_bamboo_block")) {
+            return new ResourceLocation(blockId.getNamespace(), "bamboo");
+        }
+        
+        return new ResourceLocation("minecraft:oak");
     }
     
     private static void ensureDefaultNBTStatic(ItemStack stack) {

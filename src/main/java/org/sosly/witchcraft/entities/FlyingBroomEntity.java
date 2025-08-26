@@ -42,6 +42,7 @@ import java.util.UUID;
 public class FlyingBroomEntity extends PathfinderMob {
     private static final EntityDataAccessor<Float> DATA_HOVER_OFFSET = SynchedEntityData.defineId(FlyingBroomEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Integer> DATA_RIBBON_COLOR = SynchedEntityData.defineId(FlyingBroomEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<String> DATA_HANDLE_WOOD = SynchedEntityData.defineId(FlyingBroomEntity.class, EntityDataSerializers.STRING);
 
     private UUID ownerUUID;
     private Vec3 summonTarget = null;
@@ -99,6 +100,7 @@ public class FlyingBroomEntity extends PathfinderMob {
         super.defineSynchedData();
         this.entityData.define(DATA_HOVER_OFFSET, 0.0F);
         this.entityData.define(DATA_RIBBON_COLOR, 16383998);
+        this.entityData.define(DATA_HANDLE_WOOD, "minecraft:oak");
     }
 
     @Override
@@ -241,11 +243,12 @@ public class FlyingBroomEntity extends PathfinderMob {
     }
 
     public ResourceLocation getHandleWood() {
-        return handleWood;
+        return new ResourceLocation(this.entityData.get(DATA_HANDLE_WOOD));
     }
 
     public void setHandleWood(ResourceLocation wood) {
         this.handleWood = wood;
+        this.entityData.set(DATA_HANDLE_WOOD, wood.toString());
     }
 
     public int getRibbonColor() {
@@ -418,6 +421,7 @@ public class FlyingBroomEntity extends PathfinderMob {
         }
         this.ribbonColor = compound.getInt("RibbonColor");
         this.entityData.set(DATA_RIBBON_COLOR, this.ribbonColor);
+        this.entityData.set(DATA_HANDLE_WOOD, this.handleWood.toString());
 
         int newStorageLevel = compound.getInt("StorageLevel");
         if (newStorageLevel != this.storageLevel) {

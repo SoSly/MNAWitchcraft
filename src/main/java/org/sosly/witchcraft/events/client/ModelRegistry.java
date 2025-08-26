@@ -14,6 +14,8 @@ public class ModelRegistry {
     public static void onModelRegister(ModelEvent.RegisterAdditional event) {
         event.register(new ResourceLocation(Witchcraft.MOD_ID, "item/grimoire_witch_open"));
         event.register(new ResourceLocation(Witchcraft.MOD_ID, "item/grimoire_witch_closed"));
+        event.register(new ResourceLocation(Witchcraft.MOD_ID, "item/flying_broom_handle"));
+        event.register(new ResourceLocation(Witchcraft.MOD_ID, "item/flying_broom_connectors"));
         event.register(new ResourceLocation(Witchcraft.MOD_ID, "item/flying_broom_ribbon"));
         event.register(new ResourceLocation(Witchcraft.MOD_ID, "item/flying_broom_brush"));
         event.register(new ResourceLocation(Witchcraft.MOD_ID, "entity/flying_broom"));

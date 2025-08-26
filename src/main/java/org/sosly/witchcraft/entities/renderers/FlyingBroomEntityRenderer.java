@@ -24,9 +24,11 @@ import org.sosly.witchcraft.items.ItemRegistry;
 
 public class FlyingBroomEntityRenderer extends EntityRenderer<FlyingBroomEntity> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Witchcraft.MOD_ID, "textures/entity/flying_broom.png");
-    private static final ResourceLocation BROOM_MODEL = new ResourceLocation(Witchcraft.MOD_ID, "entity/flying_broom");
+    private static final ResourceLocation HANDLE_MODEL = new ResourceLocation(Witchcraft.MOD_ID, "entity/flying_broom_handle");
+    private static final ResourceLocation CONNECTORS_MODEL = new ResourceLocation(Witchcraft.MOD_ID, "entity/flying_broom_connectors");
     
-    private BakedModel broomModel;
+    private BakedModel handleModel;
+    private BakedModel connectorsModel;
 
     public FlyingBroomEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -48,20 +50,52 @@ public class FlyingBroomEntityRenderer extends EntityRenderer<FlyingBroomEntity>
     }
 
     private void renderBroomWithTintedRibbon(FlyingBroomEntity entity, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
-        if (broomModel == null) {
-            broomModel = Minecraft.getInstance().getModelManager().getModel(BROOM_MODEL);
-        }
+        loadModelsIfNeeded();
         
-        if (broomModel != null && broomModel != Minecraft.getInstance().getModelManager().getMissingModel()) {
-            poseStack.pushPose();
-            poseStack.translate(-0.25D,-0.125D,-0.25D);
-            poseStack.scale(0.5F, 0.5F, 0.5F);
-            renderBakedModel(broomModel, poseStack, buffer, packedLight);
-            poseStack.popPose();
-        }
+        poseStack.pushPose();
+        poseStack.translate(-0.25D, -0.125D, -0.25D);
+        poseStack.scale(0.5F, 0.5F, 0.5F);
         
+        renderHandle(entity, poseStack, buffer, packedLight);
+        renderConnectors(entity, poseStack, buffer, packedLight);
         renderTintedRibbon(entity, poseStack, buffer, packedLight);
         renderTintedBrush(entity, poseStack, buffer, packedLight);
+        
+        poseStack.popPose();
+    }
+    
+    private void renderHandle(FlyingBroomEntity entity, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+        if (handleModel == null) {
+            return;
+        }
+        
+        renderBakedModelWithWoodTexture(handleModel, entity.getHandleWood(), poseStack, buffer, packedLight);
+    }
+    
+    private void loadModelsIfNeeded() {
+        if (handleModel == null) {
+            handleModel = Minecraft.getInstance().getModelManager().getModel(HANDLE_MODEL);
+        }
+        if (connectorsModel == null) {
+            connectorsModel = Minecraft.getInstance().getModelManager().getModel(CONNECTORS_MODEL);
+        }
+    }
+    
+    private void renderConnectors(FlyingBroomEntity entity, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+        if (connectorsModel == null) {
+            return;
+        }
+        
+        RandomSource random = RandomSource.create();
+        random.setSeed(42);
+        
+        var quads = connectorsModel.getQuads(null, null, random, ModelData.EMPTY, null);
+        RenderType renderType = RenderType.solid();
+        VertexConsumer consumer = buffer.getBuffer(renderType);
+        
+        for (var quad : quads) {
+            consumer.putBulkData(poseStack.last(), quad, 1.0f, 1.0f, 1.0f, packedLight, OverlayTexture.NO_OVERLAY);
+        }
     }
     
     private void renderBakedModel(BakedModel model, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
@@ -82,15 +116,9 @@ public class FlyingBroomEntityRenderer extends EntityRenderer<FlyingBroomEntity>
             return;
         }
         
-        poseStack.pushPose();
-        poseStack.translate(-0.217d, -0.125d, -0.25d);
-        poseStack.scale(0.45f, 0.45f, 0.45f);
-        
         TintedMultiBufferSource tintedBuffer = new TintedMultiBufferSource(buffer, entity.getRibbonColor());
         RandomSource random = RandomSource.create();
         renderBakedModel(ribbonModel, poseStack, tintedBuffer, packedLight, random);
-        
-        poseStack.popPose();
     }
 
     private void renderTintedBrush(FlyingBroomEntity entity, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
@@ -99,16 +127,10 @@ public class FlyingBroomEntityRenderer extends EntityRenderer<FlyingBroomEntity>
             return;
         }
         
-        poseStack.pushPose();
-        poseStack.translate(-0.25d, -0.125d, -0.25d);
-        poseStack.scale(0.5f, 0.5f, 0.5f);
-        
         int brushColor = getBrushColorForTier(entity.getBrushTier());
         TintedMultiBufferSource tintedBuffer = new TintedMultiBufferSource(buffer, brushColor);
         RandomSource random = RandomSource.create();
         renderBakedModel(brushModel, poseStack, tintedBuffer, packedLight, random);
-        
-        poseStack.popPose();
     }
 
     private void renderBakedModel(BakedModel model, PoseStack poseStack, MultiBufferSource buffer, int packedLight, RandomSource random) {
@@ -155,6 +177,48 @@ public class FlyingBroomEntityRenderer extends EntityRenderer<FlyingBroomEntity>
             case 3 -> 0xC0C0C0;
             default -> 0xE7C77B;
         };
+    }
+    
+    private void renderBakedModelWithWoodTexture(BakedModel model, ResourceLocation woodType, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+        ResourceLocation woodTexture = getWoodTexture(woodType);
+        WoodTexturedMultiBufferSource texturedBuffer = new WoodTexturedMultiBufferSource(buffer, woodTexture);
+        
+        RandomSource random = RandomSource.create();
+        random.setSeed(42);
+        
+        var quads = model.getQuads(null, null, random, ModelData.EMPTY, null);
+        RenderType renderType = RenderType.solid();
+        VertexConsumer consumer = texturedBuffer.getBuffer(renderType);
+        
+        for (var quad : quads) {
+            consumer.putBulkData(poseStack.last(), quad, 1.0f, 1.0f, 1.0f, packedLight, OverlayTexture.NO_OVERLAY);
+        }
+    }
+    
+    private ResourceLocation getWoodTexture(ResourceLocation woodType) {
+        if (woodType.getPath().equals("crimson") || woodType.getPath().equals("warped")) {
+            return new ResourceLocation(woodType.getNamespace(), "textures/block/stripped_" + woodType.getPath() + "_stem.png");
+        } else if (woodType.getPath().equals("bamboo")) {
+            return new ResourceLocation(woodType.getNamespace(), "textures/block/stripped_bamboo_block.png");
+        } else {
+            return new ResourceLocation(woodType.getNamespace(), "textures/block/stripped_" + woodType.getPath() + "_log.png");
+        }
+    }
+
+    private static class WoodTexturedMultiBufferSource implements MultiBufferSource {
+        private final MultiBufferSource delegate;
+        private final ResourceLocation woodTexture;
+
+        public WoodTexturedMultiBufferSource(MultiBufferSource delegate, ResourceLocation woodTexture) {
+            this.delegate = delegate;
+            this.woodTexture = woodTexture;
+        }
+
+        @Override
+        public VertexConsumer getBuffer(RenderType renderType) {
+            RenderType texturedRenderType = RenderType.entitySolid(woodTexture);
+            return delegate.getBuffer(texturedRenderType);
+        }
     }
 
     private static class TintedMultiBufferSource implements MultiBufferSource {
