@@ -60,4 +60,11 @@ public class BroomCapability implements IBroomCapability {
     public void setLastKnownDimension(@Nullable ResourceLocation dimension) {
         this.lastKnownDimension = dimension;
     }
+
+    @Override
+    public void reset() {
+        this.bondedBroomId = null;
+        this.lastKnownPosition = null;
+        this.lastKnownDimension = null;
+    }
 }

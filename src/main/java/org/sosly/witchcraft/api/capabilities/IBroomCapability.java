@@ -30,4 +30,6 @@ public interface IBroomCapability {
     ResourceLocation getLastKnownDimension();
 
     void setLastKnownDimension(@Nullable ResourceLocation dimension);
+
+    void reset();
 }

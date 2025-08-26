@@ -35,6 +35,7 @@ import org.sosly.witchcraft.entities.ai.Hover;
 import org.sosly.witchcraft.entities.ai.ReturnToOwner;
 import org.sosly.witchcraft.entities.ai.SafelyDescend;
 import org.sosly.witchcraft.entities.controls.FlightController;
+import org.sosly.witchcraft.entities.interactions.BroomInteractionHandler;
 import org.sosly.witchcraft.utils.ChunkLoader;
 
 import javax.annotation.Nullable;
@@ -47,6 +48,7 @@ public class FlyingBroom extends PathfinderMob {
     private static final EntityDataAccessor<Integer> DATA_RIBBON_COLOR = SynchedEntityData.defineId(FlyingBroom.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<String> DATA_HANDLE_WOOD = SynchedEntityData.defineId(FlyingBroom.class, EntityDataSerializers.STRING);
     private final FlightController flightController = new FlightController();
+    private final BroomInteractionHandler interactionHandler = new BroomInteractionHandler(this);
     private UUID ownerUUID;
     private Vec3 summonTarget = null;
     private ChunkLoader chunkLoader = null;
@@ -74,7 +76,7 @@ public class FlyingBroom extends PathfinderMob {
     }
 
     @Override
-    protected boolean canRide(@NotNull Entity entity) {
+    public boolean canRide(@NotNull Entity entity) {
         return entity instanceof Player player && (ownerUUID == null || player.getUUID().equals(ownerUUID));
     }
 
@@ -88,26 +90,15 @@ public class FlyingBroom extends PathfinderMob {
         // Do nothing - we don't want the broom to despawn automatically
     }
 
-    private void clearPlayerBond(Player player) {
+    public void clearPlayerBond(Player player) {
         LazyOptional<IBroomCapability> cap = player.getCapability(BroomProvider.BROOM);
-        cap.ifPresent(broom -> broom.setBondedBroomId(null));
-    }
-
-    private void clearOwnerBondOnDeath() {
-        Player owner = this.level().getPlayerByUUID(ownerUUID);
-        if (owner == null) {
-            return;
-        }
-
-        LazyOptional<IBroomCapability> cap = owner.getCapability(BroomProvider.BROOM);
         cap.ifPresent(broom -> {
             if (this.uuid.equals(broom.getBondedBroomId())) {
-                broom.setBondedBroomId(null);
-                broom.setLastKnownPosition(null);
-                broom.setLastKnownDimension(null);
+                broom.reset();
             }
         });
     }
+
 
     public static AttributeSupplier.Builder createAttributes() {
         return PathfinderMob.createMobAttributes()
@@ -117,7 +108,7 @@ public class FlyingBroom extends PathfinderMob {
                 ;
     }
 
-    private ItemStack createItemWithData() {
+    public ItemStack createItemWithData() {
         return broomData.toItemStack();
     }
 
@@ -141,7 +132,10 @@ public class FlyingBroom extends PathfinderMob {
     @Override
     public void die(@NotNull DamageSource damageSource) {
         if (ownerUUID != null && !this.level().isClientSide) {
-            clearOwnerBondOnDeath();
+            Player owner = this.level().getPlayerByUUID(ownerUUID);
+            if (owner != null) {
+                clearPlayerBond(owner);
+            }
         }
 
         flightController.restoreSprintToggle();
@@ -158,51 +152,9 @@ public class FlyingBroom extends PathfinderMob {
         return false;
     }
 
-    private void giveItemToPlayer(Player player, ItemStack item) {
-        if (!player.getInventory().add(item)) {
-            player.drop(item, false);
-        }
-    }
-
-    private InteractionResult handleMountAttempt(Player player) {
-        if (!canRide(player) || !canAddPassenger(player)) {
-            Witchcraft.LOGGER.warn("Broom mount denied for {} (owner: {})",
-                    player.getName().getString(),
-                    ownerUUID != null ? "set" : "none");
-            return InteractionResult.PASS;
-        }
-
-        player.startRiding(this);
-        return InteractionResult.SUCCESS;
-    }
-
-    private InteractionResult handlePickupAttempt(Player player) {
-        if (!isOwner(player)) {
-            Witchcraft.LOGGER.warn("Broom pickup denied for {} (owner: {})",
-                    player.getName().getString(),
-                    ownerUUID != null ? "set" : "none");
-            return InteractionResult.FAIL;
-        }
-
-        ItemStack broomItem = createItemWithData();
-        clearPlayerBond(player);
-        giveItemToPlayer(player, broomItem);
-        this.discard();
-
-        return InteractionResult.SUCCESS;
-    }
-
     @Override
     public @NotNull InteractionResult interactAt(@NotNull Player player, @NotNull Vec3 vec, @NotNull InteractionHand hand) {
-        if (this.level().isClientSide) {
-            return InteractionResult.SUCCESS;
-        }
-
-        if (player.isShiftKeyDown()) {
-            return handlePickupAttempt(player);
-        }
-
-        return handleMountAttempt(player);
+        return interactionHandler.handleInteraction(player, vec, hand);
     }
 
     @Override
@@ -210,7 +162,7 @@ public class FlyingBroom extends PathfinderMob {
         return false;
     }
 
-    private boolean isOwner(Player player) {
+    public boolean isOwner(Player player) {
         return ownerUUID != null && player.getUUID().equals(ownerUUID);
     }
 
@@ -365,7 +317,7 @@ public class FlyingBroom extends PathfinderMob {
     }
 
     @Override
-    protected boolean canAddPassenger(@NotNull Entity passenger) {
+    public boolean canAddPassenger(@NotNull Entity passenger) {
         if (!this.getPassengers().isEmpty()) {
             return false;
         }
@@ -431,5 +383,10 @@ public class FlyingBroom extends PathfinderMob {
 
     public void setOwner(@Nullable Player player) {
         this.ownerUUID = player != null ? player.getUUID() : null;
+    }
+
+    @Nullable
+    public UUID getOwnerUUID() {
+        return ownerUUID;
     }
 }
