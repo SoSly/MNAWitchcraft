@@ -1,4 +1,4 @@
-package org.sosly.witchcraft.items.renderers;
+package org.sosly.witchcraft.renderers.items;
 
 import org.sosly.witchcraft.items.armor.MoonthreadArmorItem;
 import org.sosly.witchcraft.items.models.MoonthreadArmorModel;

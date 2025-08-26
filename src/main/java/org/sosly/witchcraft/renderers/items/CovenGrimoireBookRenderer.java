@@ -1,4 +1,4 @@
-package org.sosly.witchcraft.items.renderers;
+package org.sosly.witchcraft.renderers.items;
 
 import com.mna.items.renderers.ItemSpellBookRenderer;
 import net.minecraft.client.model.geom.EntityModelSet;

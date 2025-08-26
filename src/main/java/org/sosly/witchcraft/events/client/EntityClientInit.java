@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.sosly.witchcraft.Witchcraft;
 import org.sosly.witchcraft.entities.EntityTypeRegistry;
-import org.sosly.witchcraft.entities.renderers.FlyingBroomEntityRenderer;
+import org.sosly.witchcraft.renderers.entities.FlyingBroomEntityRenderer;
 
 @Mod.EventBusSubscriber(modid = Witchcraft.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class EntityClientInit {

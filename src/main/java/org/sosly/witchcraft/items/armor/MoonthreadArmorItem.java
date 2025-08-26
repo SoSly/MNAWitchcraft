@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.sosly.witchcraft.ServerConfig;
 import org.sosly.witchcraft.Witchcraft;
 import org.sosly.witchcraft.factions.FactionRegistry;
-import org.sosly.witchcraft.items.renderers.MoonthreadArmorRenderer;
+import org.sosly.witchcraft.renderers.items.MoonthreadArmorRenderer;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;

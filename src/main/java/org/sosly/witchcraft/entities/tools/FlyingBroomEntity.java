@@ -1,4 +1,4 @@
-package org.sosly.witchcraft.entities;
+package org.sosly.witchcraft.entities.tools;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;

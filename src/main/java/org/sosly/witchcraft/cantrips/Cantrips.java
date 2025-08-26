@@ -17,7 +17,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.sosly.witchcraft.Witchcraft;
 import org.sosly.witchcraft.api.capabilities.ICovenCapability;
 import org.sosly.witchcraft.capabilities.coven.CovenProvider;
-import org.sosly.witchcraft.entities.FlyingBroomEntity;
+import org.sosly.witchcraft.entities.tools.FlyingBroomEntity;
 
 import java.util.UUID;
 

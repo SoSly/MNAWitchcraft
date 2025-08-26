@@ -4,11 +4,10 @@ import com.mna.items.sorcery.Grimoire;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.util.NonNullLazy;
 import org.sosly.witchcraft.Witchcraft;
-import org.sosly.witchcraft.items.renderers.CovenGrimoireBookRenderer;
+import org.sosly.witchcraft.renderers.items.CovenGrimoireBookRenderer;
 
 import java.util.function.Consumer;
 
