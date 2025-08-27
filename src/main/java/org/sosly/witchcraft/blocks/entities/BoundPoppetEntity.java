@@ -44,15 +44,9 @@ public class BoundPoppetEntity extends BlockEntity {
     public void load(@NotNull CompoundTag tag) {
         if (tag.hasUUID("target")) {
             target = tag.getUUID("target");
-        } else {
-            LOGGER.warn("BoundPoppetEntity at {} loaded without target UUID", worldPosition);
-            target = null;
         }
         if (tag.contains("type")) {
             type = tag.getString("type");
-        } else {
-            LOGGER.warn("BoundPoppetEntity at {} loaded without type string", worldPosition);
-            type = null;
         }
         super.load(tag);
     }
