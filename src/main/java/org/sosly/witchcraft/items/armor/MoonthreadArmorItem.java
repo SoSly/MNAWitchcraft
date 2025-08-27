@@ -1,6 +1,8 @@
 package org.sosly.witchcraft.items.armor;
 
+import com.mojang.logging.LogUtils;
 import com.mna.api.capabilities.IPlayerMagic;
+import org.slf4j.Logger;
 import com.mna.api.faction.IFaction;
 import com.mna.api.items.IFactionSpecific;
 import com.mna.api.items.ITieredItem;
@@ -39,6 +41,7 @@ import java.util.Random;
 import java.util.function.Consumer;
 
 public class MoonthreadArmorItem extends ArmorItem implements GeoItem, ISetItem, ITieredItem<MoonthreadArmorItem>, IFactionSpecific, IBrokenArmorReplaceable<MoonthreadArmorItem>, IManaRepairable {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private int tier = -1;
     private static final ResourceLocation MOONTHREAD_SET_BONUS = new ResourceLocation(Witchcraft.MOD_ID, "moonthread_armor_set_bonus");
     private AnimatableInstanceCache animCache = GeckoLibUtil.createInstanceCache(this);
@@ -137,7 +140,13 @@ public class MoonthreadArmorItem extends ArmorItem implements GeoItem, ISetItem,
         }
         
         IPlayerMagic magic = player.getCapability(PlayerMagicProvider.MAGIC).orElse(null);
-        if (magic == null || magic.getCastingResource() == null) {
+        if (magic == null) {
+            LOGGER.warn("Could not access player magic capability for {} during moonthread armor tick", player.getName().getString());
+            return;
+        }
+        
+        if (magic.getCastingResource() == null) {
+            LOGGER.warn("Player {} has null casting resource during moonthread armor tick", player.getName().getString());
             return;
         }
         
@@ -150,6 +159,11 @@ public class MoonthreadArmorItem extends ArmorItem implements GeoItem, ISetItem,
         if (level.getGameTime() % 20 == 0) {
             float percentPerSecond = 1.0f / ServerConfig.moonthreadArmorEarthenRegenTime;
             float regenAmount = maxAmount * percentPerSecond;
+            
+            if (regenAmount <= 0) {
+                LOGGER.warn("Invalid regen amount {} calculated for player {}", regenAmount, player.getName().getString());
+                return;
+            }
             
             magic.getCastingResource().restore(regenAmount);
         }

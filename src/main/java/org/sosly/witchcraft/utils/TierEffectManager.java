@@ -45,7 +45,7 @@ public class TierEffectManager {
             case 4 -> TIER_4_REQUIREMENTS;
             case 5 -> TIER_5_REQUIREMENTS;
             default -> {
-                LOGGER.error("Invalid tier: {}", tier);
+                LOGGER.error("{}", tier);
                 yield 0;
             }
         };
@@ -58,7 +58,7 @@ public class TierEffectManager {
             requirements.add(shuffled.get(i));
         }
         
-        LOGGER.info("Generated {} requirements for tier {}: {}", requirements.size(), tier, requirements);
+        LOGGER.info("{}", requirements.size(), tier, requirements);
         return requirements;
     }
     

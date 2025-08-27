@@ -1,6 +1,8 @@
 package org.sosly.witchcraft.items.alchemy;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.ChatFormatting;
+import org.slf4j.Logger;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -21,6 +23,8 @@ import java.util.Map;
 import java.util.Optional;
 
 public class PotionAmuletItem extends Item implements ICurioItem {
+    private static final Logger LOGGER = LogUtils.getLogger();
+    
     public PotionAmuletItem() {
         super(new Properties().stacksTo(1));
     }
@@ -28,6 +32,7 @@ public class PotionAmuletItem extends Item implements ICurioItem {
     public static Optional<ItemStack> getStack(Player player) {
         Optional<ICuriosItemHandler> curios = CuriosApi.getCuriosInventory(player).resolve();
         if (curios.isEmpty()) {
+            LOGGER.warn("Could not access Curios inventory for player {}", player.getName().getString());
             return Optional.empty();
         }
 
@@ -46,6 +51,10 @@ public class PotionAmuletItem extends Item implements ICurioItem {
         for (int i = 0; i < count; i++) {
             CompoundTag effectTag = tag.getCompound("immunity" + i);
             MobEffectInstance instance = MobEffectInstance.load(effectTag);
+            if (instance == null) {
+                LOGGER.error("Failed to load MobEffectInstance from NBT tag immunity{} in potion amulet", i);
+                continue;
+            }
             effects.add(instance);
         }
 
@@ -62,6 +71,10 @@ public class PotionAmuletItem extends Item implements ICurioItem {
         for (int i = 0; i < count; i++) {
             CompoundTag effectTag = tag.getCompound("immunity" + i);
             MobEffectInstance instance = MobEffectInstance.load(effectTag);
+            if (instance == null) {
+                LOGGER.error("Failed to load MobEffectInstance from NBT tag immunity{} during immunity check", i);
+                continue;
+            }
             if (instance.getEffect() == effect.getEffect()) {
                 return true;
             }

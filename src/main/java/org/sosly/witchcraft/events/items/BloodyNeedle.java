@@ -1,6 +1,7 @@
 package org.sosly.witchcraft.events.items;
 
 import com.mna.items.ItemInit;
+import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -20,6 +21,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.slf4j.Logger;
 import org.sosly.witchcraft.Witchcraft;
 import org.sosly.witchcraft.items.ItemRegistry;
 import org.sosly.witchcraft.items.sympathy.BoundPoppetItem;
@@ -29,7 +31,7 @@ import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = Witchcraft.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class BloodyNeedle {
-
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     @SubscribeEvent
     public static void onCraftWithPoppet(PlayerEvent.ItemCraftedEvent event) {
@@ -49,17 +51,20 @@ public class BloodyNeedle {
         }
 
         if (needle.isEmpty()) {
+            LOGGER.warn("Player {} attempted to craft bound poppet without bloody needle", event.getEntity().getName().getString());
             event.setCanceled(true);
             return;
         }
 
         CompoundTag tag = needle.getTag();
         if (tag == null) {
+            LOGGER.error("Bloody needle missing NBT data for player {}", event.getEntity().getName().getString());
             event.setResult(Event.Result.DENY);
             event.setCanceled(true);
             return;
         }
         if (!SympathyHelper.isBound(needle)) {
+            LOGGER.warn("Player {} attempted to use unbound bloody needle", event.getEntity().getName().getString());
             event.setResult(Event.Result.DENY);
             event.setCanceled(true);
             return;

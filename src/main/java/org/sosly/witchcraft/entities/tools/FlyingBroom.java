@@ -1,5 +1,6 @@
 package org.sosly.witchcraft.entities.tools;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -26,6 +27,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 import org.sosly.witchcraft.api.capabilities.IBroomCapability;
 import org.sosly.witchcraft.capabilities.broom.BroomProvider;
 import org.sosly.witchcraft.config.ServerConfig;
@@ -43,6 +45,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class FlyingBroom extends PathfinderMob {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static final EntityDataAccessor<Float> DATA_HOVER_OFFSET = SynchedEntityData.defineId(FlyingBroom.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Integer> DATA_RIBBON_COLOR = SynchedEntityData.defineId(FlyingBroom.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<String> DATA_HANDLE_WOOD = SynchedEntityData.defineId(FlyingBroom.class, EntityDataSerializers.STRING);
@@ -64,14 +67,13 @@ public class FlyingBroom extends PathfinderMob {
         Objects.requireNonNull(this.getAttribute(Attributes.FLYING_SPEED)).setBaseValue(ServerConfig.flyingBroomSpeed);
     }
 
+
     private void cacheBroomLocation(Player player) {
-        LazyOptional<IBroomCapability> cap = player.getCapability(BroomProvider.BROOM);
-        cap.ifPresent(broom -> {
-            if (this.uuid.equals(broom.getBondedBroomId())) {
-                broom.setLastKnownPosition(this.blockPosition());
-                broom.setLastKnownDimension(this.level().dimension().location());
-            }
-        });
+        IBroomCapability broom = BroomProvider.getBroomCapability(player, this.uuid);
+        if (broom != null) {
+            broom.setLastKnownPosition(this.blockPosition());
+            broom.setLastKnownDimension(this.level().dimension().location());
+        }
     }
 
     @Override
@@ -90,12 +92,10 @@ public class FlyingBroom extends PathfinderMob {
     }
 
     public void clearPlayerBond(Player player) {
-        LazyOptional<IBroomCapability> cap = player.getCapability(BroomProvider.BROOM);
-        cap.ifPresent(broom -> {
-            if (this.uuid.equals(broom.getBondedBroomId())) {
-                broom.reset();
-            }
-        });
+        IBroomCapability broom = BroomProvider.getBroomCapability(player, this.uuid);
+        if (broom != null) {
+            broom.reset();
+        }
     }
 
 
@@ -302,6 +302,7 @@ public class FlyingBroom extends PathfinderMob {
         if (compound.contains("BroomData")) {
             this.broomData = FlyingBroomData.fromNBT(compound.getCompound("BroomData"));
         } else {
+            LOGGER.warn("NBT missing BroomData, creating default");
             this.broomData = new FlyingBroomData();
         }
 

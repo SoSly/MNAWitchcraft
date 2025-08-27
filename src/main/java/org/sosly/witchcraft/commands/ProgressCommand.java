@@ -3,6 +3,7 @@ package org.sosly.witchcraft.commands;
 import com.mna.api.ManaAndArtificeMod;
 import com.mna.api.capabilities.IPlayerProgression;
 import com.mojang.brigadier.builder.ArgumentBuilder;
+import com.mojang.logging.LogUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -10,12 +11,15 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import org.slf4j.Logger;
 import org.sosly.witchcraft.api.capabilities.ICovenCapability;
 import org.sosly.witchcraft.capabilities.coven.CovenProvider;
 
 import java.util.Map;
 
 public class ProgressCommand {
+    private static final Logger LOGGER = LogUtils.getLogger();
+    
     public static ArgumentBuilder<CommandSourceStack, ?> register() {
         return Commands.literal("progress")
                 .requires(source -> source.hasPermission(2))
@@ -40,12 +44,14 @@ public class ProgressCommand {
     private static void showCovenProgress(CommandSourceStack source, ServerPlayer player) {
         ICovenCapability coven = player.getCapability(CovenProvider.COVEN).orElse(null);
         if (coven == null) {
+            LOGGER.error("ProgressCommand: Failed to get coven capability for player {}", player.getName().getString());
             source.sendFailure(Component.literal("Failed to get coven capability for " + player.getName().getString()));
             return;
         }
         
         IPlayerProgression progression = player.getCapability(ManaAndArtificeMod.getProgressionCapability()).orElse(null);
         if (progression == null) {
+            LOGGER.error("ProgressCommand: Failed to get progression capability for player {}", player.getName().getString());
             source.sendFailure(Component.literal("Failed to get progression capability for " + player.getName().getString()));
             return;
         }
@@ -93,12 +99,14 @@ public class ProgressCommand {
     private static void completeCovenProgress(CommandSourceStack source, ServerPlayer player) {
         ICovenCapability coven = player.getCapability(CovenProvider.COVEN).orElse(null);
         if (coven == null) {
+            LOGGER.error("ProgressCommand: Failed to get coven capability for player {} during completion", player.getName().getString());
             source.sendFailure(Component.literal("Failed to get coven capability for " + player.getName().getString()));
             return;
         }
         
         IPlayerProgression progression = player.getCapability(ManaAndArtificeMod.getProgressionCapability()).orElse(null);
         if (progression == null) {
+            LOGGER.error("ProgressCommand: Failed to get progression capability for player {} during completion", player.getName().getString());
             source.sendFailure(Component.literal("Failed to get progression capability for " + player.getName().getString()));
             return;
         }

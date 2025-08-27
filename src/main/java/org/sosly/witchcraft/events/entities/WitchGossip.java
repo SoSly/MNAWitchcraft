@@ -1,5 +1,6 @@
 package org.sosly.witchcraft.events.entities;
 
+import com.mojang.logging.LogUtils;
 import com.mna.api.capabilities.IPlayerProgression;
 import com.mna.api.faction.IFaction;
 import com.mna.capabilities.playerdata.progression.PlayerProgressionProvider;
@@ -12,6 +13,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.slf4j.Logger;
 import org.sosly.witchcraft.config.ServerConfig;
 import org.sosly.witchcraft.Witchcraft;
 import org.sosly.witchcraft.effects.EffectRegistry;
@@ -23,6 +25,7 @@ import java.util.List;
 
 @Mod.EventBusSubscriber(modid = Witchcraft.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class WitchGossip {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static final String LAST_GOSSIP_TIME_KEY = "mnaw:last_gossip_time";
 
     @SubscribeEvent
@@ -86,6 +89,7 @@ public class WitchGossip {
     private static boolean isValidGossipTrigger(Player player) {
         IPlayerProgression progression = player.getCapability(PlayerProgressionProvider.PROGRESSION).orElse(null);
         if (progression == null) {
+            LOGGER.warn("Player {} missing progression capability during gossip validation", player.getName().getString());
             return true;
         }
         

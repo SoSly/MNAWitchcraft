@@ -1,11 +1,14 @@
 package org.sosly.witchcraft.entities.ai;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.world.entity.ai.goal.Goal;
+import org.slf4j.Logger;
 import org.sosly.witchcraft.entities.tools.FlyingBroom;
 
 import java.util.EnumSet;
 
 public class Hover extends AbstractFlyingGoal {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static final double HOVER_RANGE = 4.0;
     private static final double PREFERRED_HOVER_HEIGHT = 1.25;
     private static final double MOVE_TO_HOVER_SPEED = 0.3;
@@ -42,8 +45,13 @@ public class Hover extends AbstractFlyingGoal {
         }
 
         double groundLevel = raycastToGround();
-        double distanceToGround = broom.getY() - groundLevel;
+        if (groundLevel < broom.level().getMinBuildHeight() - 50) {
+            LOGGER.warn("Hover raycast returned suspicious ground level {} for broom at {}", 
+                groundLevel, broom.position());
+            return false;
+        }
         
+        double distanceToGround = broom.getY() - groundLevel;
         return distanceToGround <= HOVER_RANGE;
     }
     
@@ -55,7 +63,18 @@ public class Hover extends AbstractFlyingGoal {
     @Override
     public void start() {
         double groundLevel = raycastToGround();
+        if (groundLevel < broom.level().getMinBuildHeight() - 50) {
+            LOGGER.error("Hover start failed - invalid ground level {} at {}", groundLevel, broom.position());
+            return;
+        }
+        
         targetHoverHeight = groundLevel + PREFERRED_HOVER_HEIGHT;
+        if (targetHoverHeight > broom.level().getMaxBuildHeight()) {
+            LOGGER.warn("Hover height {} exceeds world limit, clamping to {}", 
+                targetHoverHeight, broom.level().getMaxBuildHeight() - 1);
+            targetHoverHeight = broom.level().getMaxBuildHeight() - 1;
+        }
+        
         isTransitioning = true;
         baseYaw = broom.getYRot();
         basePitch = broom.getXRot();

@@ -1,15 +1,18 @@
 package org.sosly.witchcraft.events.entities;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.slf4j.Logger;
 import org.sosly.witchcraft.Witchcraft;
 
 @Mod.EventBusSubscriber(modid = Witchcraft.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class RitualWitchHandler {
+    private static final Logger LOGGER = LogUtils.getLogger();
     
     @SubscribeEvent
     public static void onWitchTick(LivingEvent.LivingTickEvent event) {

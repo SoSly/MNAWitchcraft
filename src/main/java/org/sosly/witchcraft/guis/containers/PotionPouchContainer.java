@@ -1,17 +1,21 @@
 package org.sosly.witchcraft.guis.containers;
 
 import com.mna.gui.containers.slots.SlotNoPickup;
+import com.mojang.logging.LogUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 import org.sosly.witchcraft.guis.ContainerRegistry;
 import org.sosly.witchcraft.guis.slots.PotionSlot;
 import org.sosly.witchcraft.inventories.PotionPouchInventory;
 
 public class PotionPouchContainer extends AbstractPlayerInventoryContainer {
+    private static final Logger LOGGER = LogUtils.getLogger();
+    
     private PotionPouchInventory inventory;
     private final boolean isClientside;
 

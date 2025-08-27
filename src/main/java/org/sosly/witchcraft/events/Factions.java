@@ -10,8 +10,8 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.mojang.logging.LogUtils;
+import org.slf4j.Logger;
 import org.sosly.witchcraft.Witchcraft;
 import org.sosly.witchcraft.api.capabilities.IBroomCapability;
 import org.sosly.witchcraft.api.capabilities.ICovenCapability;
@@ -25,7 +25,7 @@ import org.sosly.witchcraft.utils.TierEffectManager;
 
 @Mod.EventBusSubscriber(modid = Witchcraft.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class Factions {
-    private static final Logger LOGGER = LogManager.getLogger(Factions.class);
+    private static final Logger LOGGER = LogUtils.getLogger();
     
     @SubscribeEvent
     public static void onAttachCapability(AttachCapabilitiesEvent<?> event) {
@@ -79,6 +79,8 @@ public class Factions {
         IPlayerProgression progression = player.getCapability(PlayerProgressionProvider.PROGRESSION)
                 .orElse(null);
         if (progression == null) {
+            LOGGER.warn("Player {} missing progression capability when generating tier requirements", 
+                player.getName().getString());
             return;
         }
         
@@ -90,6 +92,8 @@ public class Factions {
         ICovenCapability covenCap = player.getCapability(CovenProvider.COVEN)
                 .orElse(null);
         if (covenCap == null) {
+            LOGGER.error("Player {} missing coven capability when generating tier requirements", 
+                player.getName().getString());
             return;
         }
         

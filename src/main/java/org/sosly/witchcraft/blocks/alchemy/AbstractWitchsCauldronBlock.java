@@ -1,5 +1,6 @@
 package org.sosly.witchcraft.blocks.alchemy;
 
+import com.mojang.logging.LogUtils;
 import com.mysticalchemy.crucible.BlockCrucible;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
@@ -30,6 +31,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.util.RandomSource;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 import org.sosly.witchcraft.blocks.EntityRegistry;
 import org.sosly.witchcraft.fluids.FluidRegistry;
 import org.sosly.witchcraft.items.ItemRegistry;
@@ -55,6 +57,7 @@ import java.util.List;
  * LEVEL = 0, so we need a separate block for the empty state.
  */
 public abstract class AbstractWitchsCauldronBlock extends BlockCrucible implements EntityBlock {
+    private static final Logger LOGGER = LogUtils.getLogger();
     public static final IntegerProperty LEVEL = LayeredCauldronBlock.LEVEL;
     
     private static final VoxelShape INSIDE = box(2.0D, 4.0D, 2.0D, 14.0D, 16.0D, 14.0D);
@@ -180,6 +183,7 @@ public abstract class AbstractWitchsCauldronBlock extends BlockCrucible implemen
         BlockEntity blockEntity = level.getBlockEntity(pos);
         
         if (!(blockEntity instanceof WitchsCauldronBlockEntity cauldron)) {
+            LOGGER.warn("AbstractWitchsCauldronBlock at {} does not have WitchsCauldronBlockEntity, falling back to super.use()", pos);
             return super.use(state, level, pos, player, hand, hit);
         }
         

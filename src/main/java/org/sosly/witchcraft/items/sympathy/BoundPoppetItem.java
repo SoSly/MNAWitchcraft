@@ -1,6 +1,8 @@
 package org.sosly.witchcraft.items.sympathy;
 
+import com.mojang.logging.LogUtils;
 import com.mna.items.ritual.PlayerCharm;
+import org.slf4j.Logger;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
@@ -35,6 +37,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class BoundPoppetItem extends PlayerCharm {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private final Block block;
 
     public BoundPoppetItem(Block block) {
@@ -63,15 +66,18 @@ public class BoundPoppetItem extends PlayerCharm {
         
         BlockPlaceContext blockplacecontext = this.updatePlacementContext(pContext);
         if (blockplacecontext == null) {
+            LOGGER.error("Failed to create valid block placement context for bound poppet at {}", pContext.getClickedPos());
             return InteractionResult.FAIL;
         }
         
         BlockState blockstate = this.getPlacementState(blockplacecontext);
         if (blockstate == null) {
+            LOGGER.error("Unable to determine valid block state for bound poppet placement at {}", blockplacecontext.getClickedPos());
             return InteractionResult.FAIL;
         }
         
         if (!this.placeBlock(blockplacecontext, blockstate)) {
+            LOGGER.error("Failed to place bound poppet block at {} - world.setBlock returned false", blockplacecontext.getClickedPos());
             return InteractionResult.FAIL;
         }
         
@@ -165,6 +171,7 @@ public class BoundPoppetItem extends PlayerCharm {
     public static boolean updateCustomBlockEntityTag(Level pLevel, @Nullable Player pPlayer, BlockPos pPos, ItemStack pStack) {
         MinecraftServer minecraftserver = pLevel.getServer();
         if (minecraftserver == null) {
+            LOGGER.error("Cannot update block entity data - server is null");
             return false;
         }
         
@@ -175,6 +182,7 @@ public class BoundPoppetItem extends PlayerCharm {
         
         BlockEntity blockentity = pLevel.getBlockEntity(pPos);
         if (blockentity == null) {
+            LOGGER.error("Cannot update block entity data - no block entity found at {}", pPos);
             return false;
         }
         
@@ -215,6 +223,7 @@ public class BoundPoppetItem extends PlayerCharm {
 
         Player player = level.getPlayerByUUID(target);
         if (player == null) {
+            LOGGER.warn("Could not find player with UUID {} when setting bound poppet target - target may be offline", target);
             return;
         }
 
@@ -232,7 +241,16 @@ public class BoundPoppetItem extends PlayerCharm {
         }
 
         UUID target = stack.getOrCreateTag().getUUID("target");
-        return ((ServerLevel)level).getEntity(target);
+        if (target == null) {
+            LOGGER.warn("Bound poppet item has no target UUID in NBT");
+            return null;
+        }
+        
+        Entity entity = ((ServerLevel)level).getEntity(target);
+        if (entity == null) {
+            LOGGER.warn("Could not find target entity with UUID {} - entity may have been removed", target);
+        }
+        return entity;
     }
 
     public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flag) {

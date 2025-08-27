@@ -1,13 +1,16 @@
 package org.sosly.witchcraft.entities.ai;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.phys.Vec3;
+import org.slf4j.Logger;
 import org.sosly.witchcraft.entities.tools.FlyingBroom;
 
 import java.util.EnumSet;
 
 public class ReturnToOwner extends Goal {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static final double TARGET_REACH_DISTANCE = 4.0;
     private static final double CLOSE_DISTANCE_THRESHOLD = 1.5;
     private static final double MAX_SECONDS_TO_TARGET = 5;
@@ -65,7 +68,10 @@ public class ReturnToOwner extends Goal {
             return;
         }
 
-        broom.getNavigation().moveTo(summonTarget.x, summonTarget.y, summonTarget.z, speedModifier);
+        boolean pathSuccess = broom.getNavigation().moveTo(summonTarget.x, summonTarget.y, summonTarget.z, speedModifier);
+        if (!pathSuccess) {
+            LOGGER.warn("Failed to create path to summon target at ({}, {}, {})", summonTarget.x, summonTarget.y, summonTarget.z);
+        }
     }
     
     private boolean hasReachedTarget(Vec3 target) {

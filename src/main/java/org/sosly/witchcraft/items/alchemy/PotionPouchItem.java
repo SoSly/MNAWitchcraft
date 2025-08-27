@@ -1,6 +1,8 @@
 package org.sosly.witchcraft.items.alchemy;
 
+import com.mojang.logging.LogUtils;
 import com.mna.KeybindInit;
+import org.slf4j.Logger;
 import com.mna.api.items.ITieredItem;
 import com.mna.items.base.IRadialInventorySelect;
 import com.mna.items.base.ItemBagBase;
@@ -37,6 +39,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class PotionPouchItem extends ItemBagBase implements IRadialInventorySelect, ITieredItem<PotionPouchItem> {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private int tier;
 
     public PotionPouchItem() {
@@ -130,8 +133,15 @@ public class PotionPouchItem extends ItemBagBase implements IRadialInventorySele
 
     @Override
     public int capacity(@Nullable Player player) {
+        if (player == null) {
+            LOGGER.warn("PotionPouchItem capacity called with null player");
+            return 0;
+        }
+        
         ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
         if (!(stack.getItem() instanceof PotionPouchItem)) {
+            LOGGER.warn("Player {} main hand item is not PotionPouchItem: {}", 
+                player.getName().getString(), stack.getItem().getClass().getSimpleName());
             return 0;
         }
         
@@ -160,8 +170,16 @@ public class PotionPouchItem extends ItemBagBase implements IRadialInventorySele
         }
         
         UUID targetUUID = pouch.getOrCreateTag().getUUID("conveyance_target");
+        if (targetUUID == null) {
+            LOGGER.error("PotionPouch has conveyance enabled but no valid target UUID");
+            potionStack.finishUsingItem(level, target);
+            getInventory(pouch).setStackInSlot(getIndex(pouch), potionStack);
+            return pouch;
+        }
+        
         Player playerTarget = level.getPlayerByUUID(targetUUID);
         if (playerTarget == null) {
+            LOGGER.warn("PotionPouch conveyance target player with UUID {} not found - may be offline", targetUUID);
             potionStack.finishUsingItem(level, target);
             getInventory(pouch).setStackInSlot(getIndex(pouch), potionStack);
             return pouch;

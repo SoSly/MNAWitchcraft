@@ -1,6 +1,8 @@
 package org.sosly.witchcraft.entities.controls;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
+import org.slf4j.Logger;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
@@ -8,6 +10,7 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.phys.Vec3;
 
 public class FlightController {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private Vec3 currentMotion = Vec3.ZERO;
     private double currentVerticalMotion = 0.0;
     private Boolean originalSprintToggle = null;
@@ -64,6 +67,9 @@ public class FlightController {
         if (controllingPassenger instanceof LocalPlayer localPlayer) {
             return calculateLocalPlayerVerticalMotion(localPlayer, speed);
         }
+        if (controllingPassenger != null) {
+            LOGGER.debug("Non-LocalPlayer controlling passenger type: {}", controllingPassenger.getClass().getSimpleName());
+        }
         return 0;
     }
 
@@ -99,6 +105,13 @@ public class FlightController {
     public void handlePlayerControlledTravel(PathfinderMob entity, Vec3 travelVector, double speed) {
         LivingEntity controllingPassenger = entity.getControllingPassenger();
         if (controllingPassenger == null) {
+            LOGGER.warn("FlightController handlePlayerControlledTravel called with null controlling passenger for entity at {}", 
+                entity.position());
+            return;
+        }
+        
+        if (speed <= 0) {
+            LOGGER.error("FlightController received invalid speed {} for entity at {}", speed, entity.position());
             return;
         }
         

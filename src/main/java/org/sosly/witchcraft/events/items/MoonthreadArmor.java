@@ -18,6 +18,8 @@ import net.minecraftforge.event.entity.living.MobEffectEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import com.mojang.logging.LogUtils;
+import org.slf4j.Logger;
 import org.sosly.witchcraft.config.ServerConfig;
 import org.sosly.witchcraft.Witchcraft;
 import org.sosly.witchcraft.api.capabilities.IMoonthreadArmorData;
@@ -31,6 +33,7 @@ import java.util.Random;
 
 @Mod.EventBusSubscriber(modid = Witchcraft.MOD_ID)
 public class MoonthreadArmor {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static final Random random = new Random();
     private static final long TEMPORARY_IMMUNITY_DURATION = 200L;
     
@@ -103,6 +106,7 @@ public class MoonthreadArmor {
         
         IMoonthreadArmorData armorData = player.getCapability(MoonthreadArmorProvider.MOONTHREAD_ARMOR_DATA).orElse(null);
         if (armorData == null) {
+            LOGGER.error("Failed to retrieve moonthread armor capability for player {}", player.getName().getString());
             return false;
         }
         
@@ -152,8 +156,6 @@ public class MoonthreadArmor {
         MobEffectInstance effectInstance = event.getEffectInstance();
         if (shouldBlockHarmfulEffect(player, effectInstance)) {
             player.removeEffect(effectInstance.getEffect());
-            Witchcraft.LOGGER.debug("Moonthread Armor removed harmful effect {} from player {}", 
-                effectInstance.getEffect().getDescriptionId(), player.getName().getString());
         }
     }
     
@@ -196,7 +198,7 @@ public class MoonthreadArmor {
             }
             
             event.setSpawnCancelled(true);
-            Witchcraft.LOGGER.info("Moonthread Armor prevented {} from spawning at ({}, {}, {}) near player {}", 
+            LOGGER.info("Moonthread Armor prevented {} from spawning at ({}, {}, {}) near player {}", 
                 event.getEntity().getType().getDescription(),
                 spawnX, spawnY, spawnZ,
                 player.getName().getString());

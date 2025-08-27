@@ -1,6 +1,6 @@
 package org.sosly.witchcraft.events.enchantments;
 
-
+import com.mojang.logging.LogUtils;
 import com.mna.api.events.RuneforgeEnchantEvent;
 import com.mna.effects.EffectInit;
 import com.mna.items.sorcery.MagicStaff;
@@ -15,6 +15,7 @@ import net.minecraftforge.event.GrindstoneEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.slf4j.Logger;
 import org.sosly.witchcraft.Witchcraft;
 import org.sosly.witchcraft.compat.MysticAlchemyCompat;
 import org.sosly.witchcraft.enchantments.EnchantmentRegistry;
@@ -25,6 +26,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Mod.EventBusSubscriber(modid = Witchcraft.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class Dedication {
+    private static final Logger LOGGER = LogUtils.getLogger();
+    
     @SubscribeEvent
     public static void onClick(PlayerInteractEvent event) {
         Level level = event.getLevel();

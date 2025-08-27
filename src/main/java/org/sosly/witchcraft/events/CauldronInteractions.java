@@ -16,6 +16,8 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import com.mojang.logging.LogUtils;
+import org.slf4j.Logger;
 import org.sosly.witchcraft.Witchcraft;
 import org.sosly.witchcraft.items.ItemRegistry;
 import org.sosly.witchcraft.blocks.BlockRegistry;
@@ -23,11 +25,16 @@ import org.sosly.witchcraft.blocks.alchemy.CondensedMoonlightCauldronBlock;
 
 @Mod.EventBusSubscriber(modid = Witchcraft.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class CauldronInteractions {
+    private static final Logger LOGGER = LogUtils.getLogger();
     
     @SubscribeEvent
     public static void setup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
-            registerCondensedMoonlightInteractions();
+            try {
+                registerCondensedMoonlightInteractions();
+            } catch (Exception e) {
+                LOGGER.error("Failed to register cauldron interactions", e);
+            }
         });
     }
     

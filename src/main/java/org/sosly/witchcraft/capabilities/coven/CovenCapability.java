@@ -1,6 +1,8 @@
 package org.sosly.witchcraft.capabilities.coven;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.resources.ResourceLocation;
+import org.slf4j.Logger;
 import org.sosly.witchcraft.api.capabilities.ICovenCapability;
 
 import java.util.Collection;
@@ -9,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class CovenCapability implements ICovenCapability {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private boolean malice = false;
     private final Map<Integer, Map<ResourceLocation, Boolean>> tierEffectsProgress = new HashMap<>();
 
@@ -35,6 +38,11 @@ public class CovenCapability implements ICovenCapability {
 
     @Override
     public void setTierEffectsRequired(int tier, Set<ResourceLocation> effects) {
+        if (effects == null || effects.isEmpty()) {
+            LOGGER.warn("Attempted to set null or empty effects for tier {}", tier);
+            return;
+        }
+        
         Map<ResourceLocation, Boolean> progress = new HashMap<>();
 
         for (ResourceLocation effect : effects) {
@@ -48,9 +56,17 @@ public class CovenCapability implements ICovenCapability {
     public void markEffectCompleted(int tier, ResourceLocation effectId) {
         Map<ResourceLocation, Boolean> progress = tierEffectsProgress.get(tier);
 
-        if (progress != null && progress.containsKey(effectId)) {
-            progress.put(effectId, true);
+        if (progress == null) {
+            LOGGER.warn("Attempted to mark effect {} completed for tier {} but no progress map exists", effectId, tier);
+            return;
         }
+        
+        if (!progress.containsKey(effectId)) {
+            LOGGER.warn("Attempted to mark unknown effect {} completed for tier {}", effectId, tier);
+            return;
+        }
+        
+        progress.put(effectId, true);
     }
 
     @Override

@@ -1,12 +1,15 @@
 package org.sosly.witchcraft.entities.ai;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import org.slf4j.Logger;
 import net.minecraft.world.entity.ai.goal.Goal;
 import org.sosly.witchcraft.entities.tools.FlyingBroom;
 
 import java.util.EnumSet;
 
 public class SafelyDescend extends AbstractFlyingGoal {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static final float MAX_HOVER_HEIGHT = 5.0f;
     private static final float MIN_HOVER_HEIGHT = 1.0f;
     private static final float HOVER_TARGET_HEIGHT = 1.25f;
@@ -64,19 +67,36 @@ public class SafelyDescend extends AbstractFlyingGoal {
     @Override
     public void start() {
         double groundLevel = raycastToGround();
+        if (groundLevel < broom.level().getMinBuildHeight() - 50) {
+            LOGGER.warn("Raycast to ground returned extremely low value {} for broom at {}, may indicate raycast failure", 
+                groundLevel, broom.position());
+        }
+        
         targetY = (float) (groundLevel + HOVER_TARGET_HEIGHT);
         
         int minBuildHeight = broom.level().getMinBuildHeight();
         int maxBuildHeight = broom.level().getMaxBuildHeight();
         
+        float originalTargetY = targetY;
         targetY = Math.max(targetY, minBuildHeight + 1);
         targetY = Math.min(targetY, maxBuildHeight - 1);
+        
+        if (Math.abs(originalTargetY - targetY) > 5) {
+            LOGGER.warn("SafelyDescend target height clamped from {} to {} due to world bounds at {}", 
+                originalTargetY, targetY, broom.position());
+        }
     }
 
     @Override
     public void tick() {
         double currentY = broom.getY();
         double speed = broom.getAttributeValue(Attributes.FLYING_SPEED);
+        
+        if (speed <= 0) {
+            LOGGER.error("Broom at {} has invalid flying speed: {}", broom.position(), speed);
+            return;
+        }
+        
         double baseMoveDistance = speed / TICKS_PER_SECOND * BASE_SPEED_MULTIPLIER;
         
         double distanceToTarget = Math.abs(targetY - currentY);

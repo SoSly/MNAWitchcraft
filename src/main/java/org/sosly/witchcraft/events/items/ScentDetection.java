@@ -1,16 +1,19 @@
 package org.sosly.witchcraft.events.items;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.slf4j.Logger;
 import org.sosly.witchcraft.Witchcraft;
 import org.sosly.witchcraft.effects.EffectRegistry;
 import org.sosly.witchcraft.utils.ScentedItemHelper;
 
 @Mod.EventBusSubscriber(modid = Witchcraft.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ScentDetection {
+    private static final Logger LOGGER = LogUtils.getLogger();
     
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {

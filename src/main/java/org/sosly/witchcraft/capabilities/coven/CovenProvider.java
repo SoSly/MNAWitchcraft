@@ -1,5 +1,6 @@
 package org.sosly.witchcraft.capabilities.coven;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -11,6 +12,7 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 import org.sosly.witchcraft.api.capabilities.ICovenCapability;
 
 import java.util.HashSet;
@@ -19,6 +21,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class CovenProvider implements ICapabilitySerializable<Tag> {
+    private static final Logger LOGGER = LogUtils.getLogger();
     public static final Capability<ICovenCapability> COVEN = CapabilityManager.get(new CapabilityToken<>() {});
     private final LazyOptional<ICovenCapability> holder = LazyOptional.of(CovenCapability::new);
 
@@ -57,6 +60,7 @@ public class CovenProvider implements ICapabilitySerializable<Tag> {
         ICovenCapability instance = holder.orElse(new CovenCapability());
         
         if (!(nbt instanceof CompoundTag cnbt)) {
+            LOGGER.warn("Invalid NBT type for coven capability deserialization");
             return;
         }
         

@@ -14,6 +14,8 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import com.mojang.logging.LogUtils;
+import org.slf4j.Logger;
 import org.sosly.witchcraft.Witchcraft;
 import org.sosly.witchcraft.items.ItemRegistry;
 import org.sosly.witchcraft.items.alchemy.PotionPouchItem;
@@ -22,6 +24,7 @@ import java.util.List;
 
 @Mod.EventBusSubscriber(modid = Witchcraft.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class PotionPouch {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static List<PractitionersPatch> allowedPatches = List.of();
 
     @SubscribeEvent
@@ -65,6 +68,8 @@ public class PotionPouch {
 
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (!(blockEntity instanceof RunicAnvilTile)) {
+            LOGGER.error("Expected RunicAnvilTile but found {} at {} for potion pouch interaction", 
+                blockEntity != null ? blockEntity.getClass().getSimpleName() : "null", pos);
             return;
         }
 
@@ -76,6 +81,8 @@ public class PotionPouch {
 
         ItemStack material = runicAnvilTile.getItem(1);
         if (!((PotionPouchItem)baseItem.getItem()).addPatchToPouch(baseItem, material)) {
+            LOGGER.warn("Failed to add patch {} to potion pouch for player {}", 
+                material.getDisplayName().getString(), event.getEntity().getName().getString());
             return;
         }
 

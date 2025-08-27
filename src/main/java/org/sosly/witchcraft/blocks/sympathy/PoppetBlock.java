@@ -1,5 +1,6 @@
 package org.sosly.witchcraft.blocks.sympathy;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -22,6 +23,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.slf4j.Logger;
 import org.sosly.witchcraft.blocks.entities.BoundPoppetEntity;
 import org.sosly.witchcraft.items.sympathy.BoundPoppetItem;
 
@@ -29,6 +31,8 @@ import java.util.UUID;
 
 
 public class PoppetBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock {
+    private static final Logger LOGGER = LogUtils.getLogger();
+    
     public PoppetBlock(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any()
@@ -95,10 +99,15 @@ public class PoppetBlock extends HorizontalDirectionalBlock implements SimpleWat
 
         ResourceLocation key = ForgeRegistries.BLOCKS.getKey(this);
         if (key == null) {
+            LOGGER.error("Failed to get registry key for PoppetBlock during destruction at {}", pos);
             return;
         }
         
         Item boundPoppetItem = ForgeRegistries.ITEMS.getValue(key);
+        if (boundPoppetItem == null) {
+            LOGGER.error("Failed to get item for block {} during destruction at {}", key, pos);
+            return;
+        }
         ItemStack stack = new ItemStack(boundPoppetItem);
 
         if (!(blockEntity instanceof BoundPoppetEntity boundPoppet)) {

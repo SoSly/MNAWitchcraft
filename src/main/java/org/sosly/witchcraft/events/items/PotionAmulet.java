@@ -11,6 +11,8 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
+import com.mojang.logging.LogUtils;
+import org.slf4j.Logger;
 import org.sosly.witchcraft.Witchcraft;
 import org.sosly.witchcraft.items.alchemy.PotionAmuletItem;
 
@@ -19,6 +21,7 @@ import java.util.Optional;
 
 @Mod.EventBusSubscriber(modid = Witchcraft.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class PotionAmulet {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static final ResourceLocation potionLocation = new ResourceLocation("minecraft:potion");
 
     @SubscribeEvent
@@ -37,12 +40,15 @@ public class PotionAmulet {
         }
 
         if (potionStack.isEmpty()) {
+            LOGGER.warn("No potion found in crafting recipe for potion amulet by player {}", event.getEntity().getName().getString());
             PotionAmuletItem.clean(crafting);
             return;
         }
 
         List<MobEffectInstance> effects = PotionUtils.getMobEffects(potionStack);
         if (effects.isEmpty()) {
+            LOGGER.warn("Potion {} has no effects for amulet crafting by player {}", 
+                ForgeRegistries.ITEMS.getKey(potionStack.getItem()), event.getEntity().getName().getString());
             return;
         }
 

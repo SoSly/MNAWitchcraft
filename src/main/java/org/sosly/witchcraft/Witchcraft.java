@@ -1,6 +1,7 @@
 package org.sosly.witchcraft;
 
 import com.mna.api.guidebook.RegisterGuidebooksEvent;
+import com.mojang.logging.LogUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -11,8 +12,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 import org.sosly.witchcraft.blocks.BlockRegistry;
 import org.sosly.witchcraft.blocks.EntityRegistry;
 import org.sosly.witchcraft.commands.CommandRegistry;
@@ -30,9 +30,10 @@ import org.sosly.witchcraft.cantrips.Cantrips;
 @Mod(Witchcraft.MOD_ID)
 public class Witchcraft {
     public static final String MOD_ID = "mnaw";
-    public static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     public Witchcraft() {
+        LOGGER.info("Initializing M&A Witchcraft mod");
         IEventBus modbus = FMLJavaModLoadingContext.get().getModEventBus();
 
         BlockRegistry.BLOCKS.register(modbus);
@@ -54,18 +55,22 @@ public class Witchcraft {
 
         if (FMLEnvironment.dist.isClient()) {
             modbus.register(ScreenRegistry.class);
+            LOGGER.info("Registered client-side screen handlers");
         }
+        LOGGER.info("M&A Witchcraft mod initialization complete");
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
+        LOGGER.info("Beginning common setup phase");
         event.enqueueWork(() -> {
             Cantrips.registerCantrips();
+            LOGGER.info("Cantrips registered successfully");
         });
     }
 
     @SubscribeEvent
     public void onRegisterGuidebooks(RegisterGuidebooksEvent event) {
         event.getRegistry().addGuidebookPath(new ResourceLocation(MOD_ID, "guide"));
-        LOGGER.info("guide registered");
+        LOGGER.info("Witchcraft guidebook registered");
     }
 }

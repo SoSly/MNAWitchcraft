@@ -1,5 +1,6 @@
 package org.sosly.witchcraft.blocks.alchemy;
 
+import com.mojang.logging.LogUtils;
 import com.mysticalchemy.config.BrewingConfig;
 import com.mysticalchemy.init.RecipeInit;
 import com.mysticalchemy.recipe.PotionIngredientRecipe;
@@ -31,6 +32,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 import org.sosly.witchcraft.blocks.BlockRegistry;
 import org.sosly.witchcraft.blocks.EntityRegistry;
 import org.sosly.witchcraft.fluids.FluidRegistry;
@@ -39,6 +41,7 @@ import java.util.HashMap;
 import java.util.Optional;
 
 public class WitchsCauldronBlockEntity extends BlockEntity {
+    private static final Logger LOGGER = LogUtils.getLogger();
     
     public enum FluidType {
         EMPTY(null),
@@ -220,7 +223,18 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
     @Override
     public void load(@NotNull CompoundTag tag) {
         super.load(tag);
-        fluidType = FluidType.valueOf(tag.getString("FluidType"));
+        String fluidTypeString = tag.getString("FluidType");
+        if (fluidTypeString.isEmpty()) {
+            LOGGER.warn("WitchsCauldronBlockEntity at {} has empty FluidType in NBT, defaulting to EMPTY", worldPosition);
+            fluidType = FluidType.EMPTY;
+        } else {
+            try {
+                fluidType = FluidType.valueOf(fluidTypeString);
+            } catch (IllegalArgumentException e) {
+                LOGGER.error("WitchsCauldronBlockEntity at {} has invalid FluidType '{}' in NBT, defaulting to EMPTY", worldPosition, fluidTypeString);
+                fluidType = FluidType.EMPTY;
+            }
+        }
         fluidLevel = tag.getInt("FluidLevel");
         if (tag.contains("heat")) {
             heat = tag.getFloat("heat");
@@ -246,8 +260,10 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
                     continue;
                 }
                 
-                MobEffect e = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(tag.getString("effect" + i)));
+                String effectString = tag.getString("effect" + i);
+                MobEffect e = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(effectString));
                 if (e == null) {
+                    LOGGER.warn("WitchsCauldronBlockEntity at {} failed to load effect '{}' from NBT", worldPosition, effectString);
                     continue;
                 }
                 
@@ -399,6 +415,7 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
             recipeManager = level.getRecipeManager();
         }
         if (recipeManager == null) {
+            LOGGER.error("WitchsCauldronBlockEntity at {} failed to get RecipeManager when trying to add ingredient", worldPosition);
             return false;
         }
         
@@ -612,14 +629,22 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
     }
     
     private void switchToEmptyCauldron() {
-        if (level == null || level.isClientSide) {
+        if (level == null) {
+            LOGGER.error("WitchsCauldronBlockEntity at {} tried to switch to empty cauldron but level is null", worldPosition);
+            return;
+        }
+        if (level.isClientSide) {
             return;
         }
         CauldronStateManager.switchToEmptyBlock(level, worldPosition, this);
     }
     
     private void switchToFilledCauldron() {
-        if (level == null || level.isClientSide) {
+        if (level == null) {
+            LOGGER.error("WitchsCauldronBlockEntity at {} tried to switch to filled cauldron but level is null", worldPosition);
+            return;
+        }
+        if (level.isClientSide) {
             return;
         }
         CauldronStateManager.switchToFilledBlock(level, worldPosition, this, fluidType, fluidLevel);

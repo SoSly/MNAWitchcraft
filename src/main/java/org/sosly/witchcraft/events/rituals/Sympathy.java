@@ -13,8 +13,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.mojang.logging.LogUtils;
+import org.slf4j.Logger;
 import org.sosly.witchcraft.Witchcraft;
 import org.sosly.witchcraft.api.capabilities.ICovenCapability;
 import org.sosly.witchcraft.capabilities.coven.CovenProvider;
@@ -29,7 +29,7 @@ import java.util.List;
  */
 @Mod.EventBusSubscriber(modid = Witchcraft.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class Sympathy {
-    private static final Logger LOGGER = LogManager.getLogger(Sympathy.class);
+    private static final Logger LOGGER = LogUtils.getLogger();
     
     @SubscribeEvent
     public static void SympathyProgression(RitualCompleteEvent event) {
@@ -44,36 +44,51 @@ public class Sympathy {
         
         ICovenCapability covenCap = caster.getCapability(CovenProvider.COVEN).orElse(null);
         if (covenCap == null) {
+            LOGGER.error("Failed to retrieve coven capability for player {}", caster.getName().getString());
             return;
         }
         
         ItemStack boundPoppet = findBoundPoppet(event.getCollectedReagents());
         if (boundPoppet.isEmpty()) {
+            LOGGER.warn("No bound poppet found in sympathy ritual reagents for player {}", caster.getName().getString());
             return;
         }
         
         ServerLevel level = (ServerLevel) caster.level();
         Entity target = SympathyHelper.getBoundEntity(boundPoppet, level);
+        
+        if (target == null) {
+            LOGGER.warn("Bound poppet target entity not found for player {}", caster.getName().getString());
+            return;
+        }
+        
         if (!(target instanceof Witch)) {
+            LOGGER.warn("Bound poppet target is not a witch ({}), cannot progress coven tier for player {}", 
+                target.getClass().getSimpleName(), caster.getName().getString());
             return;
         }
         
         ISpellDefinition spell = getSpellFromReagents(event.getCollectedReagents(), caster);
         if (spell == null) {
+            LOGGER.warn("No valid spell found in sympathy ritual reagents for player {}", caster.getName().getString());
             return;
         }
         
         IPlayerProgression progression = caster.getCapability(PlayerProgressionProvider.PROGRESSION).orElse(null);
         if (progression == null) {
+            LOGGER.error("Failed to retrieve player progression capability for player {}", caster.getName().getString());
             return;
         }
         
         int nextTier = progression.getTier() + 1;
         if (nextTier < 3 || nextTier > 5) {
+            LOGGER.warn("Player {} tier progression {} is outside valid coven range (3-5)", 
+                caster.getName().getString(), nextTier);
             return;
         }
         
         if (covenCap.getTierEffectsRequired(nextTier) == null) {
+            LOGGER.warn("No tier effects defined for tier {} for player {}", nextTier, caster.getName().getString());
             return;
         }
         

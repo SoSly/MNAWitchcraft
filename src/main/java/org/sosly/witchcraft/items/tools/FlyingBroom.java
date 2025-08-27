@@ -1,6 +1,8 @@
 package org.sosly.witchcraft.items.tools;
 
+import com.mojang.logging.LogUtils;
 import com.mna.api.items.TieredItem;
+import org.slf4j.Logger;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.network.chat.Component;
@@ -28,6 +30,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class FlyingBroom extends TieredItem {
+    private static final Logger LOGGER = LogUtils.getLogger();
+    
     public FlyingBroom() {
         super((new Item.Properties()).stacksTo(1));
     }
@@ -77,10 +81,18 @@ public class FlyingBroom extends TieredItem {
         
         cleanupExistingBroom(player, level);
         org.sosly.witchcraft.entities.tools.FlyingBroom broomEntity = createAndPositionBroom(context);
+        if (broomEntity == null) {
+            LOGGER.error("Failed to create broom entity for player {}", player.getName().getString());
+            return InteractionResult.FAIL;
+        }
+        
         broomEntity.setBroomData(broomData);
         bondBroomToPlayer(player, broomEntity);
         
-        level.addFreshEntity(broomEntity);
+        if (!level.addFreshEntity(broomEntity)) {
+            LOGGER.error("Failed to spawn broom entity in world for player {}", player.getName().getString());
+            return InteractionResult.FAIL;
+        }
         consumeItem(stack, player, context);
         
         return InteractionResult.SUCCESS;
@@ -106,18 +118,17 @@ public class FlyingBroom extends TieredItem {
     }
     
     private void cleanupExistingBroom(Player player, Level level) {
-        LazyOptional<IBroomCapability> cap = player.getCapability(BroomProvider.BROOM);
-        cap.ifPresent(broom -> {
-            if (!broom.hasBondedBroom()) {
-                return;
-            }
-            
-            org.sosly.witchcraft.entities.tools.FlyingBroom existingBroom = findBondedBroom(level, player, broom);
-            if (existingBroom != null) {
-                existingBroom.discard();
-            }
-            broom.setBondedBroomId(null);
-        });
+        IBroomCapability broom = BroomProvider.getBroomCapability(player);
+        if (broom == null || !broom.hasBondedBroom()) {
+            return;
+        }
+        
+        org.sosly.witchcraft.entities.tools.FlyingBroom existingBroom = findBondedBroom(level, player, broom);
+        if (existingBroom != null) {
+            LOGGER.debug("Discarding existing broom entity {} for player {}", existingBroom.getUUID(), player.getName().getString());
+            existingBroom.discard();
+        }
+        broom.setBondedBroomId(null);
     }
     
     private org.sosly.witchcraft.entities.tools.FlyingBroom findBondedBroom(Level level, Player player, IBroomCapability broom) {
@@ -146,13 +157,16 @@ public class FlyingBroom extends TieredItem {
     
     
     private void bondBroomToPlayer(Player player, org.sosly.witchcraft.entities.tools.FlyingBroom broomEntity) {
-        LazyOptional<IBroomCapability> cap = player.getCapability(BroomProvider.BROOM);
-        cap.ifPresent(broom -> {
-            broom.setBondedBroomId(broomEntity.getUUID());
-            broom.setBroomsUnlocked(true);
-            broom.setLastKnownPosition(broomEntity.blockPosition());
-            broom.setLastKnownDimension(broomEntity.level().dimension().location());
-        });
+        IBroomCapability broom = BroomProvider.getBroomCapability(player);
+        if (broom == null) {
+            return;
+        }
+        
+        broom.setBondedBroomId(broomEntity.getUUID());
+        broom.setBroomsUnlocked(true);
+        broom.setLastKnownPosition(broomEntity.blockPosition());
+        broom.setLastKnownDimension(broomEntity.level().dimension().location());
+        LOGGER.debug("Bonded broom entity {} to player {}", broomEntity.getUUID(), player.getName().getString());
     }
     
     private void consumeItem(ItemStack stack, Player player, UseOnContext context) {

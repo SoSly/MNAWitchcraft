@@ -1,5 +1,6 @@
 package org.sosly.witchcraft.events.items;
 
+import com.mojang.logging.LogUtils;
 import com.mna.items.ItemInit;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
@@ -10,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.slf4j.Logger;
 import org.sosly.witchcraft.config.ServerConfig;
 import org.sosly.witchcraft.Witchcraft;
 import org.sosly.witchcraft.items.ItemRegistry;
@@ -17,6 +19,8 @@ import org.sosly.witchcraft.utils.SympathyHelper;
 
 @Mod.EventBusSubscriber(modid = Witchcraft.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class VinteumNeedle {
+    private static final Logger LOGGER = LogUtils.getLogger();
+    
     @SubscribeEvent
     public static void onAttackEntity(AttackEntityEvent event) {
         LivingEntity attacker = event.getEntity();
@@ -30,6 +34,11 @@ public class VinteumNeedle {
         }
 
         Entity target = event.getTarget();
+        if (target == null) {
+            LOGGER.warn("Attack event has null target");
+            return;
+        }
+        
         if (!(target instanceof Player || target instanceof Mob)) {
             return;
         }
@@ -44,6 +53,7 @@ public class VinteumNeedle {
         if (tag == null) {
             tag = new CompoundTag();
         }
+        
         tag.putUUID("target", target.getUUID());
         tag.putString("type", target.getType().getDescription().getString());
 

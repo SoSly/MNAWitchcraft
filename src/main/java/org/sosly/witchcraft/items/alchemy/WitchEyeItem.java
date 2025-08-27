@@ -1,6 +1,8 @@
 package org.sosly.witchcraft.items.alchemy;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.network.chat.Component;
+import org.slf4j.Logger;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
@@ -21,6 +23,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class WitchEyeItem extends Item {
+    private static final Logger LOGGER = LogUtils.getLogger();
+    
     public WitchEyeItem() {
         super(new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
     }
@@ -28,6 +32,7 @@ public class WitchEyeItem extends Item {
     public static boolean hasWitchEye(Player player) {
         Optional<ICuriosItemHandler> curios = CuriosApi.getCuriosInventory(player).resolve();
         if (curios.isEmpty()) {
+            LOGGER.warn("Could not access Curios inventory for player {} when checking for witch eye", player.getName().getString());
             return false;
         }
 
@@ -40,7 +45,11 @@ public class WitchEyeItem extends Item {
             return;
         }
 
-        MysticAlchemyCompat.revealAlchemicalProperties(level, item, tooltips);
+        try {
+            MysticAlchemyCompat.revealAlchemicalProperties(level, item, tooltips);
+        } catch (Exception e) {
+            LOGGER.error("Failed to reveal alchemical properties for item {}", item.getItem().getName(item), e);
+        }
     }
 
     public static CraftingContainer createDummyCraftingInventory(ItemStack stack) {
