@@ -224,16 +224,8 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
     public void load(@NotNull CompoundTag tag) {
         super.load(tag);
         String fluidTypeString = tag.getString("FluidType");
-        if (fluidTypeString.isEmpty()) {
-            LOGGER.warn("WitchsCauldronBlockEntity at {} has empty FluidType in NBT, defaulting to EMPTY", worldPosition);
-            fluidType = FluidType.EMPTY;
-        } else {
-            try {
-                fluidType = FluidType.valueOf(fluidTypeString);
-            } catch (IllegalArgumentException e) {
-                LOGGER.error("WitchsCauldronBlockEntity at {} has invalid FluidType '{}' in NBT, defaulting to EMPTY", worldPosition, fluidTypeString);
-                fluidType = FluidType.EMPTY;
-            }
+        if (!fluidTypeString.isEmpty()) {
+            fluidType = FluidType.valueOf(fluidTypeString);
         }
         fluidLevel = tag.getInt("FluidLevel");
         if (tag.contains("heat")) {
