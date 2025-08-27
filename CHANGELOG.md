@@ -53,6 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - bloody needles and bound poppets now display who they are bound to in their tooltip 
 - dedicated items can be recharged by right-clicking a crucible prepared with instant mana or mana regen effects
 - dedicated items will resist expending their last charge
+- added comprehensive logging throughout the mod for better error tracking and debugging
 
 ### Fixed
 - fixed a typo in the factionless mages codex entry
