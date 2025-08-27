@@ -44,10 +44,7 @@ public class TierEffectManager {
             case 3 -> TIER_3_REQUIREMENTS;
             case 4 -> TIER_4_REQUIREMENTS;
             case 5 -> TIER_5_REQUIREMENTS;
-            default -> {
-                LOGGER.error("{}", tier);
-                yield 0;
-            }
+            default -> 0;
         };
         
         Set<ResourceLocation> requirements = new HashSet<>();
@@ -58,7 +55,6 @@ public class TierEffectManager {
             requirements.add(shuffled.get(i));
         }
         
-        LOGGER.info("{}", requirements.size(), tier, requirements);
         return requirements;
     }
     
