@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.sosly.witchcraft.api.capabilities.IBroomCapability;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class BroomProvider implements ICapabilitySerializable<Tag> {
@@ -99,7 +100,7 @@ public class BroomProvider implements ICapabilitySerializable<Tag> {
             return null;
         }
         
-        if (!broomId.equals(broom.getBondedBroomId())) {
+        if (!Objects.equals(broomId, broom.getBondedBroomId())) {
             LOGGER.warn("Player {} trying to access broom they are not bonded to", player.getName().getString());
             return null;
         }
