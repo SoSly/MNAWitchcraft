@@ -30,11 +30,7 @@ public class CauldronInteractions {
     @SubscribeEvent
     public static void setup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
-            try {
-                registerCondensedMoonlightInteractions();
-            } catch (Exception e) {
-                LOGGER.error("Failed to register cauldron interactions", e);
-            }
+            registerCondensedMoonlightInteractions();
         });
     }
     
