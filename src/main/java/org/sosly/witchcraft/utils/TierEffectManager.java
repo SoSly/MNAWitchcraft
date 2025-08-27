@@ -55,6 +55,7 @@ public class TierEffectManager {
             requirements.add(shuffled.get(i));
         }
         
+        LOGGER.info("Generated {} requirements for tier {}: {}", requirements.size(), tier, requirements);
         return requirements;
     }
     
