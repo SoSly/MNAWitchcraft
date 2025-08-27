@@ -11,6 +11,7 @@ buildscript {
     dependencies {
         classpath group: 'net.neoforged', name: 'NeoGradle', version: '6.0.+', changing: true
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0' //CurseForge Gradle Plugin
+        classpath 'com.modrinth.minotaur:Minotaur:2.+' // Modrinth Gradle Plugin
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
         classpath 'org.parchmentmc:librarian:1.+'
     }
@@ -21,12 +22,13 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'idea'
 apply plugin: 'maven-publish'
 apply plugin: "com.matthewprenger.cursegradle"
+apply plugin: "com.modrinth.minotaur"
 apply plugin: 'org.spongepowered.mixin'
 
-version = "${minecraft_version}-${api_name}-${mod_version}"
+version = "${mod_version}"
 group = "${mod_group}" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 base {
-    archivesName = "${minecraft_version}-${api_name}-${mod_version}"
+    archivesName = "${mod_id}-${minecraft_version}-${api_name}"
 }
 
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
@@ -154,4 +156,73 @@ publishing {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+}
+
+// CurseForge deployment configuration
+if (System.getenv("CURSEFORGE_TOKEN")) {
+    curseforge {
+        apiKey = System.getenv("CURSEFORGE_TOKEN")
+        project {
+            id = project.curseforge_project_id ?: "YOUR_PROJECT_ID"
+            changelog = file("CHANGELOG.md").exists() ? file("CHANGELOG.md").text : "See GitHub for changes"
+            changelogType = 'markdown'
+            releaseType = mod_version.contains('alpha') ? 'alpha' : mod_version.contains('beta') ? 'beta' : 'release'
+            
+            addGameVersion minecraft_version
+            addGameVersion 'Forge'
+            
+            mainArtifact(jar) {
+                displayName = "${mod_name} ${version}"
+            }
+            
+            relations {
+                requiredDependency 'mana-and-artifice'
+                requiredDependency 'mystic-alchemy'
+                optionalDependency 'jei'
+            }
+        }
+    }
+}
+
+// Modrinth deployment configuration  
+import com.modrinth.minotaur.dependencies.ModDependency
+
+if (System.getenv("MODRINTH_TOKEN")) {
+    modrinth {
+        token = System.getenv("MODRINTH_TOKEN")
+        projectId = project.modrinth_project_id ?: "YOUR_PROJECT_ID"
+        versionNumber = version
+        versionName = "${mod_name} ${version}"
+        uploadFile = jar
+        gameVersions = [minecraft_version]
+        loaders = ['forge']
+        changelog = file("CHANGELOG.md").exists() ? file("CHANGELOG.md").text : "See GitHub for changes"
+        
+        versionType = mod_version.contains('alpha') ? 'alpha' : mod_version.contains('beta') ? 'beta' : 'release'
+        
+        dependencies {
+            required.project "mana-and-artifice"
+            required.project "mystic-alchemy"
+            optional.project "jei"
+        }
+    }
+}
+
+// Combined publish task
+task publishMod {
+    group = 'publishing'
+    description = 'Publishes mod to both CurseForge and Modrinth'
+    
+    if (System.getenv("CURSEFORGE_TOKEN")) {
+        dependsOn tasks.curseforge
+    }
+    if (System.getenv("MODRINTH_TOKEN")) {
+        dependsOn tasks.modrinth
+    }
+    
+    doLast {
+        if (!System.getenv("CURSEFORGE_TOKEN") && !System.getenv("MODRINTH_TOKEN")) {
+            println "No deployment tokens found. Set CURSEFORGE_TOKEN and/or MODRINTH_TOKEN environment variables."
+        }
+    }
 }

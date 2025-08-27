@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/SoSly/MNAWitchcraft/tree/1.20.1)
+## [1.20.1-forge-0.3.0-alpha](https://github.com/SoSly/MnAWitchcraft/releases/tag/1.20.1-forge-0.3.0-alpha)
 ### Added
 - added Flying Broom, a customizable rideable entity that allows flight in the overworld and nether
 - added Coven progression spell effect tracking system for tiers 3-5
