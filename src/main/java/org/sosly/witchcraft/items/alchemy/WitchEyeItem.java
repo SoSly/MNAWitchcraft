@@ -45,11 +45,7 @@ public class WitchEyeItem extends Item {
             return;
         }
 
-        try {
-            MysticAlchemyCompat.revealAlchemicalProperties(level, item, tooltips);
-        } catch (Exception e) {
-            LOGGER.error("Failed to reveal alchemical properties for item {}", item.getItem().getName(item), e);
-        }
+        MysticAlchemyCompat.revealAlchemicalProperties(level, item, tooltips);
     }
 
     public static CraftingContainer createDummyCraftingInventory(ItemStack stack) {

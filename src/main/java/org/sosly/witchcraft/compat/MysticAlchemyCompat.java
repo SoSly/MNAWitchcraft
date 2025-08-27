@@ -1,5 +1,6 @@
 package org.sosly.witchcraft.compat;
 
+import com.mojang.logging.LogUtils;
 import com.mysticalchemy.crucible.CrucibleTile;
 import com.mysticalchemy.init.BlockInit;
 import com.mysticalchemy.init.RecipeInit;
@@ -13,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.slf4j.Logger;
 
 import java.util.List;
 import java.util.Map;
@@ -26,8 +28,17 @@ import static org.sosly.witchcraft.items.alchemy.WitchEyeItem.createDummyCraftin
  * preventing early class loading issues.
  */
 public class MysticAlchemyCompat {
+    private static final Logger LOGGER = LogUtils.getLogger();
     
     public static void revealAlchemicalProperties(Level level, ItemStack item, List<Component> tooltips) {
+        try {
+            doRevealAlchemicalProperties(level, item, tooltips);
+        } catch (Exception e) {
+            LOGGER.error("Failed to reveal alchemical properties for item {}", item.getItem().getName(item), e);
+        }
+    }
+    
+    private static void doRevealAlchemicalProperties(Level level, ItemStack item, List<Component> tooltips) {
         var recipes = level.getRecipeManager();
         Optional<PotionIngredientRecipe> recipe = recipes.getRecipeFor(
             RecipeInit.POTION_RECIPE_TYPE.get(), 
