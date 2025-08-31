@@ -8,12 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - tier requirements now generate when players carry scented M&A flowers, making progression accessible through witch gossip alone
+- added "Sworn to the Hedge" advancement for joining the Coven faction
 
 ### Changed
 - improved "Ritual: Sympathy" guidebook entry to explain how to obtain bloody needles for bound poppet creation
-
-### Added
-- added "Sworn to the Hedge" advancement for joining the Coven faction
 
 ### Fixed
 - fixed crash when crafting bound poppet with bloody needle lacking proper NBT data (such as from /give command)
