@@ -21,6 +21,22 @@ public class Essence extends SimpleCastingResource {
     }
 
     @Override
+    public void addRegenerationModifier(String identifier, float modifier) {
+        if ("mage_armor_set_bonus".equals(identifier)) {
+            return;
+        }
+        super.addRegenerationModifier(identifier, modifier);
+    }
+
+    @Override
+    public void removeRegenerationModifier(String identifier) {
+        if ("mage_armor_set_bonus".equals(identifier)) {
+            return;
+        }
+        super.removeRegenerationModifier(identifier);
+    }
+
+    @Override
     public float getRegenerationModifier(LivingEntity caster) {
         if (super.getRegenerationModifier(caster) == 1.0F) {
             return 0;

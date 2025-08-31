@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fixed crash when crafting bound poppet with bloody needle lacking proper NBT data (such as from /give command)
 - fixed "Swept Away" advancement triggering on any inventory change instead of only when obtaining flying broom
 - fixed "Swept Away" advancement appearing in its own category instead of under M&A tier progression
+- fixed Mage Robe Armor regeneration bonus incorrectly affecting Coven players (witches cannot regenerate essence naturally)
 
 ## [1.20.1-forge-0.3.0-alpha](https://github.com/SoSly/MnAWitchcraft/releases/tag/1.20.1-forge-0.3.0-alpha)
 ### Added
