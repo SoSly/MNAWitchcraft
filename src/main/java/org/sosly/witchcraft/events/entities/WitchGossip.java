@@ -43,14 +43,11 @@ public class WitchGossip {
             return;
         }
         
-        LOGGER.debug("Checking gossip conditions for witch at {}", witch.position());
-        
         long currentTime = level.getGameTime();
         long lastGossipTime = witch.getPersistentData().getLong(LAST_GOSSIP_TIME_KEY);
         int cooldownTicks = ServerConfig.witchGossipCooldown * 20;
         
         if (lastGossipTime != 0 && currentTime - lastGossipTime < cooldownTicks) {
-            LOGGER.debug("Witch gossip on cooldown, {} ticks remaining", cooldownTicks - (currentTime - lastGossipTime));
             return;
         }
         

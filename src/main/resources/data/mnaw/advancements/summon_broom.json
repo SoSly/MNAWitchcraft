@@ -1,4 +1,5 @@
 {
+  "parent": "mna:tier_2/advance_tier_3",
   "display": {
     "icon": {
       "item": "mnaw:flying_broom"
@@ -20,10 +21,17 @@
       "conditions": {
         "items": [
           {
-            "item": "mnaw:flying_broom"
+            "items": [
+              "mnaw:flying_broom"
+            ]
           }
         ]
       }
     }
-  }
+  },
+  "requirements": [
+    [
+      "has_broom"
+    ]
+  ]
 }

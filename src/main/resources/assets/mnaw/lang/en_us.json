@@ -98,6 +98,8 @@
   
   "advancement.mnaw.summon_broom.title": "Swept Away",
   "advancement.mnaw.summon_broom.description": "Place your first Flying Broom to unlock the summon broom cantrip.",
+  "mna:faction/join_coven.title": "Sworn to the Hedge",
+  "mna:faction/join_coven.description": "Join the Coven of Hedge Witches through the Ritual of the Hedge.",
   
   "cantrip.mnaw.summon_broom": "Summon Broom",
   "cantrip.mnaw.summon_broom.desc": "I can summon my broom, and it will quickly fly towards me from any distance!",
