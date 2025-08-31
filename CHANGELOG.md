@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- tier requirements now generate when players carry scented M&A flowers, making progression accessible through witch gossip alone
+
 ### Changed
 - improved "Ritual: Sympathy" guidebook entry to explain how to obtain bloody needles for bound poppet creation
 
