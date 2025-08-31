@@ -16,7 +16,7 @@ import java.util.UUID;
 public class SympathyHelper {
     public static boolean isBound(ItemStack item) {
         CompoundTag tag = item.getTag();
-        return tag != null && tag.contains("target");
+        return tag != null && tag.hasUUID("target") && tag.contains("type");
     }
 
     public static boolean isBoss(Entity entity) {

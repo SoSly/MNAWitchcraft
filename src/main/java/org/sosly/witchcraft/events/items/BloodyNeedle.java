@@ -69,6 +69,20 @@ public class BloodyNeedle {
             event.setCanceled(true);
             return;
         }
+        
+        if (!tag.hasUUID("target")) {
+            LOGGER.error("Bloody needle missing target UUID for player {}", event.getEntity().getName().getString());
+            event.setResult(Event.Result.DENY);
+            event.setCanceled(true);
+            return;
+        }
+        
+        if (!tag.contains("type")) {
+            LOGGER.error("Bloody needle missing type data for player {}", event.getEntity().getName().getString());
+            event.setResult(Event.Result.DENY);
+            event.setCanceled(true);
+            return;
+        }
 
         UUID target = tag.getUUID("target");
         String type = tag.getString("type");
