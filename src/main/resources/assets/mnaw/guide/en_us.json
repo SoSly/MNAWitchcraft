@@ -329,10 +329,26 @@
         "value": "",
         "json": [
           {
-            "text": "This ritual allows me to use a sympathetic link to a a player or mob to apply my magic over "
+            "text": "This ritual allows me to use a sympathetic link to a player or mob to apply my magic over "
           },
           {
             "text": "great distances. I must have a poppet bound to my target, as well as a player charm bound to myself."
+          },
+          {
+            "text": "\n\n"
+          },
+          {
+            "text": "To bind a poppet to a target, I need their blood. Attacking a mob with a "
+          },
+          {
+            "text": "vinteum needle",
+            "color": "blue"
+          },
+          {
+            "text": " gives me a sample of their blood, staining the needle. I can then use this bloody needle "
+          },
+          {
+            "text": "to craft a bound poppet, creating a sympathetic connection to my target."
           }
         ]
       }

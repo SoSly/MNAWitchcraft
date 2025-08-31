@@ -1,10 +1,12 @@
 package org.sosly.witchcraft.utils;
 
+import com.mojang.logging.LogUtils;
 import com.mna.api.capabilities.IPlayerProgression;
 import com.mna.capabilities.playerdata.progression.PlayerProgressionProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import org.slf4j.Logger;
 import org.sosly.witchcraft.config.ServerConfig;
 import org.sosly.witchcraft.api.capabilities.ICovenCapability;
 import org.sosly.witchcraft.capabilities.coven.CovenProvider;
@@ -14,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class GossipMessageGenerator {
+    private static final Logger LOGGER = LogUtils.getLogger();
     
     /**
      * Generates a gossip message for a witch based on the player and their current progress
@@ -24,11 +27,13 @@ public class GossipMessageGenerator {
     public static Component generateGossipMessage(Player player, String scentedItem) {
         ICovenCapability covenCap = player.getCapability(CovenProvider.COVEN).orElse(null);
         if (covenCap == null) {
+            LOGGER.debug("Player {} has no coven capability, using general gossip", player.getName().getString());
             return generateGeneralGossip(scentedItem, player);
         }
         
         IPlayerProgression progression = player.getCapability(PlayerProgressionProvider.PROGRESSION).orElse(null);
         if (progression == null) {
+            LOGGER.debug("Player {} has no progression capability, using general gossip", player.getName().getString());
             return generateGeneralGossip(scentedItem, player);
         }
         
@@ -36,6 +41,7 @@ public class GossipMessageGenerator {
         int nextTier = currentTier + 1;
         
         if (nextTier < 3 || nextTier > 5) {
+            LOGGER.debug("Player {} next tier {} outside spell hint range, using non-spell gossip", player.getName().getString(), nextTier);
             return generateNonSpellGossip(scentedItem, player);
         }
         
@@ -54,12 +60,15 @@ public class GossipMessageGenerator {
         if (incompleteEffects.isEmpty()) {
             float mnaProgress = progression.getTierProgress(player.level());
             if (mnaProgress < 1.0f) {
+                LOGGER.debug("Player {} has incomplete MNA progress ({:.2f}), using non-spell gossip", player.getName().getString(), mnaProgress);
                 return generateNonSpellGossip(scentedItem, player);
             }
+            LOGGER.debug("Player {} ready for tier advancement, using ritual hint gossip", player.getName().getString());
             return generateRitualHintGossip(scentedItem, player);
         }
         
         if (player.getRandom().nextInt(ServerConfig.witchGossipSpellHintChance) != 0) {
+            LOGGER.debug("Player {} failed spell hint chance roll, using non-spell gossip", player.getName().getString());
             return generateNonSpellGossip(scentedItem, player);
         }
         
@@ -70,6 +79,7 @@ public class GossipMessageGenerator {
             incompleteEffects.set(j, temp);
         }
         ResourceLocation hintEffect = incompleteEffects.get(0);
+        LOGGER.debug("Generating spell hint for player {} about effect {}", player.getName().getString(), hintEffect);
         return generateSpellHintGossip(scentedItem, hintEffect, player.getName().getString());
     }
     

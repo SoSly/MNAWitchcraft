@@ -43,15 +43,19 @@ public class WitchGossip {
             return;
         }
         
+        LOGGER.debug("Checking gossip conditions for witch at {}", witch.position());
+        
         long currentTime = level.getGameTime();
         long lastGossipTime = witch.getPersistentData().getLong(LAST_GOSSIP_TIME_KEY);
         int cooldownTicks = ServerConfig.witchGossipCooldown * 20;
         
         if (lastGossipTime != 0 && currentTime - lastGossipTime < cooldownTicks) {
+            LOGGER.debug("Witch gossip on cooldown, {} ticks remaining", cooldownTicks - (currentTime - lastGossipTime));
             return;
         }
         
         if (witch.getTarget() != null) {
+            LOGGER.debug("Witch has target {}, skipping gossip", witch.getTarget().getName().getString());
             return;
         }
         
@@ -66,6 +70,8 @@ public class WitchGossip {
                 .filter(p -> isValidGossipTrigger(p))
                 .toList();
         
+        LOGGER.debug("Found {} players in range, {} with nice smell effect eligible for gossip", playersInRange.size(), niceSmellPlayers.size());
+        
         if (niceSmellPlayers.isEmpty()) {
             return;
         }
@@ -74,11 +80,15 @@ public class WitchGossip {
         
         String scentedItem = ScentedItemHelper.getRandomCarriedScentedItem(targetPlayer);
         if (scentedItem == null) {
+            LOGGER.debug("Target player {} has no scented items, cannot gossip", targetPlayer.getName().getString());
             return;
         }
         
+        LOGGER.debug("Witch gossiping with {} about {}", targetPlayer.getName().getString(), scentedItem);
+        
         performGossip(serverLevel, witch, targetPlayer, scentedItem, playersInRange);
         witch.getPersistentData().putLong(LAST_GOSSIP_TIME_KEY, currentTime);
+        LOGGER.debug("Gossip completed, cooldown set for {} ticks", cooldownTicks);
     }
     
     private static double getWitchAttackRange(Witch witch) {
