@@ -98,7 +98,7 @@ public class Factions {
         }
         
         if (covenCap.getTierEffectsRequired(nextTier) == null) {
-            var requirements = TierEffectManager.generateTierRequirements(nextTier, player.getRandom(), player.level());
+            var requirements = TierEffectManager.generateTierRequirements(nextTier, player.getRandom(), player);
             covenCap.setTierEffectsRequired(nextTier, requirements);
             LOGGER.info("Generated tier {} requirements for player {}: {}", 
                 nextTier, player.getName().getString(), requirements);

@@ -139,7 +139,7 @@ public class HedgeRitual extends RitualEffect {
         }
         
         var requirements = TierEffectManager.generateTierRequirements(nextTier + 1, 
-            caster.getRandom(), level);
+            caster.getRandom(), caster);
         covenCap.setTierEffectsRequired(nextTier + 1, requirements);
 
         caster.sendSystemMessage(Component.translatable("ritual.mnaw.hedge.success"));

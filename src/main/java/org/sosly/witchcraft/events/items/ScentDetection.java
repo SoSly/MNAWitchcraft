@@ -78,7 +78,7 @@ public class ScentDetection {
         }
         
         if (covenCap.getTierEffectsRequired(nextTier) == null) {
-            var requirements = TierEffectManager.generateTierRequirements(nextTier, player.getRandom(), player.level());
+            var requirements = TierEffectManager.generateTierRequirements(nextTier, player.getRandom(), player);
             covenCap.setTierEffectsRequired(nextTier, requirements);
         }
     }
