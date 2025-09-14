@@ -32,4 +32,10 @@ public interface IBroomCapability {
     void setLastKnownDimension(@Nullable ResourceLocation dimension);
 
     void reset();
+
+    /**
+     * Copies all data from another broom capability (used for death persistence)
+     * @param other the capability to copy from
+     */
+    void copyFrom(IBroomCapability other);
 }

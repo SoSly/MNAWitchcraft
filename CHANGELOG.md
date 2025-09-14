@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
+- fixed spell requirements and completion progress resetting on player death/respawn
 - fixed faction-locked spells appearing as coven advancement requirements, making progression impossible without extensive trading
 
 ## [1.20.1-forge-0.3.1-alpha]

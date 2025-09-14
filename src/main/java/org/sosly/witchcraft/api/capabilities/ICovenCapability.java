@@ -69,4 +69,10 @@ public interface ICovenCapability {
      */
     Map<ResourceLocation, Boolean> getTierEffectsProgress(int tier);
 
+    /**
+     * Copies all data from another coven capability (used for death persistence)
+     * @param other the capability to copy from
+     */
+    void copyFrom(ICovenCapability other);
+
 }

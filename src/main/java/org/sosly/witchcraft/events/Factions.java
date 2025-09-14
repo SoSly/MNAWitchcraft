@@ -37,6 +37,31 @@ public class Factions {
     }
     
     /**
+     * Handles player death to preserve capability data across respawn
+     */
+    @SubscribeEvent
+    public static void onPlayerClone(PlayerEvent.Clone event) {
+        Player player = event.getEntity();
+        Player original = event.getOriginal();
+        
+        original.reviveCaps();
+        
+        player.getCapability(CovenProvider.COVEN).ifPresent(coven -> {
+            original.getCapability(CovenProvider.COVEN).ifPresent(oldCoven -> {
+                coven.copyFrom(oldCoven);
+            });
+        });
+        
+        player.getCapability(BroomProvider.BROOM).ifPresent(broom -> {
+            original.getCapability(BroomProvider.BROOM).ifPresent(oldBroom -> {
+                broom.copyFrom(oldBroom);
+            });
+        });
+        
+        original.invalidateCaps();
+    }
+    
+    /**
      * Detects when a player crafts a bound poppet
      */
     @SubscribeEvent

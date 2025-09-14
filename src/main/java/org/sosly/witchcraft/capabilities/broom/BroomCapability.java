@@ -67,4 +67,12 @@ public class BroomCapability implements IBroomCapability {
         this.lastKnownPosition = null;
         this.lastKnownDimension = null;
     }
+
+    @Override
+    public void copyFrom(IBroomCapability other) {
+        this.bondedBroomId = other.getBondedBroomId();
+        this.broomsUnlocked = other.broomsUnlocked();
+        this.lastKnownPosition = other.getLastKnownPosition();
+        this.lastKnownDimension = other.getLastKnownDimension();
+    }
 }

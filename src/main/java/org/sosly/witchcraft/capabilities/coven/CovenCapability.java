@@ -91,4 +91,17 @@ public class CovenCapability implements ICovenCapability {
     public Map<ResourceLocation, Boolean> getTierEffectsProgress(int tier) {
         return tierEffectsProgress.get(tier);
     }
+
+    @Override
+    public void copyFrom(ICovenCapability other) {
+        malice = other.hasMalice();
+        
+        tierEffectsProgress.clear();
+        for (int tier = 3; tier <= 5; tier++) {
+            Map<ResourceLocation, Boolean> otherProgress = other.getTierEffectsProgress(tier);
+            if (otherProgress != null) {
+                tierEffectsProgress.put(tier, new HashMap<>(otherProgress));
+            }
+        }
+    }
 }
