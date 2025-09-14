@@ -24,6 +24,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -80,6 +81,7 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
     private static final HashMap<Block, Float> HEATERS = new HashMap<>();
     static {
         HEATERS.put(Blocks.CAMPFIRE, 1.0f);
+        HEATERS.put(Blocks.SOUL_CAMPFIRE, 1.0f);
         HEATERS.put(Blocks.FIRE, 2.0f);
         HEATERS.put(Blocks.LAVA, 5.0f);
         HEATERS.put(Blocks.ICE, -2.0f);
@@ -312,13 +314,16 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
     }
     
     private void tickHeatAndStir() {
-        Block below = level.getBlockState(worldPosition.below()).getBlock();
+        BlockState belowState = level.getBlockState(worldPosition.below());
+        Block below = belowState.getBlock();
         float preHeat = heat;
         
-        if (HEATERS.containsKey(below)) {
-            heat = Mth.clamp(heat + HEATERS.get(below), MIN_TEMP, MAX_TEMP);
-        } else {
+        if (!HEATERS.containsKey(below)) {
             heat = Mth.clamp(heat - (1 - myBiome.getBaseTemperature()) * 10, MIN_TEMP, MAX_TEMP);
+        } else if (isCampfire(below) && !belowState.getValue(CampfireBlock.LIT)) {
+            heat = Mth.clamp(heat - (1 - myBiome.getBaseTemperature()) * 10, MIN_TEMP, MAX_TEMP);
+        } else {
+            heat = Mth.clamp(heat + HEATERS.get(below), MIN_TEMP, MAX_TEMP);
         }
         
         if (stir > 0.25f) {
@@ -379,6 +384,10 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
                     0, 0.01f + (0.25f - stir) * 0.25f, 0);
             }
         }
+    }
+    
+    private boolean isCampfire(Block block) {
+        return block == Blocks.CAMPFIRE || block == Blocks.SOUL_CAMPFIRE;
     }
     
     public float getHeat() {
