@@ -189,6 +189,8 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
         
         if (wasEmpty && !isEmpty()) {
             switchToFilledCauldron();
+        } else if (!wasEmpty && isEmpty()) {
+            switchToEmptyCauldron();
         } else if (!wasEmpty && !isEmpty()) {
             updateBlockStateLevel();
         }
