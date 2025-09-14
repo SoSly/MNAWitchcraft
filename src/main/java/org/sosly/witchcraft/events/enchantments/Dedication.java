@@ -17,10 +17,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.slf4j.Logger;
 import org.sosly.witchcraft.Witchcraft;
+import org.sosly.witchcraft.blocks.alchemy.WitchsCauldronBlockEntity;
 import org.sosly.witchcraft.compat.MysticAlchemyCompat;
 import org.sosly.witchcraft.enchantments.EnchantmentRegistry;
 import org.sosly.witchcraft.enchantments.staves.DedicationEnchantment;
-import org.sosly.witchcraft.compat.MysticAlchemyCompat;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -53,12 +53,19 @@ public class Dedication {
             return;
         }
 
-        var crucible = MysticAlchemyCompat.getCrucibleTile(level, pos);
-        if (crucible == null) {
+        if (tryRechargeCrucible(level, pos, stack)) {
             return;
         }
 
-        BlockState state = level.getBlockState(pos);
+        tryRechargeWitchsCauldron(level, pos, stack);
+    }
+
+    private static boolean tryRechargeCrucible(Level level, BlockPos pos, ItemStack stack) {
+        var crucible = MysticAlchemyCompat.getCrucibleTile(level, pos);
+        if (crucible == null) {
+            return false;
+        }
+
         AtomicBoolean success = new AtomicBoolean(false);
         MysticAlchemyCompat.getProminentEffects(crucible).forEach((effect, strength) -> {
             if (effect.equals(EffectInit.INSTANT_MANA.get()) || effect.equals(EffectInit.MANA_REGEN.get())) {
@@ -68,16 +75,40 @@ public class Dedication {
         });
 
         if (!success.get()) {
-            return;
+            return false;
         }
         
+        BlockState state = level.getBlockState(pos);
         int existingLevel = state.getValue(LayeredCauldronBlock.LEVEL);
         if (existingLevel == 1) {
             level.setBlock(pos, MysticAlchemyCompat.getEmptyCrucibleState(), 3);
+        } else {
+            level.setBlock(pos, state.setValue(LayeredCauldronBlock.LEVEL, existingLevel - 1), 3);
+        }
+        return true;
+    }
+
+    private static void tryRechargeWitchsCauldron(Level level, BlockPos pos, ItemStack stack) {
+        var blockEntity = level.getBlockEntity(pos);
+        if (!(blockEntity instanceof WitchsCauldronBlockEntity cauldron)) {
             return;
         }
-        
-        level.setBlock(pos, state.setValue(LayeredCauldronBlock.LEVEL, existingLevel - 1), 3);
+
+        if (cauldron.isEmpty() || !cauldron.isPotion()) {
+            return;
+        }
+
+        AtomicBoolean success = new AtomicBoolean(false);
+        cauldron.getProminentEffects().forEach((effect, strength) -> {
+            if (effect.equals(EffectInit.INSTANT_MANA.get()) || effect.equals(EffectInit.MANA_REGEN.get())) {
+                DedicationEnchantment.addMana(stack, (int) (strength * 1.0F));
+                success.set(true);
+            }
+        });
+
+        if (success.get()) {
+            cauldron.drain();
+        }
     }
 
     @SubscribeEvent

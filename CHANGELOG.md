@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fixed faction-locked spells appearing as coven advancement requirements, making progression impossible without extensive trading
 - fixed Witch's Cauldron not refilling with moonlight after being emptied with bucket (only affected bucket interaction, not bottles)
 - fixed Witch's Cauldron continuing to heat from extinguished campfires (now properly checks campfire lit state)
+- fixed Witch's Cauldron not recharging dedication-enchanted items (now supports mana boost and mana regen brews like Mystic Crucible)
 
 ### Added
 - added soul campfire support as heat source for Witch's Cauldron
