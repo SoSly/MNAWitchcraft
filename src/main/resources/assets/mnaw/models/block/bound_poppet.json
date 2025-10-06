@@ -1,6 +1,9 @@
 {
   "parent": "forge:item/default",
   "loader": "forge:composite",
+  "textures": {
+    "particle": "minecraft:block/red_wool"
+  },
   "children": {
     "poppet": {
       "loader": "forge:obj",
