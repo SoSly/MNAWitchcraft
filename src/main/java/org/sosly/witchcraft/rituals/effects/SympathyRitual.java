@@ -102,7 +102,7 @@ public class SympathyRitual extends RitualEffect {
         }
 
         ItemStack charmItem = getPlayerCharm(ctx);
-        if (charmItem.isEmpty() || ((PlayerCharm)charmItem.getItem()).getPlayerUUID(charmItem) != player.getUUID()) {
+        if (charmItem.isEmpty() || !player.getUUID().equals(((PlayerCharm)charmItem.getItem()).getPlayerUUID(charmItem))) {
             player.sendSystemMessage(Component.translatable("rituals.sympathy.not_your_charm"));
             return false;
         }
