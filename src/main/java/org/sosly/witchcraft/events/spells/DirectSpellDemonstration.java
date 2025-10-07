@@ -1,5 +1,9 @@
 package org.sosly.witchcraft.events.spells;
 
+import com.mna.api.events.ComponentApplyingEvent;
+import com.mna.api.spells.ComponentApplicationResult;
+import com.mna.api.spells.base.ISpellComponent;
+import com.mna.api.spells.targeting.SpellTarget;
 import com.mojang.logging.LogUtils;
 import com.mna.api.capabilities.IPlayerProgression;
 import com.mna.api.events.SpellCastEvent;
@@ -23,7 +27,7 @@ public class DirectSpellDemonstration {
     private static final Logger LOGGER = LogUtils.getLogger();
 
     @SubscribeEvent
-    public static void onSpellCast(SpellCastEvent event) {
+    public static void onSpellCast(ComponentApplyingEvent event) {
         SpellContext context = event.getContext();
         if (context == null) {
             return;
@@ -33,8 +37,8 @@ public class DirectSpellDemonstration {
             return;
         }
 
-        Entity target = context.getSpawnedTargetEntity();
-        if (!(target instanceof Witch)) {
+        SpellTarget target = event.getTarget();
+        if (!(target.getLivingEntity() instanceof Witch)) {
             return;
         }
 
@@ -66,26 +70,19 @@ public class DirectSpellDemonstration {
             return;
         }
 
-        ISpellDefinition spell = event.getSpell();
-        if (spell == null) {
-            LOGGER.warn("No valid spell found in spell cast event for player {}", caster.getName().getString());
+        ISpellComponent component = event.getComponent();
+        if (component == null) {
+            LOGGER.debug("No valid component found in component applying event for player {}", caster.getName().getString());
             return;
         }
 
-        spell.iterateComponents(component -> {
-            SpellEffect effect = component.getPart();
-            ResourceLocation effectId = effect.getRegistryName();
+        ResourceLocation effectId = component.getRegistryName();
+        if (!covenCap.getTierEffectsRequired(nextTier).contains(effectId)) {
+            return;
+        }
 
-            if (covenCap.getTierEffectsRequired(nextTier).contains(effectId)) {
-                covenCap.markEffectCompleted(nextTier, effectId);
-                LOGGER.info("Player {} completed spell effect {} for tier {} by direct casting on witch",
-                    caster.getName().getString(), effectId, nextTier);
-
-                if (covenCap.areAllEffectsCompleted(nextTier)) {
-                    LOGGER.info("Player {} has completed all requirements for tier {}!",
-                        caster.getName().getString(), nextTier);
-                }
-            }
-        });
+        covenCap.markEffectCompleted(nextTier, effectId);
+        LOGGER.info("Player {} completed component effect {} for tier {} by direct casting on witch",
+            caster.getName().getString(), effectId, nextTier);
     }
 }
